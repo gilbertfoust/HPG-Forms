@@ -1,7 +1,306 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta http-equiv="refresh" content="0; url='index.html'">
+  <meta charset="UTF-8" />
+  <title>Humanity Pathways Global</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --primary: #1b4b72;
+      --accent: #f4a623;
+      --bg: #f7f7f9;
+      --text: #222222;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(135deg, #0f2740, #1b4b72);
+      color: #ffffff;
+      padding: 3rem 1.5rem 3.5rem;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0 0 0.5rem;
+      font-size: 2rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    header p {
+      max-width: 720px;
+      margin: 0.25rem auto 1.5rem;
+      font-size: 1rem;
+    }
+
+    .tagline {
+      display: inline-block;
+      margin-top: 0.75rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+    }
+
+    .cta-buttons {
+      margin-top: 1.5rem;
+      display: flex;
+      justify-content: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      border-radius: 999px;
+      border: 2px solid transparent;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #1b1b1b;
+    }
+
+    .btn-primary:hover {
+      background: #f29b0c;
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.7);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateY(-1px);
+    }
+
+    main {
+      max-width: 1000px;
+      margin: -1.5rem auto 2.5rem;
+      padding: 0 1.25rem;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 14px;
+      box-shadow: 0 8px 22px rgba(15, 31, 55, 0.12);
+      padding: 2rem 1.5rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .section-title {
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.8rem;
+      color: #777777;
+      margin-bottom: 0.35rem;
+    }
+
+    h2 {
+      margin-top: 0.25rem;
+      font-size: 1.4rem;
+      color: #10243f;
+    }
+
+    p {
+      margin: 0.35rem 0 0.75rem;
+      font-size: 0.95rem;
+    }
+
+    .pillars {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      margin-top: 0.75rem;
+    }
+
+    .pillar {
+      border-radius: 12px;
+      border: 1px solid #e1e5ee;
+      padding: 1rem;
+      background: #fcfcff;
+    }
+
+    .pillar h3 {
+      margin: 0 0 0.25rem;
+      font-size: 1.05rem;
+      color: #1b4b72;
+    }
+
+    .pillar p {
+      margin: 0.1rem 0;
+      font-size: 0.9rem;
+    }
+
+    .meta {
+      font-size: 0.8rem;
+      color: #666666;
+      margin-top: 0.5rem;
+    }
+
+    .highlight {
+      background: #fff9e6;
+      border-left: 4px solid var(--accent);
+      padding: 0.75rem 0.9rem;
+      border-radius: 8px;
+      margin-top: 0.75rem;
+      font-size: 0.9rem;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.8rem;
+      color: #777777;
+      padding: 1.5rem 1rem 2rem;
+    }
+
+    @media (min-width: 700px) {
+      header h1 {
+        font-size: 2.4rem;
+      }
+
+      header p {
+        font-size: 1.05rem;
+      }
+
+      .card {
+        padding: 2.2rem 2rem;
+      }
+
+      .pillars {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+  </style>
 </head>
-<body></body>
+<body>
+  <header>
+    <div class="tagline">Humanity Pathways Global</div>
+    <h1>Shaping Pathways That Transform the World</h1>
+    <p>
+      Humanity Pathways Global exists to help communities move from surviving to self-sustaining — 
+      through education, economic opportunity, human rights, and holistic community development.
+    </p>
+    <div class="cta-buttons">
+      <!-- Update these hrefs later to point to your real pages/forms -->
+      <a href="#" class="btn btn-primary">Explore Our Initiatives</a>
+      <a href="#" class="btn btn-ghost">Partner With Us</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="card">
+      <div class="section-title">Who We Are</div>
+      <h2>Building Self‑Sustaining, Equitable Communities</h2>
+      <p>
+        Humanity Pathways Global is a nonprofit and fiscal sponsor supporting leaders, projects, 
+        and organizations that confront systemic poverty and inequality in marginalized communities, 
+        locally and globally.
+      </p>
+      <p>
+        By combining education, economic tools, advocacy, and community infrastructure, we work 
+        alongside partners to unlock potential and protect human dignity for every person we serve.
+      </p>
+      <p class="meta">
+        Founded in 2022 and rooted in Detroit, our work spans multiple countries and collaborates with 
+        youth, grassroots initiatives, and global partners.
+      </p>
+    </section>
+
+    <section class="card">
+      <div class="section-title">Our Pathways</div>
+      <h2>How We Create Lasting Change</h2>
+      <p>
+        HPG focuses on four interconnected pathways that, together, create a cycle of opportunity, 
+        justice, and long‑term community resilience.
+      </p>
+
+      <div class="pillars">
+        <div class="pillar">
+          <h3>Education & Skill Development</h3>
+          <p>
+            From literacy support to vocational training and youth leadership programs, we expand access 
+            to quality learning that prepares people to shape their own futures.
+          </p>
+        </div>
+
+        <div class="pillar">
+          <h3>Economic Empowerment</h3>
+          <p>
+            Micro‑enterprise support, financial literacy, and workforce pathways help families build 
+            stability, generate income, and participate fully in local economies.
+          </p>
+        </div>
+
+        <div class="pillar">
+          <h3>Human Rights & Social Justice</h3>
+          <p>
+            Advocacy, legal support, and mental health resources address discrimination, exclusion, and 
+            barriers that keep communities from thriving.
+          </p>
+        </div>
+
+        <div class="pillar">
+          <h3>Holistic Community Development</h3>
+          <p>
+            Community centers, health access, local governance training, and essential infrastructure 
+            projects strengthen the social fabric and shared wellbeing of each community.
+          </p>
+        </div>
+      </div>
+
+      <div class="highlight">
+        Our approach is deliberately systemic: each pathway reinforces the others, so gains in education, 
+        income, and justice add up to lasting transformation rather than short‑term relief.
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-title">Next Generation Impact</div>
+      <h2>Raising Global Youth Leaders</h2>
+      <p>
+        Through initiatives like Global Youth Leaders for Humanity, we equip young people with the skills, 
+        mentorship, and cross‑cultural experiences needed to lead change across continents.
+      </p>
+      <p>
+        Participants grow in diplomacy, public speaking, language learning, and community activism — 
+        becoming multipliers of impact in their families, cities, and nations.
+      </p>
+      <div class="cta-buttons">
+        <a href="#" class="btn btn-primary">Learn About GYLFH</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    © <span id="year"></span> Humanity Pathways Global · Empowering pathways to justice, dignity, and sustainable futures.
+  </footer>
+
+  <script>
+    // Auto-fill current year in footer
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
 </html>
