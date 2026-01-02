@@ -1,0 +1,1860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HPG NGO Onboarding Questionnaire (Post-Signature)</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg1:#0b1220;
+      --bg2:#0f1e3a;
+      --card: rgba(255,255,255,.92);
+      --glass: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.14);
+      --text:#0f172a;
+      --muted:#475569;
+      --brand:#003366;
+      --accent:#E67E22;
+      --ok:#0f7a4a;
+      --bad:#b02a37;
+      --info:#0b5ed7;
+      --shadow: 0 20px 60px rgba(0,0,0,.25);
+      --radius: 18px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Poppins, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      background:
+        radial-gradient(1200px 600px at 15% 10%, rgba(230,126,34,.18), transparent 55%),
+        radial-gradient(900px 500px at 90% 20%, rgba(0,51,102,.28), transparent 55%),
+        linear-gradient(140deg, var(--bg1), var(--bg2));
+      padding: 34px 16px 44px;
+    }
+
+    .wrap{max-width: 1040px; margin:0 auto;}
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:16px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: var(--glass);
+      border: 1px solid var(--stroke);
+      box-shadow: 0 10px 25px rgba(0,0,0,.22);
+      backdrop-filter: blur(10px);
+      color: #fff;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      min-width: 260px;
+    }
+    .brand img{
+      width: 44px; height:44px; border-radius: 12px;
+      object-fit: cover;
+      border: 1px solid rgba(255,255,255,.25);
+      background: rgba(255,255,255,.1);
+    }
+    .brand h1{font-size: 14px; margin:0; font-weight: 700; letter-spacing: .2px; line-height: 1.2;}
+    .brand p{margin: 2px 0 0; font-size: 12px; opacity: .85; line-height:1.2;}
+
+    .top-actions{display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end}
+    .chip{
+      border: 1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.08);
+      color: #fff;
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      display:flex; align-items:center; gap:8px;
+      cursor:pointer;
+      user-select:none;
+      transition: transform .12s ease, background .12s ease;
+      white-space:nowrap;
+    }
+    .chip:hover{transform: translateY(-1px); background: rgba(255,255,255,.12)}
+    .chip:active{transform: translateY(0px)}
+    .chip small{opacity:.8}
+
+    .card{
+      margin-top: 16px;
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      border: 1px solid rgba(0,0,0,.06);
+    }
+
+    .hero{
+      padding: 22px 22px 18px;
+      border-bottom: 1px solid rgba(0,0,0,.06);
+      background:
+        linear-gradient(135deg, rgba(0,51,102,.08), rgba(230,126,34,.08));
+    }
+    .hero h2{
+      margin: 0;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -.2px;
+      color: var(--brand);
+    }
+    .hero p{margin: 6px 0 0; color: var(--muted); font-size: 13px; max-width: 85ch}
+    .note{
+      margin-top: 12px;
+      display:flex; gap:10px; flex-wrap:wrap;
+      font-size: 12px; color: #0f172a;
+    }
+    .pill{
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.7);
+      border: 1px solid rgba(0,0,0,.06);
+    }
+    .pill b{color: var(--brand)}
+    .pill i{font-style:normal; color:#1f2937; opacity:.85}
+
+    .progress{
+      padding: 14px 22px;
+      background: #fff;
+      border-bottom: 1px solid rgba(0,0,0,.06);
+    }
+    .bar{
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.06);
+      overflow:hidden;
+    }
+    .bar > div{
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--brand), var(--accent));
+      transition: width .25s ease;
+    }
+
+    .steps{
+      margin-top: 12px;
+      display:grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    @media (max-width: 980px){ .steps{grid-template-columns: repeat(3, 1fr)} }
+    @media (max-width: 560px){ .steps{grid-template-columns: repeat(2, 1fr)} }
+
+    .step{
+      display:flex; gap:8px; align-items:center;
+      padding: 10px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,.06);
+      background: rgba(0,0,0,.02);
+      cursor:pointer;
+      user-select:none;
+      transition: transform .10s ease, background .10s ease, border-color .10s ease;
+    }
+    .step:hover{transform: translateY(-1px)}
+    .dot{
+      width: 22px; height:22px; border-radius: 7px;
+      display:grid; place-items:center;
+      font-size: 12px; font-weight: 700;
+      color: #fff;
+      background: rgba(71,85,105,.8);
+      flex: 0 0 auto;
+    }
+    .step.active{
+      background: rgba(0,51,102,.06);
+      border-color: rgba(0,51,102,.20);
+      color: var(--brand);
+    }
+    .step.active .dot{background: var(--brand)}
+    .step.done .dot{background: var(--ok)}
+    .step small{display:block; color: inherit; opacity:.85; line-height:1.2}
+
+    form{padding: 18px 22px 22px}
+
+    .status{
+      display:none;
+      padding: 12px 14px;
+      border-radius: 14px;
+      margin: 0 0 16px;
+      border: 1px solid rgba(0,0,0,.10);
+      font-size: 13px;
+      background: #fff;
+    }
+    .status.show{display:block}
+    .status.ok{border-color: rgba(15,122,74,.26); background: rgba(15,122,74,.06); color: var(--ok)}
+    .status.bad{border-color: rgba(176,42,55,.26); background: rgba(176,42,55,.06); color: var(--bad)}
+    .status.info{border-color: rgba(11,94,215,.26); background: rgba(11,94,215,.06); color: var(--info)}
+    .status code{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 12px}
+
+    .grid{display:grid; grid-template-columns: 1fr 1fr; gap: 14px}
+    @media (max-width: 860px){ .grid{grid-template-columns: 1fr} }
+
+    .field{margin-bottom: 12px}
+    label{display:block; font-size: 12.5px; font-weight: 600; color: #1f2937; margin-bottom: 6px}
+    .hint{font-size: 12px; color: var(--muted); margin-top: 6px}
+    .count{float:right; font-weight:500; opacity:.75}
+    input, select, textarea{
+      width:100%;
+      padding: 12px 12px;
+      border-radius: 12px;
+      border: 1.8px solid rgba(0,0,0,.14);
+      background: rgba(255,255,255,.92);
+      font-family: inherit;
+      font-size: 13.5px;
+      outline:none;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    textarea{min-height: 110px; resize: vertical}
+    input:focus, select:focus, textarea:focus{
+      border-color: rgba(230,126,34,.9);
+      box-shadow: 0 0 0 4px rgba(230,126,34,.14);
+    }
+    input:invalid.touched, select:invalid.touched, textarea:invalid.touched{
+      border-color: rgba(176,42,55,.75);
+      box-shadow: 0 0 0 4px rgba(176,42,55,.10);
+    }
+
+    .section{display:none}
+    .section.active{display:block; animation: fadeIn .16s ease}
+    @keyframes fadeIn{from{opacity:.4; transform: translateY(4px)}to{opacity:1; transform: translateY(0)}}
+
+    .row{
+      display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(0,0,0,.06);
+    }
+    .btns{display:flex; gap:10px; flex-wrap:wrap}
+    button{
+      border:0;
+      border-radius: 14px;
+      padding: 11px 14px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor:pointer;
+      transition: transform .10s ease, box-shadow .10s ease, opacity .10s ease;
+      display:flex; align-items:center; gap:10px;
+    }
+    button:disabled{opacity:.60; cursor:not-allowed; transform:none}
+    .primary{
+      background: var(--brand);
+      color: #fff;
+      box-shadow: 0 12px 26px rgba(0,51,102,.22);
+    }
+    .primary:hover,.ghost:hover{transform: translateY(-1px)}
+    .ghost{
+      background: #fff;
+      border: 1px solid rgba(0,0,0,.10);
+      color: #111827;
+    }
+    .warn{
+      background: rgba(230,126,34,.10);
+      border: 1px solid rgba(230,126,34,.30);
+      color: #92400e;
+    }
+    .subtle{
+      background: rgba(0,0,0,.03);
+      border: 1px solid rgba(0,0,0,.08);
+      color: #111827;
+    }
+
+    .kpi{
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin: 12px 0 4px;
+    }
+    @media (max-width: 900px){ .kpi{grid-template-columns: 1fr} }
+    .kpi .box{
+      border-radius: 14px;
+      border: 1px solid rgba(0,0,0,.06);
+      background: rgba(0,0,0,.02);
+      padding: 12px 12px;
+    }
+    .kpi .box b{display:block; color: var(--brand); font-size: 13px}
+    .kpi .box span{color: var(--muted); font-size: 12px}
+
+    .checks{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 10px 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(0,0,0,.06);
+      background: rgba(0,0,0,.02);
+    }
+    @media (max-width: 780px){ .checks{grid-template-columns: 1fr} }
+    .chk{
+      display:flex; gap:10px; align-items:flex-start;
+      padding: 8px 8px;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,.06);
+      background: #fff;
+    }
+    .chk input{width:auto; margin-top: 3px}
+    .chk b{font-size: 13px}
+    .chk small{display:block; color: var(--muted); font-size: 12px; margin-top: 2px}
+
+    .review{
+      border-radius: 16px;
+      border: 1px solid rgba(0,0,0,.08);
+      background: rgba(0,0,0,.02);
+      padding: 14px;
+    }
+    .review h3{margin:0 0 10px; font-size: 14px; color: var(--brand)}
+    .review .item{
+      display:grid;
+      grid-template-columns: 230px 1fr;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px dashed rgba(0,0,0,.08);
+      font-size: 13px;
+    }
+    .review .item:last-child{border-bottom:0}
+    .review .k{color: var(--muted); font-weight:600}
+    .review .v{color:#111827}
+    @media (max-width: 820px){ .review .item{grid-template-columns: 1fr} }
+
+    .hp{
+      position:absolute !important;
+      left:-10000px !important;
+      top:auto !important;
+      width:1px !important;
+      height:1px !important;
+      overflow:hidden !important;
+    }
+
+    a{color: var(--info); text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    /* Success modal */
+    .modal{
+      position: fixed;
+      inset:0;
+      display:none;
+      place-items:center;
+      padding: 18px;
+      background: rgba(0,0,0,.55);
+      z-index: 9999;
+    }
+    .modal.show{display:grid}
+    .modal .box{
+      width:min(760px, 100%);
+      border-radius: 20px;
+      background: #fff;
+      box-shadow: 0 24px 70px rgba(0,0,0,.35);
+      overflow:hidden;
+      border: 1px solid rgba(0,0,0,.08);
+    }
+    .modal .head{
+      padding: 18px 18px;
+      background: linear-gradient(135deg, rgba(0,51,102,.10), rgba(230,126,34,.10));
+      border-bottom: 1px solid rgba(0,0,0,.06);
+    }
+    .modal .head h3{margin:0; color: var(--brand); font-size: 16px}
+    .modal .body{padding: 16px 18px}
+    .ref{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+      padding: 12px 12px;
+      border-radius: 14px;
+      background: rgba(0,0,0,.03);
+      border: 1px solid rgba(0,0,0,.08);
+      margin-top: 10px;
+    }
+    .ref code{font-size: 13px; font-weight:700}
+    .muted{color: var(--muted); font-size: 13px}
+    .footnote{margin-top: 12px; font-size: 12px; color: var(--muted)}
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <img alt="HPG" src="https://img1.wsimg.com/isteam/ip/8d5502d6-d937-4d80-bd56-8074053e4d77/Humanity%20Pathways%20Global.jpg/:/rs=h:175,m">
+        <div>
+          <h1>Humanity Pathways Global</h1>
+          <p>NGO Onboarding Questionnaire (Post-Signature)</p>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <div class="chip" id="btnRestore">Restore Draft <small>(if saved)</small></div>
+        <div class="chip" id="btnSave">Save Draft</div>
+        <div class="chip" id="btnClear">Clear Draft</div>
+        <div class="chip" id="btnPrint">Print / Save PDF</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="hero">
+        <h2>Comprehensive NGO Onboarding & Development Form</h2>
+        <p>
+          This form is used after contract signing to route setup tasks (Program, Finance, IT, HR, Communications, General Counsel, Compliance, and Development).
+          Your NGO Coordinator may share a link prefilled with your Reference ID.
+        </p>
+        <div class="note">
+          <div class="pill"><b>Draft safety:</b> <i>autosave + restore</i></div>
+          <div class="pill"><b>Department routing:</b> <i>fields align to internal checklists</i></div>
+          <div class="pill"><b>Evidence links:</b> <i>Drive folders are acceptable</i></div>
+        </div>
+      </div>
+
+      <div class="progress">
+        <div class="bar"><div id="barFill"></div></div>
+
+        <div class="steps" id="stepRow">
+          <div class="step active" data-step="0"><div class="dot">1</div><div><b>Profile</b><small>Identity + contacts</small></div></div>
+          <div class="step" data-step="1"><div class="dot">2</div><div><b>Governance</b><small>Board + HR</small></div></div>
+          <div class="step" data-step="2"><div class="dot">3</div><div><b>Staffing</b><small>People + capacity</small></div></div>
+          <div class="step" data-step="3"><div class="dot">4</div><div><b>Programs</b><small>Delivery + impact</small></div></div>
+          <div class="step" data-step="4"><div class="dot">5</div><div><b>Partnerships</b><small>Development</small></div></div>
+          <div class="step" data-step="5"><div class="dot">6</div><div><b>Finance</b><small>Budget + controls</small></div></div>
+          <div class="step" data-step="6"><div class="dot">7</div><div><b>Comms</b><small>Brand + outreach</small></div></div>
+          <div class="step" data-step="7"><div class="dot">8</div><div><b>Tech + Legal</b><small>Systems + compliance</small></div></div>
+          <div class="step" data-step="8"><div class="dot">9</div><div><b>Goals</b><small>Support needs</small></div></div>
+          <div class="step" data-step="9"><div class="dot">10</div><div><b>Review</b><small>Confirm + submit</small></div></div>
+        </div>
+      </div>
+
+      <form id="ngoForm" novalidate>
+        <div class="status" id="status" role="status" aria-live="polite"></div>
+
+        <!-- Honeypot -->
+        <label class="hp">Company <input class="hp" name="company" autocomplete="off" tabindex="-1"></label>
+
+        <!-- SECTION 1: Profile -->
+        <div class="section active" data-section="0">
+          <div class="kpi">
+            <div class="box"><b>Reference</b><span>Helps HPG link this form to your contract and Trello card.</span></div>
+            <div class="box"><b>Evidence links</b><span>Use Drive folders for documents, photos, and videos.</span></div>
+            <div class="box"><b>Routing</b><span>Some answers reveal follow-up fields automatically.</span></div>
+          </div>
+
+          <div class="grid">
+            <div class="field">
+              <label for="hpg_reference_id">HPG Reference ID <span style="color:var(--bad)">*</span></label>
+              <input id="hpg_reference_id" name="hpg_reference_id" required maxlength="80" placeholder="HPG-NGO-2026-0012">
+              <div class="hint">If you received a prefilled link, this may already be set.</div>
+            </div>
+
+            <div class="field">
+              <label for="assigned_coordinator_email">Assigned NGO Coordinator Email (optional)</label>
+              <input id="assigned_coordinator_email" name="assigned_coordinator_email" type="email" maxlength="200" placeholder="coordinator@humanitypathwaysglobal.org">
+            </div>
+
+            <div class="field">
+              <label for="legal_name">Legal Name of NGO <span style="color:var(--bad)">*</span></label>
+              <input id="legal_name" name="legal_name" required maxlength="300" placeholder="Full legal name">
+            </div>
+
+            <div class="field">
+              <label for="short_name">Preferred Acronym / Short Name</label>
+              <input id="short_name" name="short_name" maxlength="120" placeholder="SM-VM, Megabridge, etc.">
+            </div>
+
+            <div class="field">
+              <label for="country_city_registration">Country & City of Registration <span style="color:var(--bad)">*</span></label>
+              <input id="country_city_registration" name="country_city_registration" required maxlength="200" placeholder="Accra, Ghana">
+            </div>
+
+            <div class="field">
+              <label for="year_established">Year of Establishment</label>
+              <input id="year_established" name="year_established" inputmode="numeric" maxlength="6" placeholder="2019">
+            </div>
+
+            <div class="field">
+              <label for="registration_type">Type of Registration</label>
+              <select id="registration_type" name="registration_type">
+                <option value="">Select...</option>
+                <option>Nonprofit / Charity</option>
+                <option>Trust</option>
+                <option>Community-Based Organization</option>
+                <option>Cooperative</option>
+                <option>Association</option>
+                <option>Social Enterprise</option>
+                <option>Other</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="org_docs_link">Registration Docs Link (optional)</label>
+              <input id="org_docs_link" name="org_docs_link" type="url" maxlength="800" placeholder="https://drive.google.com/...">
+              <div class="hint">Do not paste sensitive IDs in plain text if you can share a secure folder link instead.</div>
+            </div>
+
+            <div class="field">
+              <label for="primary_contact_name">Primary Contact Person <span style="color:var(--bad)">*</span></label>
+              <input id="primary_contact_name" name="primary_contact_name" required maxlength="200" placeholder="Full name">
+            </div>
+
+            <div class="field">
+              <label for="primary_contact_role">Primary Contact Role</label>
+              <input id="primary_contact_role" name="primary_contact_role" maxlength="160" placeholder="Founder, Executive Director, Program Lead...">
+            </div>
+
+            <div class="field">
+              <label for="primary_contact_email">Primary Contact Email <span style="color:var(--bad)">*</span></label>
+              <input id="primary_contact_email" name="primary_contact_email" required type="email" maxlength="220" placeholder="name@domain.com">
+            </div>
+
+            <div class="field">
+              <label for="primary_contact_phone">Primary Contact Phone / WhatsApp</label>
+              <input id="primary_contact_phone" name="primary_contact_phone" maxlength="90" placeholder="+233 ...">
+            </div>
+
+            <div class="field">
+              <label for="alternate_contact">Alternate Contact Person</label>
+              <input id="alternate_contact" name="alternate_contact" maxlength="260" placeholder="Name + role + email/WhatsApp">
+            </div>
+
+            <div class="field">
+              <label for="website_social">Website / Social Link</label>
+              <input id="website_social" name="website_social" maxlength="700" placeholder="https://...">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="founding_story">Founding Story (short narrative)
+              <span class="count" data-count-for="founding_story">0/3000</span>
+            </label>
+            <textarea id="founding_story" name="founding_story" maxlength="3000" placeholder="Brief story: why the NGO exists, what problem it addresses, and how it started."></textarea>
+          </div>
+
+          <div class="row">
+            <div class="muted">Step 1 of 10</div>
+            <div class="btns">
+              <button type="button" class="ghost" id="next0">Next</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 2: Governance -->
+        <div class="section" data-section="1">
+          <div class="grid">
+            <div class="field">
+              <label for="board_members">Board Members (names, roles, qualifications)
+                <span class="count" data-count-for="board_members">0/3500</span>
+              </label>
+              <textarea id="board_members" name="board_members" maxlength="3500" placeholder="List board members, roles, and relevant experience."></textarea>
+            </div>
+
+            <div class="field">
+              <label for="leadership_team">Leadership Team (executive director, program heads, finance officer, etc.)
+                <span class="count" data-count-for="leadership_team">0/3500</span>
+              </label>
+              <textarea id="leadership_team" name="leadership_team" maxlength="3500" placeholder="List leaders, titles, and responsibilities."></textarea>
+            </div>
+
+            <div class="field">
+              <label for="board_meeting_frequency">Board Meeting Frequency</label>
+              <select id="board_meeting_frequency" name="board_meeting_frequency">
+                <option value="">Select...</option>
+                <option>Weekly</option>
+                <option>Bi-weekly</option>
+                <option>Monthly</option>
+                <option>Quarterly</option>
+                <option>Bi-annual</option>
+                <option>Annual</option>
+                <option>As-needed</option>
+                <option>No board (not applicable)</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="decision_structure">Decision-Making Structure</label>
+              <select id="decision_structure" name="decision_structure">
+                <option value="">Select...</option>
+                <option>Centralized (few leaders decide)</option>
+                <option>Participatory (shared decisions)</option>
+                <option>Board-led (board drives decisions)</option>
+                <option>Hybrid</option>
+                <option>Other</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="governance_docs_link">Governance Documents Available (bylaws / constitution / policy manuals)</label>
+              <input id="governance_docs_link" name="governance_docs_link" type="url" maxlength="900" placeholder="https://drive.google.com/...">
+            </div>
+
+            <div class="field">
+              <label for="hr_policies_link">Current HR Policies (hiring, contracts, performance, grievance)</label>
+              <input id="hr_policies_link" name="hr_policies_link" type="url" maxlength="900" placeholder="https://...">
+            </div>
+          </div>
+
+          <div class="checks" style="margin-top:10px">
+            <div class="chk">
+              <input type="checkbox" id="has_ethics_policy" name="has_ethics_policy">
+              <div>
+                <b>Code of ethics / conflict of interest policy?</b>
+                <small>If checked, add a link below (optional).</small>
+              </div>
+            </div>
+            <div class="chk">
+              <input type="checkbox" id="has_grievance_process" name="has_grievance_process">
+              <div>
+                <b>Grievance procedure documented?</b>
+                <small>If checked, add a link below (optional).</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid" style="margin-top:12px">
+            <div class="field" id="ethicsLinkWrap" style="display:none">
+              <label for="ethics_policy_link">Ethics / COI Policy Link</label>
+              <input id="ethics_policy_link" name="ethics_policy_link" type="url" maxlength="900" placeholder="https://...">
+            </div>
+            <div class="field" id="grievanceLinkWrap" style="display:none">
+              <label for="grievance_policy_link">Grievance Procedure Link</label>
+              <input id="grievance_policy_link" name="grievance_policy_link" type="url" maxlength="900" placeholder="https://...">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="muted">Step 2 of 10</div>
+            <div class="btns">
+              <button type="button" class="ghost" id="back1">Back</button>
+              <button type="button" class="ghost" id="next1">Next</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 3: Staffing -->
+        <div class="section" data-section="2">
+          <div class="grid">
+            <div class="field">
+              <label for="staff_full_time">Number of Paid Staff (full-time)</label>
+              <input id="staff_full_time" name="staff_full_time" inputmode="numeric" maxlength="6" placeholder="e.g., 3">
+            </div>
+
+            <div class="field">
+              <label for="staff_part_time">Number of Paid Staff (part-time)</label>
+              <input id="staff_part_time" name="staff_part_time" inputmode="numeric" maxlength="6" placeholder="e.g., 5">
+            </div>
+
+            <div class="field">
+              <label for="volunteers_active">Number of Active Volunteers</label>
+              <input id="volunteers_active" name="volunteers_active" inputmode="numeric" maxlength="7" placeholder="e.g., 12">
+            </div>
+
+            <div class="field">
+              <label for="languages_spoken">Languages Spoken Across Staff</label>
+              <input id="languages_spoken" name="languages_spoken" maxlength="260" placeholder="English, French, Twi...">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="key_skills">Key Skills Available Internally
+              <span class="count" data-count-for="key_skills">0/2000</span>
+            </label>
+            <textarea id="key_skills" name="key_skills" maxlength="2000" placeholder="Finance, program design, IT, communications, M&E, logistics, etc."></textarea>
+          </div>
+
+          <div class="field">
+            <label for="capacity_gaps">Capacity Gaps Identified (skills missing that limit performance)
+              <span class="count" data-count-for="capacity_gaps">0/2500</span>
+            </label>
+            <textarea id="capacity_gaps" name="capacity_gaps" maxlength="2500" placeholder="What skill gaps are most limiting right now?"></textarea>
+          </div>
+
+          <div class="field">
+            <label for="training_programs">Existing Training Programs for Staff or Volunteers
+              <span class="count" data-count-for="training_programs">0/2000</span>
+            </label>
+            <textarea id="training_programs" name="training_programs" maxlength="2000" placeholder="Internal training, workshops, mentorship, onboarding processes, etc."></textarea>
+          </div>
+
+          <div class="row">
+            <div class="muted">Step 3 of 10</div>
+            <div class="btns">
+              <button type="button" class="ghost" id="back2">Back</button>
+              <button type="button" class="ghost" id="next2">Next</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 4: Programs -->
+        <div class="section" data-section="3">
+          <div class="grid">
+            <div class="field">
+              <label for="mission_statement">Mission Statement <span style="color:var(--bad)">*</span>
+                <span class="count" data-count-for="mission_statement">0/1200</span>
+              </label>
+              <textarea id="mission_statement" name="mission_statement" required maxlength="1200" placeholder="Mission statement (or working version)."></textarea>
+            </div>
+
+            <div class="field">
+              <label for="vision_statement">Vision Statement
+                <span class="count" data-count-for="vision_statement">0/1200</span>
+              </label>
+              <textarea id="vision_statement" name="vision_statement" maxlength="1200" placeholder="Vision statement (or working version)."></textarea>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Core Program Areas (tick all that apply)</label>
+            <div class="checks">
+              <div class="chk"><input type="checkbox" name="program_area_education"><div><b>Education</b><small>Schools, tutoring, literacy, scholarships</small></div></div>
+              <div class="chk"><input type="checkbox" name="program_area_health"><div><b>Health</b><small>Clinics, SRHR, disability support</small></div></div>
+              <div class="chk"><input type="checkbox" name="program_area_environment"><div><b>Environment</b><small>Conservation, waste, water, climate</small></div></div>
+              <div class="chk"><input type="checkbox" name="program_area_human_rights"><div><b>Human Rights</b><small>Protection, legal aid, advocacy</small></div></div>
+              <div class="chk"><input type="checkbox" name="program_area_livelihoods"><div><b>Livelihoods</b><small>Training, jobs, micro-enterprise</small></div></div>
+              <div class="chk"><input type="checkbox" name="program_area_gender"><div><b>Gender</b><small>Women’s empowerment, GBV support</small></div></div>
+              <div class="chk"><input type="checkbox" name="program_area_youth"><div><b>Youth</b><small>Leadership, mentoring, skills</small></div></div>
+              <div class="chk"><input type="checkbox" name="program_area_other"><div><b>Other</b><small>Specify in program description</small></div></div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="program_description">Detailed Description of Current Programs <span style="color:var(--bad)">*</span>
+              <span class="count" data-count-for="program_description">0/7000</span>
+            </label>
+            <textarea id="program_description" name="program_description" required maxlength="7000" placeholder="Describe what you do, how you deliver services, where, and for whom."></textarea>
+          </div>
+
+          <div class="grid">
+            <div class="field">
+              <label for="beneficiary_demographics">Beneficiary Demographics
+                <span class="count" data-count-for="beneficiary_demographics">0/2500</span>
+              </label>
+              <textarea id="beneficiary_demographics" name="beneficiary_demographics" maxlength="2500" placeholder="Youth, women, rural, urban, displaced, etc."></textarea>
+            </div>
+
+            <div class="field">
+              <label for="geographic_areas">Geographic Areas Served
+                <span class="count" data-count-for="geographic_areas">0/2500</span>
+              </label>
+              <textarea id="geographic_areas" name="geographic_areas" maxlength="2500" placeholder="Regions, villages, districts, counties, etc."></textarea>
+            </div>
+
+            <div class="field">
+              <label for="me_practices">Monitoring & Evaluation Practices
+                <span class="count" data-count-for="me_practices">0/2500</span>
+              </label>
+              <textarea id="me_practices" name="me_practices" maxlength="2500" placeholder="How outcomes are tracked: indicators, surveys, attendance logs, pre/post assessments, etc."></textarea>
+            </div>
+
+            <div class="field">
+              <label for="success_stories">Success Stories / Case Studies
+                <span class="count" data-count-for="success_stories">0/3000</span>
+              </label>
+              <textarea id="success_stories" name="success_stories" maxlength="3000" placeholder="Brief examples of results and impact."></textarea>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="program_challenges">Current Challenges in Program Delivery
+              <span class="count" data-count-for="program_challenges">0/3000</span>
+            </label>
+            <textarea id="program_challenges" name="program_challenges" maxlength="3000" placeholder="Operational constraints, staffing gaps, supply issues, reporting barriers, etc."></textarea>
+          </div>
+
+          <div class="row">
+            <div class="muted">Step 4 of 10</div>
+            <div class="btns">
+              <button type="button" class="ghost" id="back3">Back</button>
+              <button type="button" class="ghost" id="next3">Next</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 5: Partnerships -->
+        <div class="section" data-section="4">
+          <div class="grid">
+            <div class="field">
+              <label for="current_donors">Current Donors or Funding Partners
+                <span class="count" data-count-for="current_donors">0/2500</span>
+              </label>
+              <textarea id="current_donors" name="current_donors" maxlength="2500" placeholder="Names, amounts (if safe), and what they fund."></textarea>
+            </div>
+
+            <div class="field">
+              <label for="past_donors">Major Past Donors (last 3–5 years)
+                <span class="count" data-count-for="past_donors">0/2500</span>
+              </label>
+              <textarea id="past_donors" name="past_donors" maxlength="2500" placeholder="Funders, award size ranges, and funded activities."></textarea>
+            </div>
+
+            <div class="field">
+              <label for="partnerships">Partnerships (local gov’t, universities, other NGOs, businesses)
+                <span class="count" data-count-for="partnerships">0/2500</span>
+              </label>
+              <textarea id="partnerships" name="partnerships" maxlength="2500" placeholder="List key collaborators and what the partnerships do."></textarea>
+            </div>
+
+            <div class="field">
+              <label for="networks_memberships">Networks or Coalition Memberships
+                <span class="count" data-count-for="networks_memberships">0/2000</span>
+              </label>
+              <textarea id="networks_memberships" name="networks_memberships" maxlength="2000" placeholder="Coalitions, associations, working groups, etc."></textarea>
+            </div>
+          </div>
+
+          <div class="checks" style="margin-top:10px">
+            <div class="chk">
+              <input type="checkbox" id="has_fundraising_staff" name="has_fundraising_staff">
+              <div>
+                <b>Dedicated staff for fundraising?</b>
+                <small>If checked, identify them below.</small>
+              </div>
+            </div>
+            <div class="chk">
+              <input type="checkbox" id="has_grant_pipeline" name="has_grant_pipeline">
+              <div>
+                <b>Active grant pipeline?</b>
+                <small>If checked, provide a link or summary.</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid" style="margin-top:12px">
+            <div class="field" id="fundraisingStaffWrap" style="display:none">
+              <label for="fundraising_staff_details">Fundraising Staff Details
+                <span class="count" data-count-for="fundraising_staff_details">0/2000</span>
+              </label>
+              <textarea id="fundraising_staff_details" name="fundraising_staff_details" maxlength="2000" placeholder="Names, roles, and responsibilities."></textarea>
+            </div>
+
+            <div class="field" id="pipelineWrap" style="display:none">
+              <label for="grant_pipeline_link">Grant Pipeline Link (tracker or doc)</label>
+              <input id="grant_pipeline_link" name="grant_pipeline_link" type="url" maxlength="900" placeholder="https://...">
+              <div class="hint">A spreadsheet link is fine.</div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="funding_barriers">Barriers Faced in Securing Funding
+              <span class="count" data-count-for="funding_barriers">0/3000</span>
+            </label>
+            <textarea id="funding_barriers" name="funding_barriers" maxlength="3000" placeholder="Common barriers: compliance requirements, proposal capacity, reporting burden, matching funds, etc."></textarea>
+          </div>
+
+          <div class="row">
+            <div class="muted">Step 5 of 10</div>
+            <div class="btns">
+              <button type="button" class="ghost" id="back4">Back</button>
+              <button type="button" class="ghost" id="next4">Next</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 6: Finance -->
+        <div class="section" data-section="5">
+          <div class="grid">
+            <div class="field">
+              <label for="annual_budget_amount">Approximate Annual Budget</label>
+              <input id="annual_budget_amount" name="annual_budget_amount" maxlength="80" placeholder="25,000 USD (or local currency)">
+            </div>
+
+            <div class="field">
+              <label for="revenue_sources">Primary Sources of Revenue</label>
+              <input id="revenue_sources" name="revenue_sources" maxlength="260" placeholder="Donations, grants, service fees, etc.">
+            </div>
+
+            <div class="field">
+              <label for="has_finance_officer">Do you have a finance officer/treasurer?</label>
+              <select id="has_finance_officer" name="has_finance_officer">
+                <option value="">Select...</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </select>
+            </div>
+
+            <div class="field" id="financeOfficerWrap" style="display:none">
+              <label for="finance_officer_details">Finance Officer/Treasurer (name + role)</label>
+              <input id="finance_officer_details" name="finance_officer_details" maxlength="220" placeholder="Name + role">
+            </div>
+
+            <div class="field">
+              <label for="financial_software">Do you use financial software?</label>
+              <select id="financial_software" name="financial_software">
+                <option value="">Select...</option>
+                <option>QuickBooks</option>
+                <option>Excel / Sheets</option>
+                <option>Paper-based</option>
+                <option>Other</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="has_audit">Do you conduct annual audits?</label>
+              <select id="has_audit" name="has_audit">
+                <option value="">Select...</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+                <option value="unknown">Not sure</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid">
+            <div class="field" id="auditorWrap" style="display:none">
+              <label for="auditor_details">If yes: Auditor details (by whom?)</label>
+              <input id="auditor_details" name="auditor_details" maxlength="260" placeholder="Auditor name / firm (optional)">
+            </div>
+
+            <div class="field">
+              <label for="financial_policies">Internal financial policies (procurement, approvals, petty cash)?
+                <span class="count" data-count-for="financial_policies">0/2500</span>
+              </label>
+              <textarea id="financial_policies" name="financial_policies" maxlength="2500" placeholder="List policies and approval controls."></textarea>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="banking_details_summary">Banking Details (summary only)
+              <span class="count" data-count-for="banking_details_summary">0/2000</span>
+            </label>
+            <textarea id="banking_details_summary" name="banking_details_summary" maxlength="2000" placeholder="Local bank, whether foreign account exists (if applicable). Avoid account numbers here."></textarea>
+            <div class="hint">If you need to share sensitive information, use a secure folder link and confirm with your NGO Coordinator.</div>
+          </div>
+
+          <div class="field">
+            <label for="financial_challenges">Major Financial Challenges (cash flow, reporting, donor restrictions)
+              <span class="count" data-count-for="financial_challenges">0/2500</span>
+            </label>
+            <textarea id="financial_challenges" name="financial_challenges" maxlength="2500" placeholder="What are the most limiting finance challenges right now?"></textarea>
+          </div>
+
+          <div class="row">
+            <div class="muted">Step 6 of 10</div>
+            <div class="btns">
+              <button type="button" class="ghost" id="back5">Back</button>
+              <button type="button" class="ghost" id="next5">Next</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 7: Communications -->
+        <div class="section" data-section="6">
+          <div class="grid">
+            <div class="field">
+              <label for="has_website">Does the NGO have a website?</label>
+              <select id="has_website" name="has_website">
+                <option value="">Select...</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+                <option value="in_progress">In progress</option>
+              </select>
+            </div>
+
+            <div class="field" id="websiteWrap" style="display:none">
+              <label for="website_url">Website URL</label>
+              <input id="website_url" name="website_url" type="url" maxlength="700" placeholder="https://...">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Social Presence (tick all that apply)</label>
+            <div class="checks">
+              <div class="chk"><input type="checkbox" name="social_facebook"><div><b>Facebook</b><small>Page or group</small></div></div>
+              <div class="chk"><input type="checkbox" name="social_instagram"><div><b>Instagram</b><small>Profile</small></div></div>
+              <div class="chk"><input type="checkbox" name="social_linkedin"><div><b>LinkedIn</b><small>Company page</small></div></div>
+              <div class="chk"><input type="checkbox" name="social_x"><div><b>X / Twitter</b><small>Profile</small></div></div>
+              <div class="chk"><input type="checkbox" name="social_tiktok"><div><b>TikTok</b><small>Short-form video</small></div></div>
+              <div class="chk"><input type="checkbox" name="social_youtube"><div><b>YouTube</b><small>Channel</small></div></div>
+              <div class="chk"><input type="checkbox" name="social_newsletter"><div><b>Newsletter</b><small>Email list</small></div></div>
+              <div class="chk"><input type="checkbox" name="social_other"><div><b>Other</b><small>List in links field</small></div></div>
+            </div>
+          </div>
+
+          <div class="grid">
+            <div class="field">
+              <label for="social_links">Social Links (optional)
+                <span class="count" data-count-for="social_links">0/2000</span>
+              </label>
+              <textarea id="social_links" name="social_links" maxlength="2000" placeholder="Paste links to your social pages or channels."></textarea>
+            </div>
+
+            <div class="field">
+              <label for="has_comms_officer">Designated communications officer?</label>
+              <select id="has_comms_officer" name="has_comms_officer">
+                <option value="">Select...</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </select>
+              <div class="hint">If yes, identify them below.</div>
+            </div>
+
+            <div class="field" id="commsOfficerWrap" style="display:none">
+              <label for="comms_officer_details">Comms Officer (name + role)</label>
+              <input id="comms_officer_details" name="comms_officer_details" maxlength="220" placeholder="Name + role">
+            </div>
+
+            <div class="field">
+              <label for="branding_materials">Branding Materials Available (logo, slogan, style guide, brochures)
+                <span class="count" data-count-for="branding_materials">0/2500</span>
+              </label>
+              <textarea id="branding_materials" name="branding_materials" maxlength="2500" placeholder="What assets exist and where they can be found."></textarea>
+            </div>
+
+            <div class="field">
+              <label for="media_coverage">Media Coverage in the Past 3 Years</label>
+              <select id="media_coverage" name="media_coverage">
+                <option value="">Select...</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+                <option value="unknown">Not sure</option>
+              </select>
+            </div>
+
+            <div class="field" id="mediaWrap" style="display:none">
+              <label for="media_coverage_details">Media Coverage Details
+                <span class="count" data-count-for="media_coverage_details">0/2500</span>
+              </label>
+              <textarea id="media_coverage_details" name="media_coverage_details" maxlength="2500" placeholder="Links, outlets, and what was covered."></textarea>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="marketing_footage_link">Marketing Footage (photos/videos of operations) — attach via link</label>
+            <input id="marketing_footage_link" name="marketing_footage_link" type="url" maxlength="900" placeholder="https://drive.google.com/...">
+          </div>
+
+          <div class="grid">
+            <div class="field">
+              <label for="internal_comms_tools">Internal Communications Tools</label>
+              <input id="internal_comms_tools" name="internal_comms_tools" maxlength="280" placeholder="Email lists, WhatsApp groups, Slack, etc.">
+            </div>
+            <div class="field">
+              <label for="outreach_priorities">Outreach Priorities</label>
+              <input id="outreach_priorities" name="outreach_priorities" maxlength="280" placeholder="Youth, donors, government, international, etc.">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="muted">Step 7 of 10</div>
+            <div class="btns">
+              <button type="button" class="ghost" id="back6">Back</button>
+              <button type="button" class="ghost" id="next6">Next</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 8: Tech + Legal -->
+        <div class="section" data-section="7">
+          <div class="grid">
+            <div class="field">
+              <label for="office_facilities">Office Facilities</label>
+              <select id="office_facilities" name="office_facilities">
+                <option value="">Select...</option>
+                <option>Owned</option>
+                <option>Rented</option>
+                <option>Shared</option>
+                <option>Community space / rotating</option>
+                <option>No fixed office</option>
+                <option>Other</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="internet_quality">Internet Connection Quality</label>
+              <select id="internet_quality" name="internet_quality">
+                <option value="">Select...</option>
+                <option>Strong / reliable</option>
+                <option>Average</option>
+                <option>Weak / inconsistent</option>
+                <option>Very limited</option>
+                <option>No internet access</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="it_equipment">Access to IT Equipment</label>
+              <input id="it_equipment" name="it_equipment" maxlength="300" placeholder="Computers, printers, projectors, etc.">
+            </div>
+
+            <div class="field">
+              <label for="uses_cloud">Do you use cloud systems? (Google Workspace, Microsoft 365, Dropbox, etc.)</label>
+              <select id="uses_cloud" name="uses_cloud">
+                <option value="">Select...</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+                <option value="partial">Partially</option>
+              </select>
+            </div>
+
+            <div class="field" id="cloudWrap" style="display:none">
+              <label for="cloud_systems_list">Cloud Systems Used</label>
+              <input id="cloud_systems_list" name="cloud_systems_list" maxlength="400" placeholder="Google Workspace, Microsoft 365, Dropbox...">
+            </div>
+
+            <div class="field">
+              <label for="databases_used">Existing Databases (beneficiaries / donors / programs)</label>
+              <input id="databases_used" name="databases_used" maxlength="300" placeholder="Excel, Airtable, custom system, none...">
+            </div>
+
+            <div class="field">
+              <label for="website_management">Website Hosting & Management</label>
+              <select id="website_management" name="website_management">
+                <option value="">Select...</option>
+                <option>In-house</option>
+                <option>Outsourced</option>
+                <option>No website</option>
+                <option>In progress</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="tech_challenges">Tech Challenges (cybersecurity, access, training gaps)
+                <span class="count" data-count-for="tech_challenges">0/2500</span>
+              </label>
+              <textarea id="tech_challenges" name="tech_challenges" maxlength="2500" placeholder="List constraints and where support would help most."></textarea>
+            </div>
+          </div>
+
+          <hr style="border:0;border-top:1px solid rgba(0,0,0,.08);margin:16px 0">
+
+          <div class="grid">
+            <div class="field">
+              <label for="local_registration_numbers">Legal / Registration Numbers (summary)</label>
+              <textarea id="local_registration_numbers" name="local_registration_numbers" maxlength="2500" placeholder="Registration references, tax ID references (summary). Use a secure doc link if sensitive."></textarea>
+            </div>
+
+            <div class="field">
+              <label for="annual_reporting_compliant">Compliant with local annual reporting requirements?</label>
+              <select id="annual_reporting_compliant" name="annual_reporting_compliant">
+                <option value="">Select...</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+                <option value="unknown">Not sure</option>
+              </select>
+            </div>
+
+            <div class="field" id="annualRptWrap" style="display:none">
+              <label for="annual_reporting_notes">Annual Reporting Notes</label>
+              <textarea id="annual_reporting_notes" name="annual_reporting_notes" maxlength="2500" placeholder="What filings exist, what’s missing, and what help is needed."></textarea>
+            </div>
+
+            <div class="field">
+              <label for="legal_disputes">Any ongoing or past legal disputes?</label>
+              <select id="legal_disputes" name="legal_disputes">
+                <option value="">Select...</option>
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+                <option value="unknown">Not sure</option>
+              </select>
+            </div>
+
+            <div class="field" id="disputesWrap" style="display:none">
+              <label for="legal_disputes_details">Dispute Details (brief)</label>
+              <textarea id="legal_disputes_details" name="legal_disputes_details" maxlength="3500" placeholder="Brief context: parties, status, timeline, and risk level."></textarea>
+            </div>
+
+            <div class="field">
+              <label for="has_contracts">Contracts with staff or partners?</label>
+              <select id="has_contracts" name="has_contracts">
+                <option value="">Select...</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+                <option value="partial">Some</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="safeguarding_policies">Safeguarding / Child protection / Data privacy policies?</label>
+              <select id="safeguarding_policies" name="safeguarding_policies">
+                <option value="">Select...</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+                <option value="in_progress">In progress</option>
+              </select>
+            </div>
+
+            <div class="field" id="safeguardWrap" style="display:none">
+              <label for="safeguarding_policies_link">Safeguarding / Privacy Policy Link (attach if possible)</label>
+              <input id="safeguarding_policies_link" name="safeguarding_policies_link" type="url" maxlength="900" placeholder="https://...">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="muted">Step 8 of 10</div>
+            <div class="btns">
+              <button type="button" class="ghost" id="back7">Back</button>
+              <button type="button" class="ghost" id="next7">Next</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 9: Goals + Support -->
+        <div class="section" data-section="8">
+          <div class="grid">
+            <div class="field">
+              <label for="priorities_12mo">Top 3 Strategic Priorities (next 12 months)
+                <span class="count" data-count-for="priorities_12mo">0/2500</span>
+              </label>
+              <textarea id="priorities_12mo" name="priorities_12mo" maxlength="2500" placeholder="List the three most important priorities and why."></textarea>
+            </div>
+
+            <div class="field">
+              <label for="goals_3_5yr">Top 3 Long-Term Goals (3–5 years)
+                <span class="count" data-count-for="goals_3_5yr">0/2500</span>
+              </label>
+              <textarea id="goals_3_5yr" name="goals_3_5yr" maxlength="2500" placeholder="Where the NGO expects to be in 3–5 years."></textarea>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Areas Where You Want Support from HPG (choose multiple) <span style="color:var(--bad)">*</span></label>
+            <div class="checks" id="supportChecks">
+              <div class="chk"><input type="checkbox" name="support_financial"><div><b>Financial management</b><small>Accounting, controls, reporting</small></div></div>
+              <div class="chk"><input type="checkbox" name="support_fundraising"><div><b>Fundraising / grants</b><small>Prospecting, proposals, donor comms</small></div></div>
+              <div class="chk"><input type="checkbox" name="support_comms"><div><b>Communications / branding</b><small>Landing page, content, social</small></div></div>
+              <div class="chk"><input type="checkbox" name="support_governance"><div><b>Governance / board</b><small>Board roles, policies, cadence</small></div></div>
+              <div class="chk"><input type="checkbox" name="support_program_eval"><div><b>Program design & evaluation</b><small>M&E, indicators, reporting</small></div></div>
+              <div class="chk"><input type="checkbox" name="support_legal"><div><b>Legal / compliance</b><small>Local filings, policies, contracts</small></div></div>
+              <div class="chk"><input type="checkbox" name="support_tech"><div><b>Technology & systems</b><small>Domains, tools, security</small></div></div>
+              <div class="chk"><input type="checkbox" name="support_hr"><div><b>HR policies & staffing</b><small>Recruiting, onboarding, coverage</small></div></div>
+            </div>
+            <div class="hint" id="supportHint" style="color:var(--bad); display:none">Please select at least one support area.</div>
+          </div>
+
+          <div class="field">
+            <label for="immediate_needs">Immediate Needs (what help do you need right now) <span style="color:var(--bad)">*</span>
+              <span class="count" data-count-for="immediate_needs">0/3500</span>
+            </label>
+            <textarea id="immediate_needs" name="immediate_needs" required maxlength="3500" placeholder="Short, direct priorities help the NGO Coordinator route tasks immediately."></textarea>
+          </div>
+
+          <div class="row">
+            <div class="muted">Step 9 of 10</div>
+            <div class="btns">
+              <button type="button" class="ghost" id="back8">Back</button>
+              <button type="button" class="ghost" id="next8">Next</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 10: Review -->
+        <div class="section" data-section="9">
+          <div class="review">
+            <h3>Review & Confirm</h3>
+            <div id="reviewList"></div>
+          </div>
+
+          <div class="row">
+            <div class="muted">Step 10 of 10</div>
+            <div class="btns">
+              <button type="button" class="ghost" id="back9">Back</button>
+              <button type="submit" class="primary" id="submitBtn">Submit to HPG</button>
+              <button type="button" class="warn" id="printBtn">Print / Save PDF</button>
+            </div>
+          </div>
+
+          <div class="footnote">
+            When you submit, you should receive a submission ID. If asked, share that ID with your NGO Coordinator.
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Success Modal -->
+  <div class="modal" id="modal">
+    <div class="box">
+      <div class="head">
+        <h3>Onboarding Questionnaire Submitted</h3>
+      </div>
+      <div class="body">
+        <div class="muted">Your form was submitted successfully.</div>
+        <div class="ref">
+          <div><b>Submission ID:</b> <code id="refId">—</code></div>
+          <button class="ghost" id="copyRef" type="button">Copy ID</button>
+        </div>
+        <div class="footnote">
+          If you follow up by email, include the Submission ID and your HPG Reference ID.
+        </div>
+        <div class="row" style="border-top:0; padding-top:10px">
+          <div></div>
+          <div class="btns">
+            <button class="primary" id="closeModal" type="button">Done</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  /* ====== CONFIG: EDIT THESE TWO VALUES ====== */
+  const FUNCTION_URL = "https://YOURPROJECT.supabase.co/functions/v1/submit-ngo-onboarding";
+  const SUPABASE_ANON_KEY = "PASTE_SUPABASE_ANON_KEY_HERE";
+  /* ========================================== */
+
+  const DRAFT_KEY = "hpg_ngo_onboarding_draft_v2";
+  const COOLDOWN_KEY = "hpg_ngo_onboarding_last_submit";
+  const COOLDOWN_SECONDS = 20;
+
+  const $ = (s, r=document) => r.querySelector(s);
+  const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+
+  const form = $("#ngoForm");
+  const status = $("#status");
+  const sections = $$(".section");
+  const steps = $$(".step");
+  const barFill = $("#barFill");
+
+  const modal = $("#modal");
+  const refId = $("#refId");
+
+  const supportHint = $("#supportHint");
+  const supportChecks = $("#supportChecks");
+
+  let current = 0;
+
+  function setStatus(msg, type="info", extra=""){
+    status.className = `status show ${type}`;
+    status.innerHTML = msg + (extra ? `<div class="hint">${extra}</div>` : "");
+    status.scrollIntoView({behavior:"smooth", block:"start"});
+  }
+  function clearStatus(){
+    status.className = "status";
+    status.innerHTML = "";
+  }
+
+  function clampInt(v){
+    if (v == null) return null;
+    const s = String(v).replace(/[^\d]/g,"").trim();
+    if (!s) return null;
+    const n = Number(s);
+    return Number.isFinite(n) ? n : null;
+  }
+
+  function touchInvalid(scope=document){
+    $$("input,select,textarea", scope).forEach(el => el.classList.add("touched"));
+  }
+
+  function showSection(idx){
+    current = idx;
+    sections.forEach((s,i)=> s.classList.toggle("active", i===idx));
+    steps.forEach((st,i)=>{
+      st.classList.toggle("active", i===idx);
+      st.classList.toggle("done", i < idx);
+    });
+    const pct = Math.round(((idx) / (sections.length-1)) * 100);
+    barFill.style.width = pct + "%";
+    window.scrollTo({top: 0, behavior:"smooth"});
+  }
+
+  function updateCounters(){
+    $$("[data-count-for]").forEach(el=>{
+      const id = el.getAttribute("data-count-for");
+      const ta = $("#"+id);
+      if (!ta) return;
+      el.textContent = `${ta.value.length}/${ta.getAttribute("maxlength") || ""}`;
+    });
+  }
+
+  function toggleWrap(checked, wrapId){
+    const w = $(wrapId);
+    if (!w) return;
+    w.style.display = checked ? "block" : "none";
+  }
+
+  function toggles(){
+    toggleWrap($("#has_ethics_policy").checked, "#ethicsLinkWrap");
+    toggleWrap($("#has_grievance_process").checked, "#grievanceLinkWrap");
+
+    toggleWrap($("#has_fundraising_staff").checked, "#fundraisingStaffWrap");
+    toggleWrap($("#has_grant_pipeline").checked, "#pipelineWrap");
+
+    toggleWrap(($("#has_finance_officer").value || "") === "yes", "#financeOfficerWrap");
+    toggleWrap(($("#has_audit").value || "") === "yes", "#auditorWrap");
+
+    toggleWrap(($("#has_website").value || "") === "yes", "#websiteWrap");
+    toggleWrap(($("#has_comms_officer").value || "") === "yes", "#commsOfficerWrap");
+    toggleWrap(($("#media_coverage").value || "") === "yes", "#mediaWrap");
+
+    toggleWrap(($("#uses_cloud").value || "") === "yes" || ($("#uses_cloud").value || "") === "partial", "#cloudWrap");
+
+    toggleWrap(($("#annual_reporting_compliant").value || "") === "no" || ($("#annual_reporting_compliant").value || "") === "unknown", "#annualRptWrap");
+    toggleWrap(($("#legal_disputes").value || "") === "yes", "#disputesWrap");
+    toggleWrap(($("#safeguarding_policies").value || "") === "yes" || ($("#safeguarding_policies").value || "") === "in_progress", "#safeguardWrap");
+  }
+
+  function serialize(){
+    const fd = new FormData(form);
+    const obj = {};
+    for (const [k,v] of fd.entries()){
+      if (k === "company") continue;
+      obj[k] = String(v).trim();
+    }
+
+    // checkboxes not in FormData if unchecked (ensure explicit)
+    const cbs = $$("input[type='checkbox']", form);
+    cbs.forEach(cb => obj[cb.name || cb.id] = cb.checked);
+
+    // normalize ints
+    obj.year_established = clampInt(obj.year_established);
+    obj.staff_full_time = clampInt(obj.staff_full_time);
+    obj.staff_part_time = clampInt(obj.staff_part_time);
+    obj.volunteers_active = clampInt(obj.volunteers_active);
+
+    // empty -> null
+    Object.keys(obj).forEach(k=>{
+      if (obj[k] === "") obj[k] = null;
+    });
+
+    return obj;
+  }
+
+  function saveDraft(silent=false){
+    const data = serialize();
+    localStorage.setItem(DRAFT_KEY, JSON.stringify({ts: Date.now(), data}));
+    if (!silent) setStatus("Draft saved.", "ok");
+  }
+
+  function restoreDraft(){
+    const raw = localStorage.getItem(DRAFT_KEY);
+    if (!raw){
+      setStatus("No saved draft found.", "info");
+      return;
+    }
+    try{
+      const {data} = JSON.parse(raw);
+      Object.keys(data || {}).forEach(k=>{
+        const el = form.elements[k];
+        if (el && el.tagName){
+          if (el.type === "checkbox") el.checked = !!data[k];
+          else el.value = data[k] == null ? "" : data[k];
+        }else{
+          // checkbox names that are not in elements (rare)
+          const cb = $(`input[type="checkbox"][name="${CSS.escape(k)}"]`);
+          if (cb) cb.checked = !!data[k];
+        }
+      });
+      toggles();
+      updateCounters();
+      setStatus("Draft restored.", "ok");
+    }catch(e){
+      setStatus("Draft could not be restored.", "bad");
+    }
+  }
+
+  function clearDraft(){
+    localStorage.removeItem(DRAFT_KEY);
+    setStatus("Draft cleared.", "info");
+  }
+
+  function cooldownRemaining(){
+    const last = Number(localStorage.getItem(COOLDOWN_KEY) || "0");
+    const now = Date.now();
+    const diff = Math.floor((now - last)/1000);
+    return diff < COOLDOWN_SECONDS ? (COOLDOWN_SECONDS - diff) : 0;
+  }
+
+  function startCooldown(){
+    localStorage.setItem(COOLDOWN_KEY, String(Date.now()));
+  }
+
+  function supportSelected(){
+    const boxes = $$("input[type='checkbox']", supportChecks);
+    return boxes.some(b => b.checked);
+  }
+
+  function validateStep(stepIndex){
+    clearStatus();
+    supportHint.style.display = "none";
+
+    const reqByStep = [
+      ["hpg_reference_id","legal_name","country_city_registration","primary_contact_name","primary_contact_email"],
+      [],
+      [],
+      ["mission_statement","program_description"],
+      [],
+      [],
+      [],
+      [],
+      ["immediate_needs"],
+      []
+    ];
+    const required = reqByStep[stepIndex] || [];
+    let ok = true;
+
+    required.forEach(id=>{
+      const el = $("#"+id);
+      if (!el) return;
+      el.classList.add("touched");
+      if (!el.checkValidity() || !String(el.value || "").trim()){
+        ok = false;
+      }
+    });
+
+    // custom: support needs must include at least one checkbox (Step 9)
+    if (stepIndex === 8){
+      if (!supportSelected()){
+        ok = false;
+        supportHint.style.display = "block";
+        supportChecks.scrollIntoView({behavior:"smooth", block:"center"});
+      }
+    }
+
+    // built-in validation for visible inputs on this step
+    const visible = $$(`[data-section="${stepIndex}"] input, [data-section="${stepIndex}"] select, [data-section="${stepIndex}"] textarea`)
+      .filter(el => el.offsetParent !== null);
+
+    visible.forEach(el => el.classList.add("touched"));
+    const firstInvalid = visible.find(el => !el.checkValidity());
+    if (firstInvalid){
+      ok = false;
+      firstInvalid.focus({preventScroll:true});
+    }
+
+    if (!ok){
+      setStatus("Please complete the required fields before continuing.", "bad");
+    }
+    return ok;
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+  function linkify(s){
+    return String(s).replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+  }
+
+  function buildReview(){
+    const d = serialize();
+    const pretty = (k) => {
+      const map = {
+        hpg_reference_id: "HPG Reference ID",
+        assigned_coordinator_email: "Assigned NGO Coordinator Email",
+        legal_name: "Legal NGO Name",
+        short_name: "Preferred Acronym / Short Name",
+        country_city_registration: "Country & City of Registration",
+        year_established: "Year of Establishment",
+        registration_type: "Type of Registration",
+        org_docs_link: "Registration Docs Link",
+        primary_contact_name: "Primary Contact Name",
+        primary_contact_role: "Primary Contact Role",
+        primary_contact_email: "Primary Contact Email",
+        primary_contact_phone: "Primary Contact Phone/WhatsApp",
+        alternate_contact: "Alternate Contact",
+        website_social: "Website / Social Link",
+        founding_story: "Founding Story",
+        board_members: "Board Members",
+        board_meeting_frequency: "Board Meeting Frequency",
+        leadership_team: "Leadership Team",
+        decision_structure: "Decision-Making Structure",
+        governance_docs_link: "Governance Docs Link",
+        hr_policies_link: "HR Policies Link",
+        has_ethics_policy: "Ethics / COI Policy Exists",
+        ethics_policy_link: "Ethics / COI Policy Link",
+        has_grievance_process: "Grievance Procedure Documented",
+        grievance_policy_link: "Grievance Procedure Link",
+        staff_full_time: "Paid Staff (Full-Time)",
+        staff_part_time: "Paid Staff (Part-Time)",
+        volunteers_active: "Active Volunteers",
+        languages_spoken: "Languages Spoken",
+        key_skills: "Key Skills Available",
+        capacity_gaps: "Capacity Gaps",
+        training_programs: "Training Programs",
+        mission_statement: "Mission Statement",
+        vision_statement: "Vision Statement",
+        program_description: "Program Description",
+        beneficiary_demographics: "Beneficiary Demographics",
+        geographic_areas: "Geographic Areas Served",
+        me_practices: "Monitoring & Evaluation Practices",
+        success_stories: "Success Stories / Case Studies",
+        program_challenges: "Program Delivery Challenges",
+        current_donors: "Current Donors / Funding Partners",
+        past_donors: "Major Past Donors (3–5 years)",
+        partnerships: "Partnerships",
+        networks_memberships: "Networks / Coalitions",
+        has_fundraising_staff: "Dedicated Fundraising Staff",
+        fundraising_staff_details: "Fundraising Staff Details",
+        has_grant_pipeline: "Active Grant Pipeline",
+        grant_pipeline_link: "Grant Pipeline Link",
+        funding_barriers: "Funding Barriers",
+        annual_budget_amount: "Annual Budget",
+        revenue_sources: "Revenue Sources",
+        has_finance_officer: "Finance Officer/Treasurer",
+        finance_officer_details: "Finance Officer Details",
+        financial_software: "Financial Software",
+        has_audit: "Annual Audits",
+        auditor_details: "Auditor Details",
+        financial_policies: "Financial Policies",
+        banking_details_summary: "Banking Summary",
+        financial_challenges: "Financial Challenges",
+        has_website: "Website Exists",
+        website_url: "Website URL",
+        social_links: "Social Links",
+        has_comms_officer: "Communications Officer",
+        comms_officer_details: "Comms Officer Details",
+        branding_materials: "Branding Materials",
+        media_coverage: "Media Coverage (3 years)",
+        media_coverage_details: "Media Coverage Details",
+        marketing_footage_link: "Marketing Footage Link",
+        internal_comms_tools: "Internal Comms Tools",
+        outreach_priorities: "Outreach Priorities",
+        office_facilities: "Office Facilities",
+        internet_quality: "Internet Quality",
+        it_equipment: "IT Equipment",
+        uses_cloud: "Uses Cloud Systems",
+        cloud_systems_list: "Cloud Systems Used",
+        databases_used: "Databases Used",
+        website_management: "Website Management",
+        tech_challenges: "Tech Challenges",
+        local_registration_numbers: "Legal/Registration Numbers (summary)",
+        annual_reporting_compliant: "Annual Reporting Compliant",
+        annual_reporting_notes: "Annual Reporting Notes",
+        legal_disputes: "Legal Disputes",
+        legal_disputes_details: "Dispute Details",
+        has_contracts: "Contracts with Staff/Partners",
+        safeguarding_policies: "Safeguarding/Privacy Policies",
+        safeguarding_policies_link: "Safeguarding/Privacy Link",
+        priorities_12mo: "Top 3 Priorities (12 months)",
+        goals_3_5yr: "Top 3 Goals (3–5 years)",
+        immediate_needs: "Immediate Needs"
+      };
+      return map[k] || k;
+    };
+
+    // Add support checkboxes as a single line
+    const support = [];
+    const supportMap = [
+      ["support_financial","Financial management"],
+      ["support_fundraising","Fundraising / grants"],
+      ["support_comms","Communications / branding"],
+      ["support_governance","Governance / board strengthening"],
+      ["support_program_eval","Program design & evaluation"],
+      ["support_legal","Legal / compliance"],
+      ["support_tech","Technology & systems"],
+      ["support_hr","HR policies & staffing"]
+    ];
+    supportMap.forEach(([k,label])=>{ if (d[k]) support.push(label); });
+    d.support_areas = support.length ? support.join(", ") : null;
+
+    const rows = [];
+
+    // Ordered review output
+    const order = [
+      "hpg_reference_id","legal_name","short_name","country_city_registration","year_established","registration_type",
+      "primary_contact_name","primary_contact_role","primary_contact_email","primary_contact_phone","alternate_contact",
+      "website_social","org_docs_link","founding_story",
+      "board_members","board_meeting_frequency","leadership_team","decision_structure","governance_docs_link","hr_policies_link",
+      "has_ethics_policy","ethics_policy_link","has_grievance_process","grievance_policy_link",
+      "staff_full_time","staff_part_time","volunteers_active","languages_spoken","key_skills","capacity_gaps","training_programs",
+      "mission_statement","vision_statement","program_description","beneficiary_demographics","geographic_areas","me_practices","success_stories","program_challenges",
+      "current_donors","past_donors","partnerships","networks_memberships","has_fundraising_staff","fundraising_staff_details","has_grant_pipeline","grant_pipeline_link","funding_barriers",
+      "annual_budget_amount","revenue_sources","has_finance_officer","finance_officer_details","financial_software","has_audit","auditor_details","financial_policies","banking_details_summary","financial_challenges",
+      "has_website","website_url","social_links","has_comms_officer","comms_officer_details","branding_materials","media_coverage","media_coverage_details","marketing_footage_link","internal_comms_tools","outreach_priorities",
+      "office_facilities","internet_quality","it_equipment","uses_cloud","cloud_systems_list","databases_used","website_management","tech_challenges",
+      "local_registration_numbers","annual_reporting_compliant","annual_reporting_notes","legal_disputes","legal_disputes_details","has_contracts","safeguarding_policies","safeguarding_policies_link",
+      "priorities_12mo","goals_3_5yr","support_areas","immediate_needs",
+      "assigned_coordinator_email"
+    ];
+
+    order.forEach(k=>{
+      let v = d[k];
+      if (v == null) return;
+      if (typeof v === "boolean") v = v ? "Yes" : "No";
+      if (String(v).trim() === "") return;
+      rows.push([pretty(k), v]);
+    });
+
+    const html = rows.map(([k,v]) => `
+      <div class="item">
+        <div class="k">${escapeHtml(k)}</div>
+        <div class="v">${linkify(escapeHtml(String(v)))}</div>
+      </div>
+    `).join("");
+
+    $("#reviewList").innerHTML = html || `<div class="item"><div class="k">—</div><div class="v">No data found.</div></div>`;
+  }
+
+  // Prefill support: ?ref=...&org=...&coord=...
+  function prefill(){
+    try{
+      const p = new URLSearchParams(location.search);
+      const ref = p.get("ref"), org = p.get("org"), coord = p.get("coord");
+      if (ref && !$("#hpg_reference_id").value) $("#hpg_reference_id").value = ref;
+      if (org && !$("#legal_name").value) $("#legal_name").value = org;
+      if (coord && !$("#assigned_coordinator_email").value) $("#assigned_coordinator_email").value = coord;
+    }catch(_){}
+  }
+
+  // Buttons
+  $("#btnSave").addEventListener("click", ()=> saveDraft(false));
+  $("#btnRestore").addEventListener("click", restoreDraft);
+  $("#btnClear").addEventListener("click", clearDraft);
+  $("#btnPrint").addEventListener("click", ()=> { buildReview(); window.print(); });
+
+  $("#next0").addEventListener("click", ()=> { if (validateStep(0)) { saveDraft(true); showSection(1); }});
+  $("#back1").addEventListener("click", ()=> showSection(0));
+  $("#next1").addEventListener("click", ()=> { if (validateStep(1)) { saveDraft(true); showSection(2); }});
+
+  $("#back2").addEventListener("click", ()=> showSection(1));
+  $("#next2").addEventListener("click", ()=> { if (validateStep(2)) { saveDraft(true); showSection(3); }});
+
+  $("#back3").addEventListener("click", ()=> showSection(2));
+  $("#next3").addEventListener("click", ()=> { if (validateStep(3)) { saveDraft(true); showSection(4); }});
+
+  $("#back4").addEventListener("click", ()=> showSection(3));
+  $("#next4").addEventListener("click", ()=> { if (validateStep(4)) { saveDraft(true); showSection(5); }});
+
+  $("#back5").addEventListener("click", ()=> showSection(4));
+  $("#next5").addEventListener("click", ()=> { if (validateStep(5)) { saveDraft(true); showSection(6); }});
+
+  $("#back6").addEventListener("click", ()=> showSection(5));
+  $("#next6").addEventListener("click", ()=> { if (validateStep(6)) { saveDraft(true); showSection(7); }});
+
+  $("#back7").addEventListener("click", ()=> showSection(6));
+  $("#next7").addEventListener("click", ()=> { if (validateStep(7)) { saveDraft(true); showSection(8); }});
+
+  $("#back8").addEventListener("click", ()=> showSection(7));
+  $("#next8").addEventListener("click", ()=> { if (validateStep(8)) { saveDraft(true); buildReview(); showSection(9); }});
+
+  $("#back9").addEventListener("click", ()=> showSection(8));
+  $("#printBtn").addEventListener("click", ()=> { buildReview(); window.print(); });
+
+  // Step nav click
+  steps.forEach(st=>{
+    st.addEventListener("click", ()=>{
+      const idx = Number(st.getAttribute("data-step"));
+      if (idx <= current) return showSection(idx);
+      for (let i=current; i<idx; i++){
+        if (!validateStep(i)) return;
+      }
+      if (idx === 9) buildReview();
+      showSection(idx);
+    });
+  });
+
+  // Counters + autosave
+  const counterIds = [
+    "founding_story","board_members","leadership_team","key_skills","capacity_gaps","training_programs",
+    "mission_statement","vision_statement","program_description","beneficiary_demographics","geographic_areas",
+    "me_practices","success_stories","program_challenges","current_donors","past_donors","partnerships",
+    "networks_memberships","fundraising_staff_details","funding_barriers","financial_policies","banking_details_summary",
+    "financial_challenges","social_links","branding_materials","media_coverage_details","tech_challenges",
+    "local_registration_numbers","annual_reporting_notes","legal_disputes_details","priorities_12mo","goals_3_5yr","immediate_needs"
+  ];
+  counterIds.forEach(id=>{
+    const el = $("#"+id);
+    if (!el) return;
+    el.addEventListener("input", ()=>{ updateCounters(); saveDraft(true); });
+  });
+
+  $$("input,select,textarea", form).forEach(el=>{
+    el.addEventListener("change", ()=>{ toggles(); saveDraft(true); });
+  });
+
+  // Inputs that should toggle instantly
+  ["has_ethics_policy","has_grievance_process","has_fundraising_staff","has_grant_pipeline"].forEach(id=>{
+    const el = $("#"+id);
+    if (!el) return;
+    el.addEventListener("change", ()=>{ toggles(); saveDraft(true); });
+  });
+
+  // Submit
+  form.addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    clearStatus();
+    supportHint.style.display = "none";
+
+    // Honeypot
+    const hp = $("input[name='company']");
+    if (hp && hp.value.trim()) return;
+
+    // Final validation
+    touchInvalid(form);
+    for (let i=0; i<9; i++){
+      if (!validateStep(i)){
+        showSection(i);
+        return;
+      }
+    }
+
+    const cd = cooldownRemaining();
+    if (cd > 0){
+      setStatus("Please wait a moment before submitting again.", "info", `Try again in ${cd} seconds.`);
+      return;
+    }
+
+    const submitBtn = $("#submitBtn");
+    submitBtn.disabled = true;
+    const original = submitBtn.textContent;
+    submitBtn.textContent = "Submitting…";
+
+    try{
+      if (!FUNCTION_URL.includes("http")){
+        throw new Error("FUNCTION_URL is not set. Paste your Edge Function URL into the CONFIG section.");
+      }
+      if (!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.includes("PASTE_")){
+        throw new Error("SUPABASE_ANON_KEY is not set. Paste your anon key into the CONFIG section.");
+      }
+
+      const payload = serialize();
+
+      setStatus("Sending to HPG…", "info", "Please keep this tab open until confirmation appears.");
+
+      const res = await fetch(FUNCTION_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": SUPABASE_ANON_KEY,
+          "Authorization": "Bearer " + SUPABASE_ANON_KEY
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const json = await res.json().catch(()=> ({}));
+
+      if (!res.ok || !json.ok){
+        const msg = json.error || `Request failed (HTTP ${res.status}).`;
+        throw new Error(msg);
+      }
+
+      startCooldown();
+      localStorage.removeItem(DRAFT_KEY);
+
+      // Success modal
+      refId.textContent = json.id || "—";
+      modal.classList.add("show");
+
+      // reset form
+      form.reset();
+      toggles();
+      updateCounters();
+      showSection(0);
+      clearStatus();
+
+    }catch(err){
+      setStatus("Submission failed.", "bad", escapeHtml(String(err.message || err)));
+    }finally{
+      submitBtn.disabled = false;
+      submitBtn.textContent = original;
+    }
+  });
+
+  // Modal actions
+  $("#closeModal").addEventListener("click", ()=> modal.classList.remove("show"));
+  $("#copyRef").addEventListener("click", async ()=>{
+    const v = refId.textContent.trim();
+    try{ await navigator.clipboard.writeText(v); }catch(_){}
+  });
+
+  // Initial
+  prefill();
+  updateCounters();
+  toggles();
+
+  // Gentle autosave interval
+  setInterval(()=> saveDraft(true), 15000);
+
+})();
+</script>
+</body>
+</html>
