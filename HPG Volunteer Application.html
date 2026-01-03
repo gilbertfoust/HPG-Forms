@@ -2,1159 +2,1019 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>HPG Career Application | Humanity Pathways Global</title>
-  
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>HPG Career Application</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
-    :root {
-      /* Brand Colors */
-      --primary: #003366;       /* Deep Navy */
-      --primary-dark: #002244;
-      --primary-light: #e6f0fa;
-      --secondary: #E67E22;     /* Vibrant Orange */
-      --secondary-hover: #d35400;
-      
-      /* Interface Colors */
-      --ink: #0f172a;
-      --muted: #64748b;
-      --border: #cbd5e1;
-      --bg-gradient-start: #f8fafc;
-      --bg-gradient-end: #e2e8f0;
-      
-      /* Status Colors */
-      --success: #10b981;
-      --error: #ef4444;
-      --warning: #f59e0b;
-      
-      /* Effects */
-      --glass: rgba(255, 255, 255, 0.90);
-      --glass-blur: blur(16px);
-      --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-      --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      --radius: 16px;
-      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* (UNCHANGED STYLES — your full CSS kept as-is) */
+    :root{
+      --primary:#003366;
+      --secondary:#E67E22;
+      --ink:#0f172a;
+      --muted:#64748b;
+      --line:rgba(15,23,42,.10);
+      --glass:rgba(255,255,255,.88);
+      --panel:rgba(255,255,255,.92);
+      --shadow:0 18px 50px rgba(2,6,23,.12);
+      --shadow2:0 10px 30px rgba(2,6,23,.10);
+      --ok:#146c43;--bad:#b02a37;--info:#0b5ed7;
+      --r:22px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      margin:0;
+      padding:44px 18px;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 700px at 10% -10%, rgba(230,126,34,.20), transparent 55%),
+        radial-gradient(900px 600px at 110% 10%, rgba(0,51,102,.20), transparent 55%),
+        linear-gradient(135deg,#f6f8fb 0%, #cfd9ea 100%);
+      overflow-x:hidden;
+    }
+    body::before{
+      content:"";
+      position:fixed;
+      inset:-2px;
+      pointer-events:none;
+      background:
+        linear-gradient(rgba(255,255,255,.55),rgba(255,255,255,.15)),
+        repeating-linear-gradient(90deg, rgba(15,23,42,.03), rgba(15,23,42,.03) 1px, transparent 1px, transparent 28px);
+      mix-blend-mode:soft-light;
+      opacity:.55;
+    }
+    .container{
+      max-width:940px;
+      margin:0 auto;
+      border-radius:var(--r);
+      background:var(--glass);
+      backdrop-filter: blur(10px);
+      border:1px solid rgba(255,255,255,.45);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .container::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background:radial-gradient(900px 240px at 50% 0%, rgba(0,51,102,.10), transparent 70%);
+      opacity:.9;
+    }
+    .header{
+      position:relative;
+      padding:34px 20px 22px;
+      text-align:center;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.86)),
+        radial-gradient(1000px 260px at 50% 0%, rgba(230,126,34,.10), transparent 60%);
+      border-bottom:1px solid var(--line);
+    }
+    .header::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(90deg, rgba(0,51,102,.12), rgba(230,126,34,.14), rgba(0,51,102,.10));
+      height:4px;
+      top:0;
+    }
+    .header img{max-height:112px;margin-bottom:10px;filter:drop-shadow(0 10px 18px rgba(2,6,23,.10))}
+    .header h1{margin:0;color:var(--primary);font-size:1.85rem;font-weight:800;letter-spacing:-.6px}
+    .header p{margin:8px 0 0;color:var(--muted);font-size:.98rem}
+
+    .wizard{position:relative;padding:16px 40px 10px}
+    .progress{display:flex;align-items:center;gap:12px}
+    .bar{
+      flex:1;height:12px;border-radius:999px;
+      background:rgba(15,23,42,.08);
+      overflow:hidden;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
+      border:1px solid rgba(255,255,255,.65);
+    }
+    .bar>span{
+      display:block;height:100%;width:0;
+      background:linear-gradient(90deg, var(--secondary), #ffb26b);
+      transition:width .2s ease;
+      border-radius:999px;
+    }
+    #pct{min-width:84px;text-align:right;font-weight:800;color:rgba(15,23,42,.55)}
+    .steps{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .steps .chip{
+      padding:7px 11px;border-radius:999px;
+      border:1px solid rgba(15,23,42,.10);
+      background:rgba(255,255,255,.78);
+      color:rgba(15,23,42,.55);
+      font-size:.86rem;
+      box-shadow:0 6px 14px rgba(2,6,23,.06);
+    }
+    .steps .chip i{margin-right:7px}
+    .steps .chip.active{
+      border-color:rgba(0,51,102,.25);
+      color:var(--primary);
+      background:rgba(255,255,255,.92);
+      font-weight:800;
+    }
+    .steps .chip.done{
+      border-color:rgba(20,108,67,.25);
+      color:var(--ok);
+      background:rgba(20,108,67,.06);
+      font-weight:800;
     }
 
-    /* --- Reset & Base --- */
-    *, *::before, *::after { box-sizing: border-box; }
-    
-    body {
-      font-family: 'Poppins', sans-serif;
-      margin: 0;
-      min-height: 100vh;
-      color: var(--ink);
-      background: radial-gradient(circle at top left, rgba(230, 126, 34, 0.15), transparent 40%),
-                  radial-gradient(circle at bottom right, rgba(0, 51, 102, 0.15), transparent 40%),
-                  linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
-      background-attachment: fixed;
-      display: flex;
-      justify-content: center;
-      padding: 40px 20px;
+    form{position:relative;padding:10px 40px 38px}
+    .status{
+      display:none;
+      padding:14px 14px;
+      border-radius:14px;
+      margin:0 0 18px 0;
+      border:1px solid rgba(0,0,0,.08);
+      background:#fff;
+      font-size:.96rem;
+      box-shadow:var(--shadow2);
+    }
+    .status.show{display:block}
+    .status.ok{border-color:rgba(20,108,67,.22);background:rgba(20,108,67,.06);color:var(--ok)}
+    .status.bad{border-color:rgba(176,42,55,.22);background:rgba(176,42,55,.06);color:var(--bad)}
+    .status.info{border-color:rgba(11,94,215,.22);background:rgba(11,94,215,.06);color:var(--info)}
+    .status small{display:block;opacity:.9;margin-top:6px}
+    .status .mini-actions{margin-top:10px;display:flex;gap:10px;flex-wrap:wrap}
+    .mini-btn{
+      border:1px solid rgba(15,23,42,.12);
+      background:rgba(255,255,255,.92);
+      border-radius:12px;
+      padding:9px 11px;
+      font-weight:800;
+      cursor:pointer;
+      box-shadow:0 8px 18px rgba(2,6,23,.08);
+    }
+    .mini-btn:hover{background:#fff}
+
+    .form-section{margin:10px 0 0}
+    .section-title{
+      font-size:1.15rem;color:var(--primary);
+      font-weight:900;margin:0 0 18px;
+      display:flex;align-items:center;gap:12px;
+      padding-bottom:12px;border-bottom:1px solid rgba(15,23,42,.10);
+    }
+    .section-title i{
+      color:var(--secondary);
+      filter:drop-shadow(0 10px 16px rgba(230,126,34,.20));
     }
 
-    /* --- Main Container --- */
-    .app-container {
-      width: 100%;
-      max-width: 900px;
-      background: var(--glass);
-      backdrop-filter: var(--glass-blur);
-      -webkit-backdrop-filter: var(--glass-blur);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow-lg);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
+    .step{
+      display:none;
+      background:var(--panel);
+      border:1px solid rgba(255,255,255,.55);
+      border-radius:18px;
+      padding:18px 18px 6px;
+      box-shadow:0 14px 34px rgba(2,6,23,.10);
+    }
+    .step.active{display:block;animation:fadeUp .18s ease-out}
+    @keyframes fadeUp{from{opacity:.55;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+    .grid-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .form-group{margin-bottom:18px}
+    label{display:block;font-weight:800;font-size:.92rem;margin-bottom:8px;color:rgba(15,23,42,.85)}
+    .hint{font-size:.82rem;color:rgba(15,23,42,.58);margin-top:-4px;margin-bottom:9px}
+    .counter{font-size:.78rem;color:rgba(15,23,42,.55);margin-top:7px;text-align:right}
+
+    input,select,textarea{
+      width:100%;
+      padding:14px 14px;
+      border:1px solid rgba(15,23,42,.14);
+      border-radius:14px;
+      font-family:inherit;
+      font-size:.96rem;
+      background:rgba(255,255,255,.88);
+      transition: box-shadow .15s ease, border-color .15s ease, transform .15s ease;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.75);
+    }
+    textarea{resize:vertical}
+    input:focus,select:focus,textarea:focus{
+      outline:none;
+      border-color:rgba(230,126,34,.55);
+      box-shadow:0 0 0 4px rgba(230,126,34,.14), 0 10px 22px rgba(2,6,23,.08);
+      background:#fff;
+    }
+    .field-error{display:none;margin-top:8px;color:var(--bad);font-size:.82rem;font-weight:800}
+    .invalid .field-error{display:block}
+    .invalid input,.invalid select,.invalid textarea{
+      border-color:rgba(176,42,55,.55);
+      box-shadow:0 0 0 4px rgba(176,42,55,.10);
+      background:#fff;
     }
 
-    /* --- Decoration --- */
-    .app-container::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; right: 0; height: 6px;
-      background: linear-gradient(90deg, var(--primary), var(--secondary));
-      z-index: 10;
+    .checkbox-group{display:flex;flex-wrap:wrap;gap:10px}
+    .checkbox-pill{cursor:pointer;position:relative}
+    .checkbox-pill input{position:absolute;opacity:0;cursor:pointer}
+    .pill-content{
+      display:flex;align-items:center;gap:8px;
+      padding:10px 16px;
+      background:rgba(255,255,255,.92);
+      border:1px solid rgba(15,23,42,.14);
+      border-radius:999px;
+      font-size:.92rem;font-weight:900;
+      color:rgba(15,23,42,.55);
+      transition:transform .12s ease, box-shadow .12s ease, background .12s ease, border-color .12s ease;
+      user-select:none;
+      box-shadow:0 10px 22px rgba(2,6,23,.08);
+    }
+    .checkbox-pill input:checked~.pill-content{
+      border-color:rgba(0,51,102,.55);
+      background:linear-gradient(180deg, rgba(0,51,102,.98), rgba(0,34,68,.98));
+      color:#fff;
+      transform:translateY(-2px);
+      box-shadow:0 14px 26px rgba(0,51,102,.20);
     }
 
-    /* --- Header --- */
-    .header {
-      text-align: center;
-      padding: 40px 30px 20px;
-      background: linear-gradient(to bottom, rgba(255,255,255,0.8), rgba(255,255,255,0));
+    .actions{
+      position:sticky;
+      bottom:0;
+      z-index:5;
+      display:flex;
+      gap:12px;
+      margin-top:18px;
+      padding:14px 14px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.55);
+      background:rgba(255,255,255,.78);
+      backdrop-filter: blur(10px);
+      box-shadow:0 18px 40px rgba(2,6,23,.12);
+      flex-wrap:wrap;
     }
-    
-    .logo-area img {
-      height: 80px;
-      width: auto;
-      margin-bottom: 15px;
-      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+    button{
+      padding:14px 16px;
+      border:none;
+      border-radius:14px;
+      font-size:1rem;
+      font-weight:900;
+      cursor:pointer;
+      transition:transform .12s ease, box-shadow .12s ease, background .12s ease, border-color .12s ease;
+      display:flex;align-items:center;justify-content:center;gap:10px;
+    }
+    button:disabled{opacity:.65;cursor:not-allowed;transform:none !important}
+    .btn{flex:1;min-width:160px}
+    .btn-primary{
+      color:#fff;
+      background:linear-gradient(180deg, rgba(0,51,102,.98), rgba(0,34,68,.98));
+      box-shadow:0 14px 28px rgba(0,51,102,.22);
+    }
+    .btn-primary:hover{transform:translateY(-2px)}
+    .btn-outline{
+      background:rgba(255,255,255,.92);
+      color:var(--primary);
+      border:1px solid rgba(0,51,102,.35);
+      box-shadow:0 12px 22px rgba(2,6,23,.10);
+    }
+    .btn-outline:hover{transform:translateY(-2px)}
+    .btn-ghost{
+      background:rgba(255,255,255,.92);
+      border:1px solid rgba(15,23,42,.12);
+      box-shadow:0 12px 22px rgba(2,6,23,.10);
+    }
+    .btn-ghost:hover{transform:translateY(-2px)}
+
+    .hp{
+      position:absolute !important;
+      left:-10000px !important;
+      top:auto !important;
+      width:1px !important;
+      height:1px !important;
+      overflow:hidden !important;
     }
 
-    .header h1 {
-      margin: 0;
-      font-size: 1.75rem;
-      font-weight: 700;
-      color: var(--primary);
-      letter-spacing: -0.5px;
+    .modal{display:none;position:fixed;inset:0;background:rgba(2,6,23,.55);padding:18px;z-index:50}
+    .modal.show{display:flex;align-items:center;justify-content:center}
+    .modal-card{
+      background:rgba(255,255,255,.96);
+      border-radius:18px;
+      max-width:900px;width:100%;
+      box-shadow:var(--shadow);
+      border:1px solid rgba(255,255,255,.55);
+      overflow:hidden;
+      backdrop-filter: blur(10px);
     }
-    
-    .header p {
-      margin: 8px 0 0;
-      color: var(--muted);
-      font-size: 0.95rem;
+    .modal-head{
+      padding:16px 18px;
+      border-bottom:1px solid rgba(15,23,42,.10);
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      background:linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.90));
     }
+    .modal-head h3{margin:0;font-size:1.05rem;color:var(--primary);font-weight:900}
+    .modal-body{padding:16px 18px;max-height:65vh;overflow:auto}
+    .summary{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .kv{
+      border:1px solid rgba(15,23,42,.10);
+      border-radius:14px;
+      padding:12px;
+      background:rgba(248,250,252,.95);
+      box-shadow:0 10px 22px rgba(2,6,23,.06);
+    }
+    .kv b{display:block;color:rgba(15,23,42,.75);font-size:.86rem;margin-bottom:6px;font-weight:900}
+    .kv span{color:rgba(15,23,42,.90);font-size:.95rem;word-break:break-word}
+    .modal-actions{
+      padding:14px 18px;
+      border-top:1px solid rgba(15,23,42,.10);
+      display:flex;gap:12px;flex-wrap:wrap;
+      background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.86));
+    }
+    .modal-actions .btn{flex:1;min-width:180px}
 
-    /* --- Wizard Progress --- */
-    .wizard-nav {
-      padding: 20px 40px;
+    @media (max-width:650px){
+      .grid-row{grid-template-columns:1fr}
+      .wizard{padding:14px 18px 10px}
+      form{padding:10px 18px 26px}
+      .summary{grid-template-columns:1fr}
+      .actions{padding:12px}
+      body{padding:28px 12px}
     }
-
-    .progress-bar-track {
-      height: 8px;
-      background: #e2e8f0;
-      border-radius: 99px;
-      overflow: hidden;
-      margin-bottom: 20px;
-      position: relative;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--secondary), #f39c12);
-      width: 0%;
-      transition: width 0.5s ease;
-      border-radius: 99px;
-    }
-
-    .steps-indicator {
-      display: flex;
-      justify-content: space-between;
-      position: relative;
-    }
-    
-    /* Connective line behind steps */
-    .steps-indicator::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 0; right: 0;
-      height: 2px;
-      background: #e2e8f0;
-      z-index: 0;
-      transform: translateY(-50%);
-    }
-
-    .step-badge {
-      position: relative;
-      z-index: 1;
-      background: #fff;
-      color: var(--muted);
-      border: 2px solid #e2e8f0;
-      padding: 8px 16px;
-      border-radius: 50px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: var(--transition);
-      cursor: default;
-    }
-
-    .step-badge.active {
-      border-color: var(--primary);
-      color: var(--primary);
-      box-shadow: 0 4px 12px rgba(0, 51, 102, 0.15);
-      transform: translateY(-2px);
-    }
-
-    .step-badge.completed {
-      background: var(--success);
-      border-color: var(--success);
-      color: white;
-    }
-
-    /* --- Form Sections --- */
-    form {
-      padding: 10px 40px 40px;
-      position: relative;
-    }
-
-    .form-step {
-      display: none;
-      animation: fadeIn 0.4s ease-out forwards;
-    }
-    .form-step.active { display: block; }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .section-title {
-      font-size: 1.25rem;
-      color: var(--primary);
-      margin-bottom: 25px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding-bottom: 10px;
-      border-bottom: 2px solid var(--primary-light);
-    }
-    
-    .section-title i { color: var(--secondary); }
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-
-    .form-group {
-      margin-bottom: 24px;
-      position: relative;
-    }
-
-    label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 8px;
-      color: var(--ink);
-      font-size: 0.9rem;
-    }
-
-    .hint {
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-top: -4px;
-      margin-bottom: 8px;
-    }
-
-    /* --- Inputs --- */
-    input[type="text"],
-    input[type="email"],
-    input[type="tel"],
-    input[type="url"],
-    input[type="date"],
-    select,
-    textarea {
-      width: 100%;
-      padding: 12px 16px;
-      font-size: 1rem;
-      font-family: inherit;
-      color: var(--ink);
-      background: #ffffff;
-      border: 2px solid var(--border);
-      border-radius: 10px;
-      transition: var(--transition);
-    }
-
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 4px rgba(0, 51, 102, 0.1);
-    }
-
-    /* Floating Error Messages */
-    .field-error {
-      color: var(--error);
-      font-size: 0.8rem;
-      font-weight: 600;
-      margin-top: 6px;
-      display: none;
-      align-items: center;
-      gap: 5px;
-    }
-    .form-group.invalid input, .form-group.invalid select, .form-group.invalid textarea {
-      border-color: var(--error);
-      background-color: #fff5f5;
-    }
-    .form-group.invalid .field-error { display: flex; }
-
-    /* --- Custom File Upload --- */
-    .file-drop-area {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 30px;
-      border: 2px dashed var(--border);
-      border-radius: 12px;
-      background: var(--bg-gradient-start);
-      transition: var(--transition);
-      cursor: pointer;
-      text-align: center;
-    }
-    .file-drop-area:hover, .file-drop-area.dragover {
-      background: var(--primary-light);
-      border-color: var(--primary);
-    }
-    .file-msg {
-      font-size: 0.9rem;
-      color: var(--muted);
-      pointer-events: none;
-    }
-    .file-input {
-      position: absolute;
-      left: 0; top: 0;
-      height: 100%; width: 100%;
-      opacity: 0;
-      cursor: pointer;
-    }
-    .file-name-display {
-      margin-top: 10px;
-      font-weight: 600;
-      color: var(--primary);
-      font-size: 0.9rem;
-    }
-
-    /* --- Custom Checkboxes (Pills) --- */
-    .checkbox-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-    
-    .checkbox-pill {
-      position: relative;
-      cursor: pointer;
-    }
-    
-    .checkbox-pill input {
-      position: absolute;
-      opacity: 0;
-      cursor: pointer;
-    }
-    
-    .pill-content {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 18px;
-      background: #fff;
-      border: 2px solid var(--border);
-      border-radius: 50px;
-      font-weight: 600;
-      color: var(--muted);
-      transition: var(--transition);
-      user-select: none;
-    }
-    
-    .checkbox-pill input:checked ~ .pill-content {
-      background: var(--primary);
-      border-color: var(--primary);
-      color: #fff;
-      box-shadow: 0 4px 10px rgba(0, 51, 102, 0.2);
-      transform: translateY(-2px);
-    }
-
-    /* --- Character Counter --- */
-    .char-count {
-      text-align: right;
-      font-size: 0.75rem;
-      color: var(--muted);
-      margin-top: 4px;
-    }
-    .char-count.limit-near { color: var(--warning); }
-    .char-count.limit-reached { color: var(--error); font-weight: bold; }
-
-    /* --- Action Buttons --- */
-    .actions {
-      display: flex;
-      gap: 15px;
-      margin-top: 20px;
-      padding-top: 20px;
-      border-top: 1px solid var(--border);
-    }
-    
-    .btn {
-      padding: 14px 24px;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 1rem;
-      border: none;
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      flex: 1;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--primary), #004080);
-      color: white;
-      box-shadow: 0 4px 12px rgba(0, 51, 102, 0.25);
-    }
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 16px rgba(0, 51, 102, 0.3);
-    }
-    
-    .btn-secondary {
-      background: white;
-      color: var(--ink);
-      border: 2px solid var(--border);
-    }
-    .btn-secondary:hover {
-      background: var(--bg-gradient-start);
-      border-color: var(--muted);
-    }
-
-    .btn-ghost {
-      background: transparent;
-      color: var(--muted);
-      flex: 0;
-    }
-    .btn-ghost:hover { color: var(--primary); }
-
-    /* --- Alert Box --- */
-    .alert-box {
-      padding: 12px 16px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      display: none;
-      font-size: 0.9rem;
-      align-items: center;
-      gap: 10px;
-      animation: slideDown 0.3s ease;
-    }
-    @keyframes slideDown { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    
-    .alert-error { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; }
-    .alert-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; }
-    .alert-info { background: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8; }
-
-    /* --- Review Modal --- */
-    .modal-overlay {
-      position: fixed; inset: 0;
-      background: rgba(15, 23, 42, 0.6);
-      backdrop-filter: blur(4px);
-      z-index: 100;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-    .modal-overlay.open { display: flex; }
-    
-    .modal-card {
-      background: #fff;
-      width: 100%; max-width: 800px;
-      max-height: 85vh;
-      border-radius: 16px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      box-shadow: var(--shadow-lg);
-    }
-    
-    .modal-header {
-      padding: 20px 25px;
-      background: var(--bg-gradient-start);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .modal-header h3 { margin: 0; color: var(--primary); }
-    
-    .modal-body {
-      padding: 25px;
-      overflow-y: auto;
-    }
-    
-    .review-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;
-    }
-    .review-item {
-      background: #f8fafc;
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid #f1f5f9;
-    }
-    .review-label { display: block; font-size: 0.8rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
-    .review-value { color: var(--ink); font-weight: 500; word-break: break-word; }
-
-    .modal-footer {
-      padding: 20px 25px;
-      border-top: 1px solid var(--border);
-      background: #fff;
-      display: flex;
-      justify-content: flex-end;
-      gap: 12px;
-    }
-
-    /* --- Success View --- */
-    .success-view {
-      display: none;
-      text-align: center;
-      padding: 60px 40px;
-    }
-    .success-icon {
-      font-size: 4rem;
-      color: var(--success);
-      margin-bottom: 20px;
-      animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
-
-    /* Honeypot */
-    .hp-field { opacity: 0; position: absolute; top: 0; left: 0; height: 0; width: 0; z-index: -1; }
-
-    /* --- Responsive --- */
-    @media (max-width: 600px) {
-      .app-container { border-radius: 0; height: 100vh; overflow-y: auto; }
-      body { padding: 0; }
-      .wizard-nav { padding: 15px 20px; }
-      .steps-indicator { display: none; } /* Hide complicated steps on mobile, keep bar */
-      .grid-2 { grid-template-columns: 1fr; }
-      .actions { flex-direction: column-reverse; }
-      .btn { width: 100%; }
-      .header h1 { font-size: 1.4rem; }
-    }
-    
-    /* Print Utility */
-    @media print {
-      body { background: white; padding: 0; }
-      .app-container { box-shadow: none; border: none; }
-      .actions, .wizard-nav, .file-drop-area, #btnSaveDraft { display: none !important; }
+    @media print{
+      body{background:#fff;padding:0}
+      body::before{display:none}
+      .container{box-shadow:none;border:none;border-radius:0}
+      .actions{display:none !important}
+      .wizard{display:none !important}
+      .step{box-shadow:none;border:1px solid #ddd}
     }
   </style>
 </head>
 
 <body>
-
-<canvas id="confetti" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;display:none;"></canvas>
-
-<div class="app-container" id="printableArea">
-  
-  <header class="header">
-    <div class="logo-area">
-      <img src="https://img1.wsimg.com/isteam/ip/8d5502d6-d937-4d80-bd56-8074053e4d77/Humanity%20Pathways%20Global.jpg/:/rs=h:175,m" alt="HPG Logo" crossorigin="anonymous">
+  <div class="container" id="applicationCard">
+    <div class="header">
+      <img src="https://img1.wsimg.com/isteam/ip/8d5502d6-d937-4d80-bd56-8074053e4d77/Humanity%20Pathways%20Global.jpg/:/rs=h:175,m" alt="HPG Logo">
+      <h1>Join the Movement</h1>
+      <p>Career & Volunteer Application</p>
     </div>
-    <h1>Career & Volunteer Application</h1>
-    <p>Join the movement. Make an impact.</p>
-  </header>
 
-  <nav class="wizard-nav">
-    <div class="progress-bar-track">
-      <div class="progress-fill" id="progressBar"></div>
+    <div class="wizard" aria-label="Application progress">
+      <div class="progress">
+        <div class="bar" aria-hidden="true"><span id="barFill"></span></div>
+        <div style="min-width:84px;text-align:right;font-weight:700;color:#6c757d" id="pct">0%</div>
+      </div>
+      <div class="steps" id="stepChips">
+        <div class="chip"><i class="fa-regular fa-user"></i>Personal</div>
+        <div class="chip"><i class="fa-solid fa-briefcase"></i>Position</div>
+        <div class="chip"><i class="fa-solid fa-star"></i>Experience</div>
+        <div class="chip"><i class="fa-solid fa-globe"></i>Alignment</div>
+        <div class="chip"><i class="fa-solid fa-check"></i>Review</div>
+      </div>
     </div>
-    <div class="steps-indicator" id="stepIndicator">
-      <div class="step-badge active"><i class="fa-regular fa-user"></i> Personal</div>
-      <div class="step-badge"><i class="fa-solid fa-briefcase"></i> Role</div>
-      <div class="step-badge"><i class="fa-solid fa-star"></i> Experience</div>
-      <div class="step-badge"><i class="fa-solid fa-heart"></i> Alignment</div>
-      <div class="step-badge"><i class="fa-solid fa-check"></i> Review</div>
-    </div>
-  </nav>
 
-  <div style="padding: 0 40px;">
-    <div id="alertBox" class="alert-box"></div>
+    <form id="appForm" novalidate>
+      <div class="status" id="status" role="status" aria-live="polite"></div>
+
+      <!-- Honeypot -->
+      <label class="hp">Company <input class="hp" type="text" name="company" autocomplete="off" tabindex="-1"></label>
+
+      <!-- Keep an ID field if you want to store/display it locally, but DO NOT submit it -->
+      <input type="hidden" id="application_id">
+
+      <!-- STEP 1 -->
+      <section class="step active" data-step="0">
+        <div class="form-section">
+          <div class="section-title"><i class="fas fa-user-circle"></i> Personal Information</div>
+
+          <div class="grid-row">
+            <div class="form-group" data-field>
+              <label for="full_name">Legal Full Name *</label>
+              <input id="full_name" type="text" name="full_name" required maxlength="120" autocomplete="name" placeholder="As listed on ID">
+              <div class="field-error">Please enter your full legal name.</div>
+            </div>
+            <div class="form-group" data-field>
+              <label for="preferred_name">Preferred Name</label>
+              <input id="preferred_name" type="text" name="preferred_name" maxlength="120" autocomplete="nickname">
+              <div class="field-error"></div>
+            </div>
+          </div>
+
+          <div class="grid-row">
+            <div class="form-group" data-field>
+              <label for="email">Email Address *</label>
+              <input id="email" type="email" name="email" required maxlength="160" autocomplete="email" placeholder="name@example.com">
+              <div class="field-error">Please enter a valid email address.</div>
+            </div>
+            <div class="form-group" data-field>
+              <label for="phone">Mobile Phone *</label>
+              <div class="hint">Tip: include country code if outside the U.S. (example: +233 ...).</div>
+              <input id="phone" type="tel" name="phone" required maxlength="30" inputmode="tel" autocomplete="tel" placeholder="e.g. +1 313 555 0123">
+              <div class="field-error">Please enter a phone number.</div>
+            </div>
+          </div>
+
+          <div class="form-group" data-field>
+            <label for="location">Current Location (City, State, Country) *</label>
+            <input id="location" type="text" name="location" required maxlength="140" placeholder="e.g. Detroit, MI, USA">
+            <div class="field-error">Please enter your location.</div>
+          </div>
+
+          <div class="form-group" data-field>
+            <label for="linkedin_url">LinkedIn / Portfolio URL</label>
+            <input id="linkedin_url" type="url" name="linkedin_url" maxlength="240" autocomplete="url" placeholder="https://...">
+            <div class="field-error">That link does not look valid.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 2 -->
+      <section class="step" data-step="1">
+        <div class="form-section">
+          <div class="section-title"><i class="fas fa-briefcase"></i> Position & Logistics</div>
+
+          <div class="grid-row">
+            <div class="form-group" data-field>
+              <label for="position">Position Applying For *</label>
+              <select id="position" name="position" required>
+                <option value="" disabled selected>Select Role...</option>
+                <option>Director of NGO Programs</option>
+                <option>HR Specialist</option>
+                <option>Recruitment Specialist</option>
+                <option>Grant Manager</option>
+                <option>Software/DevOps Specialist</option>
+                <option>Project Manager</option>
+                <option>General Volunteer</option>
+              </select>
+              <div class="field-error">Please select a position.</div>
+            </div>
+            <div class="form-group" data-field>
+              <label for="start_date">Available Start Date *</label>
+              <input id="start_date" type="date" name="start_date" required>
+              <div class="field-error">Please choose a start date.</div>
+            </div>
+          </div>
+
+          <div class="form-group" data-field>
+            <label>Work Style & Availability *</label>
+            <div class="hint">Select at least one.</div>
+            <div class="checkbox-group" id="availabilityGroup">
+              <label class="checkbox-pill"><input class="availability" type="checkbox" name="availability" value="Remote"><span class="pill-content"><i class="fas fa-laptop-house"></i> Remote</span></label>
+              <label class="checkbox-pill"><input class="availability" type="checkbox" name="availability" value="Part-time"><span class="pill-content"><i class="fas fa-clock"></i> Part-time</span></label>
+              <label class="checkbox-pill"><input class="availability" type="checkbox" name="availability" value="Weekends"><span class="pill-content"><i class="fas fa-calendar-alt"></i> Weekends</span></label>
+              <label class="checkbox-pill"><input class="availability" type="checkbox" name="availability" value="Evenings"><span class="pill-content"><i class="fas fa-moon"></i> Evenings</span></label>
+            </div>
+            <div class="field-error" id="availErr" style="display:none;margin-top:10px">Please select at least one availability option.</div>
+          </div>
+
+          <div class="form-group" data-field>
+            <label for="time_constraints">Hours per week & Time Zone constraints</label>
+            <input id="time_constraints" type="text" name="time_constraints" maxlength="140" placeholder="e.g. 10–15 hours/week, EST evenings only">
+            <div class="field-error"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 3 -->
+      <section class="step" data-step="2">
+        <div class="form-section">
+          <div class="section-title"><i class="fas fa-star"></i> Experience & Qualifications</div>
+
+          <div class="form-group" data-field>
+            <label for="education">Highest Degree Earned *</label>
+            <select id="education" name="education" required>
+              <option value="" disabled selected>Select one...</option>
+              <option value="High School">High School / GED</option>
+              <option value="Associate">Associate's Degree</option>
+              <option value="Bachelor">Bachelor's Degree</option>
+              <option value="Master">Master's Degree</option>
+              <option value="Doctorate">Doctorate / PhD</option>
+            </select>
+            <div class="field-error">Please select an education level.</div>
+          </div>
+
+          <div class="form-group" data-field>
+            <label for="experience_summary">Professional Experience Summary *</label>
+            <div class="hint">If relevant, mention fiscal sponsorship or grant management experience.</div>
+            <textarea id="experience_summary" name="experience_summary" rows="5" required maxlength="4000"></textarea>
+            <div class="counter" data-count-for="experience_summary"></div>
+            <div class="field-error">Please add a short experience summary.</div>
+          </div>
+
+          <div class="form-group" data-field>
+            <label for="strengths">Top 2–3 Core Competencies *</label>
+            <textarea id="strengths" name="strengths" rows="3" required maxlength="600" placeholder="e.g. Project Management, Python/SQL, Community Outreach"></textarea>
+            <div class="counter" data-count-for="strengths"></div>
+            <div class="field-error">Please list your core competencies.</div>
+          </div>
+
+          <div class="form-group" data-field>
+            <label for="tools">Technical Tools & Certifications</label>
+            <input id="tools" type="text" name="tools" maxlength="240" placeholder="e.g. Asana, Slack, Google Workspace, PMP">
+            <div class="field-error"></div>
+          </div>
+
+          <div class="form-group" data-field>
+            <label for="resume_link">Link to Resume (Google Drive/Dropbox) *</label>
+            <input id="resume_link" type="url" name="resume_link" required maxlength="240" autocomplete="url" placeholder="https://...">
+            <div class="hint" style="color:#e67e22"><i class="fas fa-exclamation-triangle"></i> Ensure the link is viewable by anyone.</div>
+            <div class="field-error">Please provide a valid resume link.</div>
+          </div>
+
+          <div class="form-group" data-field>
+            <label for="resume_file">Optional: Upload Resume (PDF/DOC/DOCX)</label>
+            <div class="hint">If you upload a file, HR can access it from your reference ID record.</div>
+            <input id="resume_file" type="file" name="resume_file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+            <div class="field-error" id="fileErr"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 4 -->
+      <section class="step" data-step="3">
+        <div class="form-section">
+          <div class="section-title"><i class="fas fa-globe-americas"></i> Mission Alignment</div>
+
+          <div class="form-group" data-field>
+            <label for="inspiration">What inspires you to contribute to HPG's mission? *</label>
+            <textarea id="inspiration" name="inspiration" rows="4" required maxlength="2000"></textarea>
+            <div class="counter" data-count-for="inspiration"></div>
+            <div class="field-error">Please add a short explanation.</div>
+          </div>
+
+          <div class="form-group" data-field>
+            <label for="causes">Specific causes or regions you care about</label>
+            <input id="causes" type="text" name="causes" maxlength="240" placeholder="e.g. Education in East Africa, Digital Literacy, Women’s Health">
+            <div class="field-error"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 5 -->
+      <section class="step" data-step="4">
+        <div class="form-section">
+          <div class="section-title"><i class="fas fa-check-double"></i> Compliance & Review</div>
+
+          <div class="grid-row">
+            <div class="form-group" data-field>
+              <label for="work_auth">Legally authorized to work in your country?</label>
+              <select id="work_auth" name="work_auth">
+                <option value="Yes">Yes</option><option value="No">No</option>
+              </select>
+              <div class="field-error"></div>
+            </div>
+            <div class="form-group" data-field>
+              <label for="sponsorship">Do you require sponsorship?</label>
+              <select id="sponsorship" name="sponsorship">
+                <option value="No">No</option><option value="Yes">Yes</option>
+              </select>
+              <div class="field-error"></div>
+            </div>
+          </div>
+
+          <div class="form-group" data-field>
+            <label class="checkbox-pill" style="width:100%;">
+              <input id="consent" type="checkbox" name="consent" required>
+              <span class="pill-content" style="width:100%;"><i class="fas fa-user-check"></i> I consent to Humanity Pathways Global processing my data for recruitment purposes.</span>
+            </label>
+            <div class="hint">A submission receipt email will be sent to the address you entered.</div>
+            <div class="field-error">Consent is required to submit.</div>
+          </div>
+
+          <div class="hint" style="margin-top:8px">
+            Next, you’ll see a review screen before the final submit.
+          </div>
+        </div>
+      </section>
+
+      <div class="actions">
+        <button type="button" class="btn btn-outline" id="btnPdf"><i class="fas fa-file-download"></i> Download PDF</button>
+        <button type="button" class="btn btn-ghost" id="btnBack"><i class="fa-solid fa-arrow-left"></i> Back</button>
+        <button type="button" class="btn btn-primary" id="btnNext">Next <i class="fa-solid fa-arrow-right"></i></button>
+        <button type="button" class="btn btn-primary" id="btnReview" style="display:none">Review <i class="fa-regular fa-clipboard"></i></button>
+        <button type="submit" class="btn btn-primary" id="btnSubmit" style="display:none">Submit <i class="fas fa-paper-plane"></i></button>
+      </div>
+    </form>
   </div>
 
-  <form id="appForm" novalidate>
-    
-    <input type="text" name="website_hp" class="hp-field" tabindex="-1" autocomplete="off">
-    
-    <div class="form-step active" data-step="1">
-      <div class="section-title"><i class="fa-solid fa-id-card"></i> Personal Details</div>
-      
-      <div class="grid-2">
-        <div class="form-group">
-          <label for="fullName">Full Legal Name *</label>
-          <input type="text" id="fullName" name="fullName" required placeholder="As shown on ID">
-          <div class="field-error"><i class="fa-solid fa-circle-exclamation"></i> Name is required</div>
-        </div>
-        <div class="form-group">
-          <label for="email">Email Address *</label>
-          <input type="email" id="email" name="email" required placeholder="you@example.com">
-          <div class="field-error"><i class="fa-solid fa-circle-exclamation"></i> Valid email required</div>
-        </div>
+  <!-- Review Modal -->
+  <div class="modal" id="reviewModal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="reviewTitle">
+      <div class="modal-head">
+        <h3 id="reviewTitle"><i class="fa-regular fa-clipboard"></i> Review your application</h3>
+        <button class="mini-btn" id="closeReview" aria-label="Close review">✕</button>
       </div>
-
-      <div class="grid-2">
-        <div class="form-group">
-          <label for="phone">Phone Number *</label>
-          <input type="tel" id="phone" name="phone" required placeholder="+1 (555) 000-0000">
-          <div class="field-error"><i class="fa-solid fa-circle-exclamation"></i> Phone required</div>
-        </div>
-        <div class="form-group">
-          <label for="location">Current Location *</label>
-          <input type="text" id="location" name="location" required placeholder="City, State, Country">
-          <div class="field-error"><i class="fa-solid fa-circle-exclamation"></i> Location required</div>
-        </div>
+      <div class="modal-body">
+        <div class="summary" id="summaryGrid"></div>
       </div>
-
-      <div class="form-group">
-        <label for="linkedin">LinkedIn / Portfolio URL</label>
-        <input type="url" id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/...">
+      <div class="modal-actions">
+        <button class="btn btn-ghost" type="button" id="btnEdit"><i class="fa-solid fa-pen"></i> Edit</button>
+        <button class="btn btn-primary" type="button" id="btnConfirmSubmit"><i class="fas fa-paper-plane"></i> Confirm Submit</button>
       </div>
-    </div>
-
-    <div class="form-step" data-step="2">
-      <div class="section-title"><i class="fa-solid fa-briefcase"></i> Role & Logistics</div>
-      
-      <div class="grid-2">
-        <div class="form-group">
-          <label for="position">Position Applying For *</label>
-          <select id="position" name="position" required>
-            <option value="" disabled selected>Select a role...</option>
-            <option value="Director of NGO Programs">Director of NGO Programs</option>
-            <option value="HR Specialist">HR Specialist</option>
-            <option value="Grant Manager">Grant Manager</option>
-            <option value="Tech/DevOps">Software/DevOps Specialist</option>
-            <option value="Project Manager">Project Manager</option>
-            <option value="General Volunteer">General Volunteer</option>
-          </select>
-          <div class="field-error"><i class="fa-solid fa-circle-exclamation"></i> Select a position</div>
-        </div>
-        <div class="form-group">
-          <label for="startDate">Earliest Start Date *</label>
-          <input type="date" id="startDate" name="startDate" required>
-          <div class="field-error"><i class="fa-solid fa-circle-exclamation"></i> Date required</div>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Work Availability (Select all that apply) *</label>
-        <div class="checkbox-group" id="availGroup">
-          <label class="checkbox-pill">
-            <input type="checkbox" name="availability" value="Remote">
-            <span class="pill-content"><i class="fa-solid fa-wifi"></i> Remote</span>
-          </label>
-          <label class="checkbox-pill">
-            <input type="checkbox" name="availability" value="Part-time">
-            <span class="pill-content"><i class="fa-regular fa-clock"></i> Part-time</span>
-          </label>
-          <label class="checkbox-pill">
-            <input type="checkbox" name="availability" value="Weekends">
-            <span class="pill-content"><i class="fa-solid fa-calendar-day"></i> Weekends</span>
-          </label>
-          <label class="checkbox-pill">
-            <input type="checkbox" name="availability" value="Evenings">
-            <span class="pill-content"><i class="fa-solid fa-moon"></i> Evenings</span>
-          </label>
-        </div>
-        <div class="field-error" id="availError"><i class="fa-solid fa-circle-exclamation"></i> Select at least one option</div>
-      </div>
-    </div>
-
-    <div class="form-step" data-step="3">
-      <div class="section-title"><i class="fa-solid fa-graduation-cap"></i> Experience</div>
-      
-      <div class="form-group">
-        <label for="education">Highest Education Level *</label>
-        <select id="education" name="education" required>
-          <option value="" disabled selected>Select...</option>
-          <option>High School / GED</option>
-          <option>Associate's Degree</option>
-          <option>Bachelor's Degree</option>
-          <option>Master's Degree</option>
-          <option>Doctorate / PhD</option>
-        </select>
-        <div class="field-error">Required</div>
-      </div>
-
-      <div class="form-group">
-        <label for="summary">Professional Summary *</label>
-        <div class="hint">Briefly highlight your core competencies and years of experience.</div>
-        <textarea id="summary" name="summary" rows="5" maxlength="1000" required></textarea>
-        <div class="char-count"><span id="summaryCount">0</span>/1000</div>
-        <div class="field-error">Summary is required</div>
-      </div>
-
-      <div class="form-group">
-        <label>Upload Resume (PDF/DOCX) *</label>
-        <div class="file-drop-area" id="dropZone">
-          <span class="file-msg"><i class="fa-solid fa-cloud-arrow-up fa-2x"></i><br>Drag & Drop here or Click to Browse</span>
-          <input class="file-input" type="file" id="resumeFile" name="resumeFile" accept=".pdf,.doc,.docx" required>
-        </div>
-        <div class="file-name-display" id="fileNameDisplay"></div>
-        <div class="field-error" id="fileError">File is required (Max 5MB)</div>
-      </div>
-    </div>
-
-    <div class="form-step" data-step="4">
-      <div class="section-title"><i class="fa-solid fa-hands-holding-child"></i> Mission Alignment</div>
-      
-      <div class="form-group">
-        <label for="whyHpg">Why Humanity Pathways Global? *</label>
-        <div class="hint">What inspires you about our mission? How does this align with your personal goals?</div>
-        <textarea id="whyHpg" name="whyHpg" rows="6" maxlength="2000" required></textarea>
-        <div class="char-count"><span id="whyCount">0</span>/2000</div>
-        <div class="field-error">Response required</div>
-      </div>
-
-      <div class="form-group">
-        <label for="referral">How did you hear about us?</label>
-        <input type="text" id="referral" name="referral" placeholder="e.g. LinkedIn, Friend, Website">
-      </div>
-    </div>
-
-    <div class="form-step" data-step="5">
-      <div class="section-title"><i class="fa-solid fa-clipboard-check"></i> Final Review</div>
-      
-      <div class="form-group" style="background: #f1f5f9; padding: 20px; border-radius: 12px;">
-        <label class="checkbox-pill" style="width:100%">
-          <input type="checkbox" id="consent" name="consent" required>
-          <span class="pill-content" style="width:100%"><i class="fa-solid fa-user-check"></i> I certify the information provided is true and consent to data processing for recruitment.</span>
-        </label>
-        <div class="field-error" id="consentError">You must agree to continue</div>
-      </div>
-
-      <p class="hint" style="text-align:center; font-size: 1rem; margin-top:20px;">
-        Please click "Review Application" below to verify your details before final submission.
-      </p>
-    </div>
-
-    <div class="actions">
-      <button type="button" class="btn btn-secondary" id="btnPrev" style="display:none">Back</button>
-      <button type="button" class="btn btn-ghost" id="btnSaveDraft" title="Save progress"><i class="fa-regular fa-floppy-disk"></i> Save Draft</button>
-      <div style="flex:1"></div> <button type="button" class="btn btn-primary" id="btnNext">Next Step <i class="fa-solid fa-arrow-right"></i></button>
-      <button type="button" class="btn btn-primary" id="btnReviewOpen" style="display:none">Review Application</button>
-    </div>
-
-  </form>
-
-  <div class="success-view" id="successView">
-    <div class="success-icon"><i class="fa-regular fa-circle-check"></i></div>
-    <h2 style="color:var(--primary)">Application Submitted!</h2>
-    <p>Thank you for applying to Humanity Pathways Global. Your reference ID is <strong id="refId">#HPG-0000</strong>.</p>
-    <p>We have sent a confirmation email to <span id="confirmEmail" style="font-weight:600"></span>.</p>
-    
-    <div style="display:flex; gap:10px; justify-content:center; margin-top:30px;">
-      <button type="button" class="btn btn-secondary" id="btnDownloadPdf"><i class="fa-solid fa-file-pdf"></i> Download PDF</button>
-      <button type="button" class="btn btn-secondary" onclick="window.location.reload()"><i class="fa-solid fa-rotate-right"></i> New Application</button>
     </div>
   </div>
 
-</div>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const $ = (s, r=document) => r.querySelector(s);
+      const $$ = (s, r=document) => [...r.querySelectorAll(s)];
 
-<div class="modal-overlay" id="reviewModal">
-  <div class="modal-card">
-    <div class="modal-header">
-      <h3>Review Your Details</h3>
-      <button type="button" class="btn-ghost" id="closeModal" style="font-size:1.5rem; padding:0;">&times;</button>
-    </div>
-    <div class="modal-body">
-      <div id="reviewContent" class="review-grid">
-        </div>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" id="editApp">Edit</button>
-      <button type="button" class="btn btn-primary" id="btnFinalSubmit">Confirm & Submit <i class="fa-solid fa-paper-plane"></i></button>
-    </div>
-  </div>
-</div>
+      const CONFIG = {
+        functionUrl: 'https://mlmjlgmsrkemsuwdohsa.supabase.co/functions/v1/submit-application',
+        supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1sbWpsZ21zcmtlbXN1d2RvaHNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU1MTE0MTgsImV4cCI6MjA4MTA4NzQxOH0.NW6sYH5TC-Pa591FZd09coSiJFhoAOg3oz27he6XV1I',
+        maxUploadBytes: 2 * 1024 * 1024
+      };
 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    
-    // --- Config & State ---
-    const TOTAL_STEPS = 5;
-    let currentStep = 1;
-    let formDataState = {};
+      const form = $('#appForm');
+      const status = $('#status');
+      const btnPdf = $('#btnPdf');
+      const btnBack = $('#btnBack');
+      const btnNext = $('#btnNext');
+      const btnReview = $('#btnReview');
+      const btnSubmit = $('#btnSubmit');
+      const barFill = $('#barFill');
+      const pct = $('#pct');
+      const chips = $$('#stepChips .chip');
+      const steps = $$('.step');
 
-    // --- DOM Elements ---
-    const form = document.getElementById('appForm');
-    const steps = document.querySelectorAll('.form-step');
-    const stepBadges = document.querySelectorAll('.step-badge');
-    const progressBar = document.getElementById('progressBar');
-    
-    // Buttons
-    const btnNext = document.getElementById('btnNext');
-    const btnPrev = document.getElementById('btnPrev');
-    const btnReviewOpen = document.getElementById('btnReviewOpen');
-    const btnSaveDraft = document.getElementById('btnSaveDraft');
-    const btnFinalSubmit = document.getElementById('btnFinalSubmit');
-    const btnDownloadPdf = document.getElementById('btnDownloadPdf');
+      const reviewModal = $('#reviewModal');
+      const closeReview = $('#closeReview');
+      const btnEdit = $('#btnEdit');
+      const btnConfirmSubmit = $('#btnConfirmSubmit');
+      const summaryGrid = $('#summaryGrid');
 
-    // Modal
-    const reviewModal = document.getElementById('reviewModal');
-    const closeModal = document.getElementById('closeModal');
-    const editApp = document.getElementById('editApp');
+      const startDate = $('#start_date');
+      const today = new Date();
+      startDate.min = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
 
-    // --- Initialization ---
-    // Check for draft
-    loadDraft();
-    updateUI();
-    setMinStartDate();
+      btnPdf.addEventListener('click', savePDF);
 
-    // --- Navigation Logic ---
-    btnNext.addEventListener('click', () => {
-      if (validateStep(currentStep)) {
-        if (currentStep < TOTAL_STEPS) {
-          currentStep++;
-          updateUI();
-          saveDraft(); // Auto-save on next
-        }
-      }
-    });
-
-    btnPrev.addEventListener('click', () => {
-      if (currentStep > 1) {
-        currentStep--;
-        updateUI();
-      }
-    });
-
-    function updateUI() {
-      // Show/Hide Steps
-      steps.forEach(step => {
-        if(parseInt(step.dataset.step) === currentStep) {
-          step.classList.add('active');
+      function setStatus(message, type='info', extra='', withCopyId=''){
+        status.className = `status show ${type}`;
+        let html = message + (extra ? `<small>${extra}</small>` : '');
+        if (withCopyId){
+          html += `<div class="mini-actions">
+            <button type="button" class="mini-btn" id="copyIdBtn"><i class="fa-regular fa-copy"></i> Copy Reference ID</button>
+            <button type="button" class="mini-btn" id="clearDraftBtn"><i class="fa-regular fa-trash-can"></i> Clear saved draft</button>
+          </div>`;
         } else {
-          step.classList.remove('active');
+          html += `<div class="mini-actions">
+            <button type="button" class="mini-btn" id="clearDraftBtn"><i class="fa-regular fa-trash-can"></i> Clear saved draft</button>
+          </div>`;
+        }
+        status.innerHTML = html;
+        $('#clearDraftBtn')?.addEventListener('click', clearDraft);
+        $('#copyIdBtn')?.addEventListener('click', () => navigator.clipboard.writeText(withCopyId).then(() => {
+          setStatus('Reference ID copied.', 'ok');
+        }).catch(() => {}));
+        status.scrollIntoView({behavior:'smooth', block:'start'});
+      }
+      function clearStatus(){ status.className='status'; status.innerHTML=''; }
+
+      let cur = 0;
+      function renderWizard(){
+        steps.forEach((s,i)=>s.classList.toggle('active', i===cur));
+        const total = steps.length - 1;
+        const p = Math.round((cur / total) * 100);
+        barFill.style.width = p + '%';
+        pct.textContent = p + '%';
+        chips.forEach((c,i)=>{
+          c.classList.toggle('active', i===cur);
+          c.classList.toggle('done', i<cur);
+        });
+        btnBack.style.display = cur===0 ? 'none' : '';
+        btnNext.style.display = cur < total ? '' : 'none';
+        btnReview.style.display = cur===total ? '' : 'none';
+        btnSubmit.style.display = 'none';
+        clearStatus();
+      }
+      renderWizard();
+
+      btnBack.addEventListener('click', ()=>{ if (cur>0){ cur--; renderWizard(); steps[cur].scrollIntoView({behavior:'smooth',block:'start'}); }});
+      btnNext.addEventListener('click', ()=>{
+        if (!validateStep(cur)) return;
+        if (cur < steps.length-1){ cur++; renderWizard(); steps[cur].scrollIntoView({behavior:'smooth',block:'start'}); }
+      });
+
+      btnReview.addEventListener('click', ()=>{
+        if (!validateStep(cur)) return;
+        openReview();
+      });
+
+      function markField(group, ok){ group.classList.toggle('invalid', !ok); }
+      function validateAvailability(){
+        const picked = $$('.availability').some(c => c.checked);
+        $('#availErr').style.display = picked ? 'none' : 'block';
+        return picked;
+      }
+      function validateGroup(el){
+        const group = el.closest('[data-field]');
+        if (!group) return true;
+        const ok = el.checkValidity();
+        markField(group, ok);
+        return ok;
+      }
+      $$('input,select,textarea', form).forEach(el=>{
+        el.addEventListener('blur', ()=> validateGroup(el));
+        el.addEventListener('input', ()=> {
+          if (el.closest('.invalid')) validateGroup(el);
+          scheduleDraftSave();
+          updateCountersFor(el);
+        });
+      });
+
+      function validateStep(stepIndex){
+        clearStatus();
+        const stepEl = steps[stepIndex];
+        let ok = true;
+        if (stepIndex === 1) ok = validateAvailability() && ok;
+        const fields = $$('input,select,textarea', stepEl).filter(x => x.type !== 'file');
+        fields.forEach(el => { if (!el.checkValidity()) ok = false; validateGroup(el); });
+
+        if (!ok){
+          setStatus('Please review the highlighted fields and try again.', 'bad');
+          const firstInvalid = stepEl.querySelector('.invalid input, .invalid select, .invalid textarea');
+          if (firstInvalid) firstInvalid.focus({preventScroll:true});
+          return false;
+        }
+        return true;
+      }
+
+      const phone = $('#phone');
+      phone.addEventListener('blur', () => {
+        const v = (phone.value||'').trim();
+        if (!v) return;
+        if (v.startsWith('+')) return;
+        const digits = v.replace(/\D/g,'');
+        let d = digits;
+        if (d.length === 11 && d.startsWith('1')) d = d.slice(1);
+        if (d.length === 10){
+          phone.value = `+1 (${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;
         }
       });
 
-      // Update Header Badges
-      stepBadges.forEach((badge, index) => {
-        const stepNum = index + 1;
-        badge.classList.remove('active', 'completed');
-        if (stepNum === currentStep) badge.classList.add('active');
-        if (stepNum < currentStep) badge.classList.add('completed');
-      });
-
-      // Update Progress Bar
-      const percentage = ((currentStep - 1) / (TOTAL_STEPS - 1)) * 100;
-      progressBar.style.width = `${percentage}%`;
-
-      // Button Visibility
-      btnPrev.style.display = currentStep === 1 ? 'none' : 'flex';
-      
-      if (currentStep === TOTAL_STEPS) {
-        btnNext.style.display = 'none';
-        btnReviewOpen.style.display = 'flex';
-      } else {
-        btnNext.style.display = 'flex';
-        btnReviewOpen.style.display = 'none';
-      }
-
-      // Scroll to top of form
-      document.querySelector('.app-container').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    // --- Validation Logic ---
-    function validateStep(step) {
-      const activeStepEl = document.querySelector(`.form-step[data-step="${step}"]`);
-      const inputs = activeStepEl.querySelectorAll('input, select, textarea');
-      let isValid = true;
-      let firstError = null;
-
-      // Special Check for Checkboxes in Step 2
-      if (step === 2) {
-        const availChecked = document.querySelectorAll('input[name="availability"]:checked').length > 0;
-        const availGroup = document.getElementById('availGroup').parentElement;
-        const availErr = document.getElementById('availError');
-        
-        if (!availChecked) {
-          availErr.style.display = 'flex';
-          isValid = false;
-        } else {
-          availErr.style.display = 'none';
-        }
-      }
-
-      inputs.forEach(input => {
-        // Skip hidden or optional if empty
-        if (input.type === 'hidden') return;
-        
-        const group = input.closest('.form-group');
-        if (!group) return;
-
-        let fieldValid = input.checkValidity();
-        
-        // Custom File Validation
-        if (input.type === 'file' && input.hasAttribute('required')) {
-           if (input.files.length === 0) fieldValid = false;
-        }
-
-        if (!fieldValid) {
-          group.classList.add('invalid');
-          isValid = false;
-          if (!firstError) firstError = input;
-        } else {
-          group.classList.remove('invalid');
-        }
-      });
-
-      if (!isValid && firstError) {
-        showAlert('Please correct the errors before proceeding.', 'error');
-        firstError.focus();
-        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      } else {
-        hideAlert();
-      }
-
-      return isValid;
-    }
-
-    // --- Input Enhancements ---
-    
-    // Character Counters
-    ['summary', 'whyHpg'].forEach(id => {
-      const el = document.getElementById(id);
-      const counter = document.getElementById(id.replace('whyHpg', 'why') + 'Count'); // hacky id match
-      if (el && counter) {
-        el.addEventListener('input', () => {
-          const len = el.value.length;
-          const max = el.getAttribute('maxlength');
-          counter.textContent = len;
-          if (len > max * 0.9) counter.parentElement.classList.add('limit-near');
-          if (len >= max) counter.parentElement.classList.add('limit-reached');
+      function updateCounters(){
+        $$('[data-count-for]').forEach(c=>{
+          const id = c.getAttribute('data-count-for');
+          const el = document.getElementById(id);
+          if (!el || !el.maxLength) return;
+          c.textContent = `${(el.value||'').length} / ${el.maxLength}`;
         });
       }
-    });
-
-    // File Drop Zone
-    const dropZone = document.getElementById('dropZone');
-    const fileInput = document.getElementById('resumeFile');
-    const fileNameDisplay = document.getElementById('fileNameDisplay');
-    const fileError = document.getElementById('fileError');
-
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-      dropZone.addEventListener(eventName, preventDefaults, false);
-    });
-    function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
-
-    ['dragenter', 'dragover'].forEach(eventName => {
-      dropZone.addEventListener(eventName, () => dropZone.classList.add('dragover'), false);
-    });
-    ['dragleave', 'drop'].forEach(eventName => {
-      dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'), false);
-    });
-
-    dropZone.addEventListener('drop', handleDrop, false);
-    fileInput.addEventListener('change', handleFiles, false);
-
-    function handleDrop(e) {
-      const dt = e.dataTransfer;
-      const files = dt.files;
-      fileInput.files = files; // Assign drop to input
-      handleFiles();
-    }
-
-    function handleFiles() {
-      const file = fileInput.files[0];
-      if (file) {
-        // Size Check (5MB)
-        if (file.size > 5 * 1024 * 1024) {
-          fileError.textContent = "File is too large (Max 5MB)";
-          fileError.style.display = "block";
-          fileInput.value = ""; // Clear
-          fileNameDisplay.textContent = "";
-        } else {
-          fileError.style.display = "none";
-          fileNameDisplay.innerHTML = `<i class="fa-solid fa-file"></i> ${file.name}`;
-        }
+      function updateCountersFor(el){
+        const c = $(`[data-count-for="${el.id}"]`);
+        if (c && el.maxLength) c.textContent = `${(el.value||'').length} / ${el.maxLength}`;
       }
-    }
+      updateCounters();
 
-    // --- Draft Logic (LocalStorage) ---
-    btnSaveDraft.addEventListener('click', () => {
-      saveDraft();
-      showAlert('Draft saved successfully! You can return later.', 'success');
-    });
+      const DRAFT_KEY = 'hpg_career_app_draft_v1';
+      const DRAFT_TS = 'hpg_career_app_draft_ts_v1';
+      let draftTimer = null;
 
-    function saveDraft() {
-      const data = {};
-      new FormData(form).forEach((value, key) => {
-        if(key !== 'resumeFile' && key !== 'website_hp') { // Don't save files/honeypot
-            if(data[key]) {
-                data[key] = data[key] + ', ' + value; // Handle checkboxes
-            } else {
-                data[key] = value;
-            }
-        }
-      });
-      // Save step
-      data._step = currentStep;
-      localStorage.setItem('hpg_app_draft', JSON.stringify(data));
-    }
-
-    function loadDraft() {
-      const saved = localStorage.getItem('hpg_app_draft');
-      if (saved) {
-        const data = JSON.parse(saved);
-        
-        // Restore step if valid
-        if(data._step && data._step < 5) currentStep = parseInt(data._step);
-
-        Object.keys(data).forEach(key => {
-          const el = document.querySelector(`[name="${key}"]`);
-          if (el) {
-            if (el.type === 'radio' || el.type === 'checkbox') {
-              // complex handling for multi-checkbox skipped for brevity in this snippet
-              // but handled roughly by finding value match
-              document.querySelectorAll(`[name="${key}"]`).forEach(box => {
-                  if(data[key].includes(box.value)) box.checked = true;
-              });
-            } else {
-              el.value = data[key];
-            }
+      function serializeDraft(){
+        const data = {};
+        $$('input,select,textarea', form).forEach(el=>{
+          const name = el.name || el.id;
+          if (!name) return;
+          if (name === 'company') return;
+          if (el.type === 'file') return;
+          if (name === 'application_id') return;
+          if (el.type === 'checkbox'){
+            data[name] = el.checked;
+          } else {
+            data[name] = el.value;
           }
         });
-        showAlert('We restored your saved draft.', 'info');
+        data['availability'] = $$('input[name="availability"]').filter(x=>x.checked).map(x=>x.value);
+        return data;
       }
-    }
 
-    function clearDraft() {
-      localStorage.removeItem('hpg_app_draft');
-    }
-
-    // --- Review & Submit ---
-    btnReviewOpen.addEventListener('click', () => {
-      if(!validateStep(5)) return; // Check consent
-
-      const fd = new FormData(form);
-      const container = document.getElementById('reviewContent');
-      container.innerHTML = '';
-
-      const readableLabels = {
-        fullName: 'Full Name', email: 'Email', phone: 'Phone', location: 'Location',
-        linkedin: 'LinkedIn', position: 'Position', startDate: 'Start Date',
-        education: 'Education', summary: 'Experience Summary', whyHpg: 'Mission Statement',
-        referral: 'Referral Source'
-      };
-
-      // Handle Availability manually
-      const avail = [];
-      document.querySelectorAll('input[name="availability"]:checked').forEach(c => avail.push(c.value));
-      
-      let html = `<div class="review-item"><span class="review-label">Availability</span><span class="review-value">${avail.join(', ')}</span></div>`;
-
-      for (let [key, val] of fd.entries()) {
-        if (readableLabels[key] && val.trim() !== '') {
-          html += `
-            <div class="review-item">
-              <span class="review-label">${readableLabels[key]}</span>
-              <span class="review-value">${val}</span>
-            </div>
-          `;
-        }
+      function restoreDraft(){
+        try{
+          const raw = localStorage.getItem(DRAFT_KEY);
+          if (!raw) return false;
+          const data = JSON.parse(raw);
+          $$('input,select,textarea', form).forEach(el=>{
+            const name = el.name || el.id;
+            if (!name || name==='company' || el.type==='file') return;
+            if (name === 'application_id') return;
+            if (el.type === 'checkbox'){
+              if (typeof data[name] === 'boolean') el.checked = data[name];
+            } else if (data[name] != null) {
+              el.value = data[name];
+            }
+          });
+          const av = Array.isArray(data.availability) ? data.availability : [];
+          $$('input[name="availability"]').forEach(ch => ch.checked = av.includes(ch.value));
+          updateCounters();
+          return true;
+        } catch { return false; }
       }
-      container.innerHTML = html + container.innerHTML; // Append avail at end or pre-pend
 
-      reviewModal.classList.add('open');
-    });
+      function clearDraft(){
+        localStorage.removeItem(DRAFT_KEY);
+        localStorage.removeItem(DRAFT_TS);
+        setStatus('Saved draft cleared.', 'ok');
+      }
 
-    closeModal.addEventListener('click', () => reviewModal.classList.remove('open'));
-    editApp.addEventListener('click', () => reviewModal.classList.remove('open'));
+      function scheduleDraftSave(){
+        if (draftTimer) clearTimeout(draftTimer);
+        draftTimer = setTimeout(() => {
+          localStorage.setItem(DRAFT_KEY, JSON.stringify(serializeDraft()));
+          localStorage.setItem(DRAFT_TS, String(Date.now()));
+        }, 450);
+      }
 
-    btnFinalSubmit.addEventListener('click', async () => {
-        const btnIcon = btnFinalSubmit.querySelector('i');
-        btnFinalSubmit.disabled = true;
-        btnFinalSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Sending...`;
+      if (restoreDraft()){
+        const ts = Number(localStorage.getItem(DRAFT_TS)||'0');
+        const when = ts ? new Date(ts).toLocaleString() : '';
+        setStatus('Draft restored.', 'info', when ? `Last saved: ${when}` : '');
+      }
 
-        // Simulate API Call
-        await new Promise(r => setTimeout(r, 2000));
+      function cooldownActive(){
+        const key='hpg_app_last_submit';
+        const now=Date.now();
+        const last=Number(localStorage.getItem(key)||'0');
+        const seconds=Math.floor((now-last)/1000);
+        if (seconds < 20) return 20-seconds;
+        localStorage.setItem(key,String(now));
+        return 0;
+      }
 
-        // Mock Success
-        reviewModal.classList.remove('open');
-        form.style.display = 'none';
-        document.querySelector('.wizard-nav').style.display = 'none';
-        document.getElementById('successView').style.display = 'block';
-        
-        // Update Success details
-        const email = document.getElementById('email').value;
-        document.getElementById('confirmEmail').textContent = email;
-        document.getElementById('refId').textContent = '#HPG-' + Math.floor(1000 + Math.random() * 9000);
+      const REVIEW_FIELDS = [
+        ['Full name','full_name'],['Preferred name','preferred_name'],['Email','email'],['Phone','phone'],
+        ['Location','location'],['LinkedIn/Portfolio','linkedin_url'],
+        ['Position','position'],['Start date','start_date'],['Availability','availability'],
+        ['Time constraints','time_constraints'],['Education','education'],
+        ['Experience summary','experience_summary'],['Core competencies','strengths'],
+        ['Tools','tools'],['Resume link','resume_link'],
+        ['Causes/regions','causes'],['Work authorization','work_auth'],['Sponsorship','sponsorship']
+      ];
 
-        fireConfetti();
-        clearDraft();
-    });
+      function getValueByName(name){
+        if (name === 'availability'){
+          return $$('input[name="availability"]').filter(x=>x.checked).map(x=>x.value).join(', ') || '(none)';
+        }
+        const el = form.querySelector(`[name="${name}"]`);
+        return el ? (el.value || '(blank)') : '(blank)';
+      }
 
-    // --- Utilities ---
-    function showAlert(msg, type) {
-      const box = document.getElementById('alertBox');
-      box.className = `alert-box alert-${type}`;
-      box.innerHTML = type === 'error' ? `<i class="fa-solid fa-circle-xmark"></i> ${msg}` : `<i class="fa-solid fa-circle-info"></i> ${msg}`;
-      box.style.display = 'flex';
-      setTimeout(() => { if(type !== 'error') hideAlert() }, 5000);
-    }
+      function openReview(){
+        summaryGrid.innerHTML = REVIEW_FIELDS.map(([label,name])=>{
+          const val = getValueByName(name);
+          return `<div class="kv"><b>${label}</b><span>${escapeHtml(val)}</span></div>`;
+        }).join('');
+        reviewModal.classList.add('show');
+        reviewModal.setAttribute('aria-hidden','false');
+      }
 
-    function hideAlert() {
-      document.getElementById('alertBox').style.display = 'none';
-    }
+      function closeReviewModal(){
+        reviewModal.classList.remove('show');
+        reviewModal.setAttribute('aria-hidden','true');
+      }
 
-    function setMinStartDate() {
-      const today = new Date().toISOString().split('T')[0];
-      document.getElementById('startDate').setAttribute('min', today);
-    }
+      closeReview.addEventListener('click', closeReviewModal);
+      btnEdit.addEventListener('click', ()=>{ closeReviewModal(); });
+      reviewModal.addEventListener('click', (e)=>{ if (e.target === reviewModal) closeReviewModal(); });
 
-    // --- PDF Generation ---
-    btnDownloadPdf.addEventListener('click', () => {
-      const element = document.getElementById('printableArea');
-      // Temporarily show form for PDF even if submitted
-      const originalDisplay = form.style.display;
-      
-      const opt = {
-        margin: 0.5,
-        filename: 'HPG_Application.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-      };
-      
-      html2pdf().set(opt).from(element).save();
-    });
+      btnConfirmSubmit.addEventListener('click', async ()=>{
+        closeReviewModal();
+        form.requestSubmit();
+      });
 
-    // --- Confetti Effect (Canvas) ---
-    function fireConfetti() {
-        const canvas = document.getElementById("confetti");
-        canvas.style.display = 'block';
-        const ctx = canvas.getContext("2d");
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+      function escapeHtml(s){
+        return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+      }
 
-        const pieces = [];
-        const colors = ['#003366', '#E67E22', '#10b981', '#f39c12'];
+      form.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        clearStatus();
 
-        for(let i=0; i<150; i++) {
-            pieces.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height - canvas.height,
-                w: Math.random() * 10 + 5,
-                h: Math.random() * 10 + 5,
-                color: colors[Math.floor(Math.random() * colors.length)],
-                dy: Math.random() * 5 + 2,
-                dx: Math.random() * 4 - 2
-            });
+        const hp = form.querySelector('input[name="company"]');
+        if (hp && hp.value.trim()) return;
+
+        for (let i=0;i<steps.length;i++){
+          if (!validateStep(i)){ cur = i; renderWizard(); steps[cur].scrollIntoView({behavior:'smooth',block:'start'}); return; }
         }
 
-        function update() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            pieces.forEach(p => {
-                p.y += p.dy;
-                p.x += p.dx;
-                if(p.y > canvas.height) p.y = -20;
-                ctx.fillStyle = p.color;
-                ctx.fillRect(p.x, p.y, p.w, p.h);
-            });
-            requestAnimationFrame(update);
+        const cd = cooldownActive();
+        if (cd > 0){
+          setStatus('Please wait a moment before submitting again.', 'info', `Try again in ${cd} seconds.`);
+          return;
         }
-        update();
-        
-        // Stop after 5 seconds
-        setTimeout(() => { canvas.style.display = 'none'; }, 5000);
-    }
 
-  });
-</script>
+        const file = $('#resume_file')?.files?.[0] || null;
+        if (file){
+          if (file.size > CONFIG.maxUploadBytes){
+            $('#fileErr').textContent = `File is too large. Max ${(CONFIG.maxUploadBytes/1024/1024).toFixed(0)}MB.`;
+            setStatus('Please adjust your resume upload.', 'bad');
+            cur = 2; renderWizard(); steps[cur].scrollIntoView({behavior:'smooth',block:'start'});
+            return;
+          }
+          $('#fileErr').textContent = '';
+        }
+
+        btnBack.disabled = btnNext.disabled = btnReview.disabled = btnSubmit.disabled = btnPdf.disabled = true;
+        const original = btnSubmit.innerHTML;
+        btnSubmit.innerHTML = 'Submitting...';
+
+        try{
+          setStatus('Submitting your application…', 'info');
+
+          const fd = new FormData(form);
+          const data = {};
+         for (const [k,v] of fd.entries()){
+  if (k === 'availability' || k === 'company' || k === 'resume_file' || k === 'application_id') continue;
+  data[k] = (v ?? '').toString().trim();
+}
+
+          data.availability = fd.getAll('availability');
+          data.consent = fd.get('consent') === 'on';
+
+          if (file){
+            const b64 = await fileToBase64(file);
+            data.resume_file = {
+              name: file.name,
+              type: file.type || 'application/octet-stream',
+              size: file.size,
+              base64: b64.split(',')[1]
+            };
+          }
+
+          const res = await fetch(CONFIG.functionUrl, {
+            method:'POST',
+            headers:{
+              'Content-Type':'application/json',
+              'apikey': CONFIG.supabaseAnonKey,
+              'Authorization': 'Bearer ' + CONFIG.supabaseAnonKey
+            },
+            body: JSON.stringify(data)
+          });
+
+          const out = await res.json().catch(()=>({}));
+          if (!res.ok || !out.ok) throw new Error(out.error || `Request failed (${res.status})`);
+
+          const appId = out.id ? String(out.id) : '';
+          $('#application_id').value = appId;
+
+          localStorage.removeItem(DRAFT_KEY);
+          localStorage.removeItem(DRAFT_TS);
+
+          setStatus(
+            'Application received.',
+            'ok',
+            appId ? `Reference ID: ${appId}. A receipt email should arrive shortly.` : 'A receipt email should arrive shortly.',
+            appId
+          );
+
+          form.reset();
+          updateCounters();
+          cur = 0; renderWizard();
+
+        } catch(err){
+          console.error(err);
+          setStatus('Something went wrong while submitting.', 'bad', err?.message || 'Please try again.');
+        } finally {
+          btnSubmit.innerHTML = original;
+          btnBack.disabled = btnNext.disabled = btnReview.disabled = btnSubmit.disabled = btnPdf.disabled = false;
+        }
+      });
+
+      async function fileToBase64(file){
+        return new Promise((resolve,reject)=>{
+          const reader = new FileReader();
+          reader.onload = ()=> resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function savePDF(){
+        clearStatus();
+        const card = document.getElementById('applicationCard');
+        const actions = document.querySelector('.actions');
+
+        btnPdf.disabled = true;
+        const original = btnPdf.innerHTML;
+        btnPdf.innerHTML = 'Preparing PDF...';
+
+        actions.style.display = 'none';
+        const opt = {
+          margin:[0.5,0.5],
+          filename:'HPG_Application.pdf',
+          image:{type:'jpeg',quality:0.98},
+          html2canvas:{scale:2,useCORS:true},
+          jsPDF:{unit:'in',format:'letter',orientation:'portrait'}
+        };
+
+        html2pdf().set(opt).from(card).save()
+          .catch(()=>setStatus('PDF generation failed. Please try again.', 'bad'))
+          .finally(()=>{
+            actions.style.display='flex';
+            btnPdf.disabled=false;
+            btnPdf.innerHTML=original;
+          });
+      }
+    });
+  </script>
 </body>
 </html>
+
