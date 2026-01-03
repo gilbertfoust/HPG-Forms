@@ -9,7 +9,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <style>
     /* (UNCHANGED STYLES — your full CSS kept as-is) */
@@ -330,6 +332,61 @@
     }
     .modal-actions .btn{flex:1;min-width:180px}
 
+    /* NEW: Browser heads-up note */
+    .browser-note{
+      display:none;
+      margin:0 0 14px 0;
+      padding:12px 14px;
+      border:1px solid rgba(11,94,215,.22);
+      background:rgba(11,94,215,.06);
+      color:rgba(15,23,42,.86);
+      border-radius:14px;
+      box-shadow:var(--shadow2);
+      font-size:.92rem;
+      line-height:1.35;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .browser-note.show{display:flex}
+    .browser-note i{color:var(--info);margin-top:2px}
+    .browser-note b{color:var(--primary)}
+    .modal-note{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(11,94,215,.18);
+      background:rgba(11,94,215,.05);
+      color:rgba(15,23,42,.78);
+      font-size:.9rem;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .modal-note i{color:var(--info);margin-top:2px}
+
+    /* NEW: Success modal bits */
+    .success-hero{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+    .success-icon{
+      width:46px;height:46px;border-radius:999px;
+      background:rgba(20,108,67,.10);
+      display:grid;place-items:center;
+      color:var(--ok);
+      font-size:1.35rem;
+      border:1px solid rgba(20,108,67,.25);
+      box-shadow:0 10px 22px rgba(2,6,23,.06);
+    }
+    .success-sub{color:rgba(15,23,42,.72);font-size:.95rem;margin:0 0 12px 0}
+    .success-kv{
+      border:1px solid rgba(15,23,42,.10);
+      border-radius:14px;
+      padding:12px;
+      background:rgba(248,250,252,.95);
+      box-shadow:0 10px 22px rgba(2,6,23,.06);
+      margin-top:10px;
+    }
+    .success-kv b{display:block;color:rgba(15,23,42,.75);font-size:.86rem;margin-bottom:6px;font-weight:900}
+    .success-kv span{color:rgba(15,23,42,.90);font-size:.98rem;word-break:break-word}
+
     @media (max-width:650px){
       .grid-row{grid-template-columns:1fr}
       .wizard{padding:14px 18px 10px}
@@ -345,6 +402,7 @@
       .actions{display:none !important}
       .wizard{display:none !important}
       .step{box-shadow:none;border:1px solid #ddd}
+      .modal{display:none !important}
     }
   </style>
 </head>
@@ -585,6 +643,16 @@
         </div>
       </section>
 
+      <!-- NEW: Heads-up shown on final step -->
+      <div class="browser-note" id="browserNote">
+        <i class="fa-solid fa-circle-info"></i>
+        <div>
+          <b>Heads up:</b> Some browsers, privacy tools, or strict settings may block submissions.
+          If you do not see an <b>“Application received”</b> confirmation after submitting, please try a different browser (Chrome, Edge, or Firefox) and resubmit.
+          If you opened this page from a downloaded file, try opening the official hosted link instead.
+        </div>
+      </div>
+
       <div class="actions">
         <button type="button" class="btn btn-outline" id="btnPdf"><i class="fas fa-file-download"></i> Download PDF</button>
         <button type="button" class="btn btn-ghost" id="btnBack"><i class="fa-solid fa-arrow-left"></i> Back</button>
@@ -604,10 +672,58 @@
       </div>
       <div class="modal-body">
         <div class="summary" id="summaryGrid"></div>
+
+        <!-- NEW: Heads-up inside the review -->
+        <div class="modal-note">
+          <i class="fa-solid fa-circle-info"></i>
+          <div>
+            If you click <b>Confirm Submit</b> and do not see an <b>“Application received”</b> confirmation, try a different browser (Chrome, Edge, or Firefox) and submit again.
+          </div>
+        </div>
       </div>
       <div class="modal-actions">
         <button class="btn btn-ghost" type="button" id="btnEdit"><i class="fa-solid fa-pen"></i> Edit</button>
         <button class="btn btn-primary" type="button" id="btnConfirmSubmit"><i class="fas fa-paper-plane"></i> Confirm Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEW: Success Modal (receipt + confetti trigger) -->
+  <div class="modal" id="successModal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="successTitle">
+      <div class="modal-head">
+        <h3 id="successTitle"><i class="fa-solid fa-circle-check"></i> Submission completed</h3>
+        <button class="mini-btn" id="closeSuccess" aria-label="Close success">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="success-hero">
+          <div class="success-icon"><i class="fa-solid fa-check"></i></div>
+          <div>
+            <div style="font-weight:900;color:var(--primary);font-size:1.1rem">Application received</div>
+            <div style="color:rgba(15,23,42,.70);font-size:.95rem">Your submission has been recorded successfully.</div>
+          </div>
+        </div>
+
+        <p class="success-sub" id="successSubText">
+          A receipt email should arrive shortly at the address you entered.
+        </p>
+
+        <div class="success-kv">
+          <b>Reference ID</b>
+          <span id="successRefId">(pending)</span>
+        </div>
+
+        <div class="success-kv">
+          <b>Next steps</b>
+          <span>
+            You may download a PDF copy now. If you do not receive a receipt email, check spam/junk, then try again using another browser.
+          </span>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" type="button" id="successCopyId"><i class="fa-regular fa-copy"></i> Copy Reference ID</button>
+        <button class="btn btn-outline" type="button" id="successPdf"><i class="fa-solid fa-file-download"></i> Download PDF</button>
+        <button class="btn btn-primary" type="button" id="successNew"><i class="fa-solid fa-rotate-right"></i> Start New Application</button>
       </div>
     </div>
   </div>
@@ -635,17 +751,30 @@
       const chips = $$('#stepChips .chip');
       const steps = $$('.step');
 
+      const browserNote = $('#browserNote');
+
       const reviewModal = $('#reviewModal');
       const closeReview = $('#closeReview');
       const btnEdit = $('#btnEdit');
       const btnConfirmSubmit = $('#btnConfirmSubmit');
       const summaryGrid = $('#summaryGrid');
 
+      const successModal = $('#successModal');
+      const closeSuccess = $('#closeSuccess');
+      const successRefId = $('#successRefId');
+      const successSubText = $('#successSubText');
+      const successCopyId = $('#successCopyId');
+      const successPdf = $('#successPdf');
+      const successNew = $('#successNew');
+
+      let lastSuccessfulId = '';
+
       const startDate = $('#start_date');
       const today = new Date();
       startDate.min = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
 
       btnPdf.addEventListener('click', savePDF);
+      successPdf.addEventListener('click', savePDF);
 
       function setStatus(message, type='info', extra='', withCopyId=''){
         status.className = `status show ${type}`;
@@ -684,6 +813,7 @@
         btnNext.style.display = cur < total ? '' : 'none';
         btnReview.style.display = cur===total ? '' : 'none';
         btnSubmit.style.display = 'none';
+        browserNote.classList.toggle('show', cur===total);
         clearStatus();
       }
       renderWizard();
@@ -884,6 +1014,70 @@
         return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
       }
 
+      function openSuccessModal(appId){
+        lastSuccessfulId = appId || '';
+        successRefId.textContent = lastSuccessfulId || '(not provided)';
+        successSubText.textContent = lastSuccessfulId
+          ? 'A receipt email should arrive shortly. Save your Reference ID in case you need to follow up.'
+          : 'A receipt email should arrive shortly.';
+
+        successModal.classList.add('show');
+        successModal.setAttribute('aria-hidden','false');
+
+        // confetti burst (with safe fallback)
+        fireConfetti();
+      }
+
+      function closeSuccessModal(){
+        successModal.classList.remove('show');
+        successModal.setAttribute('aria-hidden','true');
+      }
+
+      closeSuccess.addEventListener('click', closeSuccessModal);
+      successModal.addEventListener('click', (e)=>{ if (e.target === successModal) closeSuccessModal(); });
+
+      successCopyId.addEventListener('click', ()=>{
+        if (!lastSuccessfulId) return;
+        navigator.clipboard.writeText(lastSuccessfulId).then(()=>{
+          setStatus('Reference ID copied.', 'ok');
+        }).catch(()=>{});
+      });
+
+      successNew.addEventListener('click', ()=>{
+        closeSuccessModal();
+        startNewApplication();
+      });
+
+      function startNewApplication(){
+        // Clear draft + reset the form and wizard
+        localStorage.removeItem(DRAFT_KEY);
+        localStorage.removeItem(DRAFT_TS);
+        form.reset();
+        updateCounters();
+        $('#application_id').value = '';
+        lastSuccessfulId = '';
+        cur = 0;
+        renderWizard();
+        steps[cur].scrollIntoView({behavior:'smooth',block:'start'});
+        setStatus('You may start a new application now.', 'info');
+      }
+
+      function fireConfetti(){
+        try{
+          if (typeof confetti !== 'function') return;
+          const burst = (particleCount, spread, startVelocity, scalar) => confetti({
+            particleCount,
+            spread,
+            startVelocity,
+            scalar,
+            origin: { y: 0.65 }
+          });
+          burst(90, 70, 45, 1);
+          setTimeout(()=>burst(70, 85, 40, 0.95), 180);
+          setTimeout(()=>burst(60, 95, 38, 0.9), 360);
+        } catch {}
+      }
+
       form.addEventListener('submit', async (e)=>{
         e.preventDefault();
         clearStatus();
@@ -913,6 +1107,8 @@
         }
 
         btnBack.disabled = btnNext.disabled = btnReview.disabled = btnSubmit.disabled = btnPdf.disabled = true;
+        btnConfirmSubmit.disabled = true;
+
         const original = btnSubmit.innerHTML;
         btnSubmit.innerHTML = 'Submitting...';
 
@@ -921,10 +1117,10 @@
 
           const fd = new FormData(form);
           const data = {};
-         for (const [k,v] of fd.entries()){
-  if (k === 'availability' || k === 'company' || k === 'resume_file' || k === 'application_id') continue;
-  data[k] = (v ?? '').toString().trim();
-}
+          for (const [k,v] of fd.entries()){
+            if (k === 'availability' || k === 'company' || k === 'resume_file' || k === 'application_id') continue;
+            data[k] = (v ?? '').toString().trim();
+          }
 
           data.availability = fd.getAll('availability');
           data.consent = fd.get('consent') === 'on';
@@ -965,16 +1161,25 @@
             appId
           );
 
-          form.reset();
-          updateCounters();
-          cur = 0; renderWizard();
+          // NEW: pop success receipt modal + confetti
+          openSuccessModal(appId);
+
+          // Keep form contents visible so user can still download PDF if they want.
+          // They can start a new application from the success modal.
 
         } catch(err){
           console.error(err);
-          setStatus('Something went wrong while submitting.', 'bad', err?.message || 'Please try again.');
+
+          const msg = (err && err.message) ? err.message : 'Please try again.';
+          const extra = msg.toLowerCase().includes('failed to fetch')
+            ? 'Your browser or network may have blocked the request. If you do not get a completion notice, try Chrome, Edge, or Firefox and resubmit.'
+            : msg;
+
+          setStatus('Something went wrong while submitting.', 'bad', extra);
         } finally {
           btnSubmit.innerHTML = original;
           btnBack.disabled = btnNext.disabled = btnReview.disabled = btnSubmit.disabled = btnPdf.disabled = false;
+          btnConfirmSubmit.disabled = false;
         }
       });
 
@@ -992,8 +1197,8 @@
         const card = document.getElementById('applicationCard');
         const actions = document.querySelector('.actions');
 
-        btnPdf.disabled = true;
         const original = btnPdf.innerHTML;
+        btnPdf.disabled = true;
         btnPdf.innerHTML = 'Preparing PDF...';
 
         actions.style.display = 'none';
