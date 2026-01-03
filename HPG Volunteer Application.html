@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" id="rootHtml">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
@@ -14,7 +14,7 @@
   <script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <style>
-    /* (UNCHANGED STYLES — your full CSS kept as-is) */
+    /* ===== Base theme (kept compatible with your existing design) ===== */
     :root{
       --primary:#003366;
       --secondary:#E67E22;
@@ -27,7 +27,29 @@
       --shadow2:0 10px 30px rgba(2,6,23,.10);
       --ok:#146c43;--bad:#b02a37;--info:#0b5ed7;
       --r:22px;
+
+      --bgA: rgba(230,126,34,.20);
+      --bgB: rgba(0,51,102,.20);
+      --ring: rgba(230,126,34,.14);
+      --focus: rgba(230,126,34,.55);
     }
+
+    /* ===== Dark mode (front-end only) ===== */
+    [data-theme="dark"]{
+      --ink:#e8eefc;
+      --muted:#b6c3dd;
+      --line:rgba(231,238,252,.12);
+      --glass:rgba(8,13,26,.72);
+      --panel:rgba(10,16,32,.80);
+      --shadow:0 18px 50px rgba(0,0,0,.45);
+      --shadow2:0 10px 30px rgba(0,0,0,.35);
+
+      --bgA: rgba(230,126,34,.12);
+      --bgB: rgba(0,51,102,.22);
+      --ring: rgba(230,126,34,.18);
+      --focus: rgba(255,178,107,.60);
+    }
+
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
@@ -36,11 +58,18 @@
       padding:44px 18px;
       color:var(--ink);
       background:
-        radial-gradient(1200px 700px at 10% -10%, rgba(230,126,34,.20), transparent 55%),
-        radial-gradient(900px 600px at 110% 10%, rgba(0,51,102,.20), transparent 55%),
+        radial-gradient(1200px 700px at 10% -10%, var(--bgA), transparent 55%),
+        radial-gradient(900px 600px at 110% 10%, var(--bgB), transparent 55%),
         linear-gradient(135deg,#f6f8fb 0%, #cfd9ea 100%);
       overflow-x:hidden;
     }
+    [data-theme="dark"] body{
+      background:
+        radial-gradient(1200px 700px at 10% -10%, rgba(230,126,34,.10), transparent 55%),
+        radial-gradient(900px 600px at 110% 10%, rgba(0,51,102,.25), transparent 55%),
+        linear-gradient(135deg,#0b1224 0%, #0a1020 100%);
+    }
+
     body::before{
       content:"";
       position:fixed;
@@ -52,6 +81,23 @@
       mix-blend-mode:soft-light;
       opacity:.55;
     }
+    [data-theme="dark"] body::before{
+      background:
+        linear-gradient(rgba(255,255,255,.08),rgba(255,255,255,.02)),
+        repeating-linear-gradient(90deg, rgba(231,238,252,.06), rgba(231,238,252,.06) 1px, transparent 1px, transparent 28px);
+      opacity:.55;
+    }
+
+    /* Accessibility: skip link */
+    .skip-link{
+      position:absolute;left:-999px;top:12px;
+      background:#fff;color:#000;
+      padding:10px 12px;border-radius:10px;
+      z-index:9999;border:1px solid rgba(0,0,0,.12);
+      box-shadow:var(--shadow2);
+    }
+    .skip-link:focus{left:12px}
+
     .container{
       max-width:940px;
       margin:0 auto;
@@ -71,14 +117,115 @@
       background:radial-gradient(900px 240px at 50% 0%, rgba(0,51,102,.10), transparent 70%);
       opacity:.9;
     }
+
+    /* ===== Top utility bar (language + theme + quick actions) ===== */
+    .topbar{
+      position:relative;
+      z-index:2;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.82));
+    }
+    [data-theme="dark"] .topbar{
+      background:linear-gradient(180deg, rgba(10,16,32,.80), rgba(10,16,32,.68));
+    }
+    .topbar .left, .topbar .right{
+      display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    }
+    .pill{
+      display:inline-flex;align-items:center;gap:10px;
+      border:1px solid rgba(15,23,42,.14);
+      background:rgba(255,255,255,.86);
+      padding:9px 12px;border-radius:999px;
+      box-shadow:0 10px 22px rgba(2,6,23,.06);
+      color:rgba(15,23,42,.78);
+      font-weight:800;
+      font-size:.88rem;
+    }
+    [data-theme="dark"] .pill{
+      border-color:rgba(231,238,252,.14);
+      background:rgba(10,16,32,.72);
+      color:rgba(231,238,252,.88);
+      box-shadow:0 10px 22px rgba(0,0,0,.30);
+    }
+    .pill select{
+      width:auto;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid rgba(15,23,42,.12);
+      background:rgba(255,255,255,.92);
+      font-weight:800;
+      font-size:.88rem;
+      color:inherit;
+      box-shadow:none;
+    }
+    [data-theme="dark"] .pill select{
+      background:rgba(10,16,32,.80);
+      border-color:rgba(231,238,252,.16);
+      color:rgba(231,238,252,.90);
+    }
+    .icon-btn{
+      border:1px solid rgba(15,23,42,.12);
+      background:rgba(255,255,255,.86);
+      color:rgba(15,23,42,.82);
+      border-radius:999px;
+      padding:9px 12px;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:0 10px 22px rgba(2,6,23,.06);
+      display:inline-flex;align-items:center;gap:10px;
+      transition:transform .12s ease, background .12s ease;
+    }
+    [data-theme="dark"] .icon-btn{
+      border-color:rgba(231,238,252,.14);
+      background:rgba(10,16,32,.72);
+      color:rgba(231,238,252,.88);
+      box-shadow:0 10px 22px rgba(0,0,0,.30);
+    }
+    .icon-btn:hover{transform:translateY(-1px);background:#fff}
+    [data-theme="dark"] .icon-btn:hover{background:rgba(10,16,32,.85)}
+    .save-indicator{
+      font-weight:800;
+      color:rgba(15,23,42,.62);
+      display:flex;align-items:center;gap:8px;
+      padding:9px 12px;border-radius:999px;
+      border:1px solid rgba(15,23,42,.10);
+      background:rgba(255,255,255,.68);
+    }
+    [data-theme="dark"] .save-indicator{
+      color:rgba(231,238,252,.72);
+      border-color:rgba(231,238,252,.12);
+      background:rgba(10,16,32,.58);
+    }
+    .save-dot{
+      width:9px;height:9px;border-radius:999px;
+      background:rgba(100,116,139,.45);
+      box-shadow:0 0 0 4px rgba(100,116,139,.12);
+    }
+    .save-dot.on{
+      background:rgba(20,108,67,.85);
+      box-shadow:0 0 0 4px rgba(20,108,67,.18);
+    }
+
     .header{
       position:relative;
-      padding:34px 20px 22px;
+      padding:30px 20px 22px;
       text-align:center;
       background:
         linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.86)),
         radial-gradient(1000px 260px at 50% 0%, rgba(230,126,34,.10), transparent 60%);
       border-bottom:1px solid var(--line);
+      z-index:1;
+    }
+    [data-theme="dark"] .header{
+      background:
+        linear-gradient(180deg, rgba(10,16,32,.86), rgba(10,16,32,.72)),
+        radial-gradient(1000px 260px at 50% 0%, rgba(230,126,34,.10), transparent 60%);
     }
     .header::before{
       content:"";
@@ -92,6 +239,7 @@
     }
     .header img{max-height:112px;margin-bottom:10px;filter:drop-shadow(0 10px 18px rgba(2,6,23,.10))}
     .header h1{margin:0;color:var(--primary);font-size:1.85rem;font-weight:800;letter-spacing:-.6px}
+    [data-theme="dark"] .header h1{color:#bcd7ff}
     .header p{margin:8px 0 0;color:var(--muted);font-size:.98rem}
 
     .wizard{position:relative;padding:16px 40px 10px}
@@ -103,6 +251,11 @@
       box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
       border:1px solid rgba(255,255,255,.65);
     }
+    [data-theme="dark"] .bar{
+      background:rgba(231,238,252,.10);
+      border-color:rgba(231,238,252,.14);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.10);
+    }
     .bar>span{
       display:block;height:100%;width:0;
       background:linear-gradient(90deg, var(--secondary), #ffb26b);
@@ -110,6 +263,7 @@
       border-radius:999px;
     }
     #pct{min-width:84px;text-align:right;font-weight:800;color:rgba(15,23,42,.55)}
+    [data-theme="dark"] #pct{color:rgba(231,238,252,.70)}
     .steps{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
     .steps .chip{
       padding:7px 11px;border-radius:999px;
@@ -119,6 +273,12 @@
       font-size:.86rem;
       box-shadow:0 6px 14px rgba(2,6,23,.06);
     }
+    [data-theme="dark"] .steps .chip{
+      border-color:rgba(231,238,252,.12);
+      background:rgba(10,16,32,.60);
+      color:rgba(231,238,252,.74);
+      box-shadow:0 6px 14px rgba(0,0,0,.24);
+    }
     .steps .chip i{margin-right:7px}
     .steps .chip.active{
       border-color:rgba(0,51,102,.25);
@@ -126,11 +286,21 @@
       background:rgba(255,255,255,.92);
       font-weight:800;
     }
+    [data-theme="dark"] .steps .chip.active{
+      border-color:rgba(188,215,255,.26);
+      color:#bcd7ff;
+      background:rgba(10,16,32,.78);
+    }
     .steps .chip.done{
       border-color:rgba(20,108,67,.25);
       color:var(--ok);
       background:rgba(20,108,67,.06);
       font-weight:800;
+    }
+    [data-theme="dark"] .steps .chip.done{
+      border-color:rgba(20,108,67,.35);
+      background:rgba(20,108,67,.10);
+      color:#7be6b6;
     }
 
     form{position:relative;padding:10px 40px 38px}
@@ -143,6 +313,10 @@
       background:#fff;
       font-size:.96rem;
       box-shadow:var(--shadow2);
+    }
+    [data-theme="dark"] .status{
+      background:rgba(10,16,32,.82);
+      border-color:rgba(231,238,252,.14);
     }
     .status.show{display:block}
     .status.ok{border-color:rgba(20,108,67,.22);background:rgba(20,108,67,.06);color:var(--ok)}
@@ -158,8 +332,16 @@
       font-weight:800;
       cursor:pointer;
       box-shadow:0 8px 18px rgba(2,6,23,.08);
+      color:rgba(15,23,42,.82);
+    }
+    [data-theme="dark"] .mini-btn{
+      background:rgba(10,16,32,.78);
+      border-color:rgba(231,238,252,.14);
+      color:rgba(231,238,252,.88);
+      box-shadow:0 8px 18px rgba(0,0,0,.30);
     }
     .mini-btn:hover{background:#fff}
+    [data-theme="dark"] .mini-btn:hover{background:rgba(10,16,32,.90)}
 
     .form-section{margin:10px 0 0}
     .section-title{
@@ -167,6 +349,10 @@
       font-weight:900;margin:0 0 18px;
       display:flex;align-items:center;gap:12px;
       padding-bottom:12px;border-bottom:1px solid rgba(15,23,42,.10);
+    }
+    [data-theme="dark"] .section-title{
+      color:#bcd7ff;
+      border-bottom-color:rgba(231,238,252,.12);
     }
     .section-title i{
       color:var(--secondary);
@@ -187,8 +373,11 @@
     .grid-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
     .form-group{margin-bottom:18px}
     label{display:block;font-weight:800;font-size:.92rem;margin-bottom:8px;color:rgba(15,23,42,.85)}
+    [data-theme="dark"] label{color:rgba(231,238,252,.86)}
     .hint{font-size:.82rem;color:rgba(15,23,42,.58);margin-top:-4px;margin-bottom:9px}
+    [data-theme="dark"] .hint{color:rgba(231,238,252,.70)}
     .counter{font-size:.78rem;color:rgba(15,23,42,.55);margin-top:7px;text-align:right}
+    [data-theme="dark"] .counter{color:rgba(231,238,252,.68)}
 
     input,select,textarea{
       width:100%;
@@ -200,20 +389,36 @@
       background:rgba(255,255,255,.88);
       transition: box-shadow .15s ease, border-color .15s ease, transform .15s ease;
       box-shadow:inset 0 1px 0 rgba(255,255,255,.75);
+      color:rgba(15,23,42,.92);
+    }
+    [data-theme="dark"] input,[data-theme="dark"] select,[data-theme="dark"] textarea{
+      background:rgba(10,16,32,.70);
+      border-color:rgba(231,238,252,.16);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+      color:rgba(231,238,252,.92);
     }
     textarea{resize:vertical}
     input:focus,select:focus,textarea:focus{
       outline:none;
-      border-color:rgba(230,126,34,.55);
-      box-shadow:0 0 0 4px rgba(230,126,34,.14), 0 10px 22px rgba(2,6,23,.08);
+      border-color:var(--focus);
+      box-shadow:0 0 0 4px var(--ring), 0 10px 22px rgba(2,6,23,.08);
       background:#fff;
     }
+    [data-theme="dark"] input:focus,[data-theme="dark"] select:focus,[data-theme="dark"] textarea:focus{
+      background:rgba(10,16,32,.82);
+      box-shadow:0 0 0 4px rgba(255,178,107,.18), 0 10px 22px rgba(0,0,0,.35);
+    }
+
     .field-error{display:none;margin-top:8px;color:var(--bad);font-size:.82rem;font-weight:800}
     .invalid .field-error{display:block}
     .invalid input,.invalid select,.invalid textarea{
       border-color:rgba(176,42,55,.55);
       box-shadow:0 0 0 4px rgba(176,42,55,.10);
       background:#fff;
+    }
+    [data-theme="dark"] .invalid input,[data-theme="dark"] .invalid select,[data-theme="dark"] .invalid textarea{
+      background:rgba(10,16,32,.86);
+      box-shadow:0 0 0 4px rgba(176,42,55,.14);
     }
 
     .checkbox-group{display:flex;flex-wrap:wrap;gap:10px}
@@ -231,6 +436,12 @@
       user-select:none;
       box-shadow:0 10px 22px rgba(2,6,23,.08);
     }
+    [data-theme="dark"] .pill-content{
+      background:rgba(10,16,32,.70);
+      border-color:rgba(231,238,252,.16);
+      color:rgba(231,238,252,.75);
+      box-shadow:0 10px 22px rgba(0,0,0,.30);
+    }
     .checkbox-pill input:checked~.pill-content{
       border-color:rgba(0,51,102,.55);
       background:linear-gradient(180deg, rgba(0,51,102,.98), rgba(0,34,68,.98));
@@ -238,6 +449,36 @@
       transform:translateY(-2px);
       box-shadow:0 14px 26px rgba(0,51,102,.20);
     }
+
+    /* Enhanced file upload */
+    .file-drop{
+      border:1px dashed rgba(15,23,42,.22);
+      border-radius:16px;
+      padding:14px;
+      background:rgba(255,255,255,.70);
+      box-shadow:0 10px 22px rgba(2,6,23,.06);
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:14px;
+    }
+    [data-theme="dark"] .file-drop{
+      border-color:rgba(231,238,252,.22);
+      background:rgba(10,16,32,.56);
+      box-shadow:0 10px 22px rgba(0,0,0,.28);
+    }
+    .file-drop.dragover{
+      border-color:rgba(230,126,34,.55);
+      box-shadow:0 0 0 4px rgba(230,126,34,.14), 0 10px 22px rgba(2,6,23,.08);
+    }
+    .file-meta{
+      display:flex;flex-direction:column;gap:6px;min-width:220px;
+      color:rgba(15,23,42,.78);
+    }
+    [data-theme="dark"] .file-meta{color:rgba(231,238,252,.78)}
+    .file-meta b{font-size:.92rem}
+    .file-meta small{opacity:.85}
+    .file-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 
     .actions{
       position:sticky;
@@ -253,6 +494,11 @@
       backdrop-filter: blur(10px);
       box-shadow:0 18px 40px rgba(2,6,23,.12);
       flex-wrap:wrap;
+    }
+    [data-theme="dark"] .actions{
+      border-color:rgba(231,238,252,.14);
+      background:rgba(10,16,32,.62);
+      box-shadow:0 18px 40px rgba(0,0,0,.45);
     }
     button{
       padding:14px 16px;
@@ -278,11 +524,24 @@
       border:1px solid rgba(0,51,102,.35);
       box-shadow:0 12px 22px rgba(2,6,23,.10);
     }
+    [data-theme="dark"] .btn-outline{
+      background:rgba(10,16,32,.70);
+      border-color:rgba(188,215,255,.22);
+      color:#bcd7ff;
+      box-shadow:0 12px 22px rgba(0,0,0,.35);
+    }
     .btn-outline:hover{transform:translateY(-2px)}
     .btn-ghost{
       background:rgba(255,255,255,.92);
       border:1px solid rgba(15,23,42,.12);
       box-shadow:0 12px 22px rgba(2,6,23,.10);
+      color:rgba(15,23,42,.82);
+    }
+    [data-theme="dark"] .btn-ghost{
+      background:rgba(10,16,32,.70);
+      border-color:rgba(231,238,252,.14);
+      color:rgba(231,238,252,.88);
+      box-shadow:0 12px 22px rgba(0,0,0,.35);
     }
     .btn-ghost:hover{transform:translateY(-2px)}
 
@@ -306,13 +565,22 @@
       overflow:hidden;
       backdrop-filter: blur(10px);
     }
+    [data-theme="dark"] .modal-card{
+      background:rgba(10,16,32,.90);
+      border-color:rgba(231,238,252,.14);
+    }
     .modal-head{
       padding:16px 18px;
       border-bottom:1px solid rgba(15,23,42,.10);
       display:flex;align-items:center;justify-content:space-between;gap:12px;
       background:linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.90));
     }
+    [data-theme="dark"] .modal-head{
+      background:linear-gradient(180deg, rgba(10,16,32,.94), rgba(10,16,32,.86));
+      border-bottom-color:rgba(231,238,252,.12);
+    }
     .modal-head h3{margin:0;font-size:1.05rem;color:var(--primary);font-weight:900}
+    [data-theme="dark"] .modal-head h3{color:#bcd7ff}
     .modal-body{padding:16px 18px;max-height:65vh;overflow:auto}
     .summary{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .kv{
@@ -322,17 +590,28 @@
       background:rgba(248,250,252,.95);
       box-shadow:0 10px 22px rgba(2,6,23,.06);
     }
+    [data-theme="dark"] .kv{
+      border-color:rgba(231,238,252,.12);
+      background:rgba(10,16,32,.70);
+      box-shadow:0 10px 22px rgba(0,0,0,.28);
+    }
     .kv b{display:block;color:rgba(15,23,42,.75);font-size:.86rem;margin-bottom:6px;font-weight:900}
+    [data-theme="dark"] .kv b{color:rgba(231,238,252,.78)}
     .kv span{color:rgba(15,23,42,.90);font-size:.95rem;word-break:break-word}
+    [data-theme="dark"] .kv span{color:rgba(231,238,252,.90)}
     .modal-actions{
       padding:14px 18px;
       border-top:1px solid rgba(15,23,42,.10);
       display:flex;gap:12px;flex-wrap:wrap;
       background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.86));
     }
+    [data-theme="dark"] .modal-actions{
+      background:linear-gradient(180deg, rgba(10,16,32,.88), rgba(10,16,32,.78));
+      border-top-color:rgba(231,238,252,.12);
+    }
     .modal-actions .btn{flex:1;min-width:180px}
 
-    /* NEW: Browser heads-up note */
+    /* Heads-up note (final step + inside review) */
     .browser-note{
       display:none;
       margin:0 0 14px 0;
@@ -347,9 +626,13 @@
       gap:10px;
       align-items:flex-start;
     }
+    [data-theme="dark"] .browser-note{
+      color:rgba(231,238,252,.88);
+      border-color:rgba(11,94,215,.22);
+      background:rgba(11,94,215,.10);
+    }
     .browser-note.show{display:flex}
     .browser-note i{color:var(--info);margin-top:2px}
-    .browser-note b{color:var(--primary)}
     .modal-note{
       margin-top:10px;
       padding:10px 12px;
@@ -362,9 +645,14 @@
       gap:10px;
       align-items:flex-start;
     }
+    [data-theme="dark"] .modal-note{
+      color:rgba(231,238,252,.84);
+      border-color:rgba(11,94,215,.20);
+      background:rgba(11,94,215,.10);
+    }
     .modal-note i{color:var(--info);margin-top:2px}
 
-    /* NEW: Success modal bits */
+    /* Success modal extras */
     .success-hero{display:flex;align-items:center;gap:12px;margin-bottom:10px}
     .success-icon{
       width:46px;height:46px;border-radius:999px;
@@ -375,7 +663,11 @@
       border:1px solid rgba(20,108,67,.25);
       box-shadow:0 10px 22px rgba(2,6,23,.06);
     }
+    [data-theme="dark"] .success-icon{
+      box-shadow:0 10px 22px rgba(0,0,0,.28);
+    }
     .success-sub{color:rgba(15,23,42,.72);font-size:.95rem;margin:0 0 12px 0}
+    [data-theme="dark"] .success-sub{color:rgba(231,238,252,.78)}
     .success-kv{
       border:1px solid rgba(15,23,42,.10);
       border-radius:14px;
@@ -384,8 +676,83 @@
       box-shadow:0 10px 22px rgba(2,6,23,.06);
       margin-top:10px;
     }
+    [data-theme="dark"] .success-kv{
+      border-color:rgba(231,238,252,.12);
+      background:rgba(10,16,32,.70);
+      box-shadow:0 10px 22px rgba(0,0,0,.28);
+    }
     .success-kv b{display:block;color:rgba(15,23,42,.75);font-size:.86rem;margin-bottom:6px;font-weight:900}
+    [data-theme="dark"] .success-kv b{color:rgba(231,238,252,.78)}
     .success-kv span{color:rgba(15,23,42,.90);font-size:.98rem;word-break:break-word}
+    [data-theme="dark"] .success-kv span{color:rgba(231,238,252,.90)}
+
+    /* Lightweight toasts (front-end only) */
+    .toasts{
+      position:fixed;
+      right:14px;
+      bottom:14px;
+      z-index:999;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      max-width:min(420px, calc(100vw - 28px));
+      pointer-events:none;
+    }
+    .toast{
+      pointer-events:auto;
+      border-radius:16px;
+      padding:12px 12px;
+      background:rgba(255,255,255,.92);
+      border:1px solid rgba(15,23,42,.10);
+      box-shadow:var(--shadow2);
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      color:rgba(15,23,42,.86);
+      animation:toastIn .18s ease-out;
+    }
+    [data-theme="dark"] .toast{
+      background:rgba(10,16,32,.88);
+      border-color:rgba(231,238,252,.12);
+      color:rgba(231,238,252,.90);
+      box-shadow:0 14px 30px rgba(0,0,0,.45);
+    }
+    @keyframes toastIn{from{opacity:.6;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    .toast .t-ic{margin-top:2px}
+    .toast .t-ic.ok{color:var(--ok)}
+    .toast .t-ic.bad{color:var(--bad)}
+    .toast .t-ic.info{color:var(--info)}
+    .toast .t-body b{display:block;margin-bottom:2px}
+    .toast .t-close{
+      margin-left:auto;
+      border:none;
+      background:transparent;
+      color:inherit;
+      cursor:pointer;
+      padding:0;
+      font-size:1.05rem;
+      opacity:.8;
+    }
+    .toast .t-close:hover{opacity:1}
+
+    /* RTL support */
+    [dir="rtl"] .steps .chip i{margin-right:0;margin-left:7px}
+    [dir="rtl"] .section-title{flex-direction:row-reverse}
+    [dir="rtl"] .section-title i{margin-left:0;margin-right:0}
+    [dir="rtl"] .success-hero{flex-direction:row-reverse}
+    [dir="rtl"] .modal-note,[dir="rtl"] .browser-note{flex-direction:row-reverse}
+    [dir="rtl"] .topbar{flex-direction:row-reverse}
+    [dir="rtl"] .topbar .left, [dir="rtl"] .topbar .right{flex-direction:row-reverse}
+
+    /* Reduce motion */
+    @media (prefers-reduced-motion: reduce){
+      *{scroll-behavior:auto !important}
+      .step.active{animation:none}
+      .toast{animation:none}
+      button{transition:none}
+      .checkbox-pill input:checked~.pill-content{transform:none}
+      .btn-primary:hover,.btn-outline:hover,.btn-ghost:hover{transform:none}
+    }
 
     @media (max-width:650px){
       .grid-row{grid-template-columns:1fr}
@@ -394,6 +761,7 @@
       .summary{grid-template-columns:1fr}
       .actions{padding:12px}
       body{padding:28px 12px}
+      .topbar{gap:10px}
     }
     @media print{
       body{background:#fff;padding:0}
@@ -401,31 +769,70 @@
       .container{box-shadow:none;border:none;border-radius:0}
       .actions{display:none !important}
       .wizard{display:none !important}
+      .topbar{display:none !important}
       .step{box-shadow:none;border:1px solid #ddd}
       .modal{display:none !important}
+      .toasts{display:none !important}
     }
   </style>
 </head>
 
 <body>
+  <a href="#appForm" class="skip-link" data-i18n="skipToForm">Skip to form</a>
+
+  <div class="toasts" id="toasts" aria-live="polite" aria-atomic="true"></div>
+
   <div class="container" id="applicationCard">
+    <!-- Topbar (language / theme / save indicator / quick help) -->
+    <div class="topbar">
+      <div class="left">
+        <div class="pill" title="Language">
+          <i class="fa-solid fa-language"></i>
+          <span data-i18n="language">Language</span>
+          <select id="langSelect" aria-label="Language">
+            <option value="en">English</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+            <option value="ar">العربية</option>
+          </select>
+        </div>
+
+        <div class="save-indicator" id="saveIndicator" title="Draft autosave">
+          <span class="save-dot" id="saveDot" aria-hidden="true"></span>
+          <span id="saveText" data-i18n="draftNotSaved">Draft not saved yet</span>
+        </div>
+      </div>
+
+      <div class="right">
+        <button class="icon-btn" id="themeToggle" type="button" aria-label="Toggle theme">
+          <i class="fa-solid fa-moon"></i>
+          <span data-i18n="theme">Theme</span>
+        </button>
+
+        <button class="icon-btn" id="btnHelp" type="button" aria-label="Help">
+          <i class="fa-solid fa-circle-question"></i>
+          <span data-i18n="help">Help</span>
+        </button>
+      </div>
+    </div>
+
     <div class="header">
       <img src="https://img1.wsimg.com/isteam/ip/8d5502d6-d937-4d80-bd56-8074053e4d77/Humanity%20Pathways%20Global.jpg/:/rs=h:175,m" alt="HPG Logo">
-      <h1>Join the Movement</h1>
-      <p>Career & Volunteer Application</p>
+      <h1 data-i18n="joinMovement">Join the Movement</h1>
+      <p data-i18n="careerVolunteer">Career & Volunteer Application</p>
     </div>
 
     <div class="wizard" aria-label="Application progress">
       <div class="progress">
         <div class="bar" aria-hidden="true"><span id="barFill"></span></div>
-        <div style="min-width:84px;text-align:right;font-weight:700;color:#6c757d" id="pct">0%</div>
+        <div id="pct">0%</div>
       </div>
-      <div class="steps" id="stepChips">
-        <div class="chip"><i class="fa-regular fa-user"></i>Personal</div>
-        <div class="chip"><i class="fa-solid fa-briefcase"></i>Position</div>
-        <div class="chip"><i class="fa-solid fa-star"></i>Experience</div>
-        <div class="chip"><i class="fa-solid fa-globe"></i>Alignment</div>
-        <div class="chip"><i class="fa-solid fa-check"></i>Review</div>
+      <div class="steps" id="stepChips" aria-label="Steps">
+        <div class="chip"><i class="fa-regular fa-user"></i><span data-i18n="stepPersonal">Personal</span></div>
+        <div class="chip"><i class="fa-solid fa-briefcase"></i><span data-i18n="stepPosition">Position</span></div>
+        <div class="chip"><i class="fa-solid fa-star"></i><span data-i18n="stepExperience">Experience</span></div>
+        <div class="chip"><i class="fa-solid fa-globe"></i><span data-i18n="stepAlignment">Alignment</span></div>
+        <div class="chip"><i class="fa-solid fa-check"></i><span data-i18n="stepReview">Review</span></div>
       </div>
     </div>
 
@@ -439,18 +846,18 @@
       <input type="hidden" id="application_id">
 
       <!-- STEP 1 -->
-      <section class="step active" data-step="0">
+      <section class="step active" data-step="0" aria-label="Personal information">
         <div class="form-section">
-          <div class="section-title"><i class="fas fa-user-circle"></i> Personal Information</div>
+          <div class="section-title"><i class="fas fa-user-circle"></i> <span data-i18n="personalInfo">Personal Information</span></div>
 
           <div class="grid-row">
             <div class="form-group" data-field>
-              <label for="full_name">Legal Full Name *</label>
-              <input id="full_name" type="text" name="full_name" required maxlength="120" autocomplete="name" placeholder="As listed on ID">
-              <div class="field-error">Please enter your full legal name.</div>
+              <label for="full_name"><span data-i18n="legalFullName">Legal Full Name</span> *</label>
+              <input id="full_name" type="text" name="full_name" required maxlength="120" autocomplete="name" placeholder="As listed on ID" data-i18n-attr="placeholder:phAsListedOnId">
+              <div class="field-error" data-i18n="errFullName">Please enter your full legal name.</div>
             </div>
             <div class="form-group" data-field>
-              <label for="preferred_name">Preferred Name</label>
+              <label for="preferred_name" data-i18n="preferredName">Preferred Name</label>
               <input id="preferred_name" type="text" name="preferred_name" maxlength="120" autocomplete="nickname">
               <div class="field-error"></div>
             </div>
@@ -458,171 +865,212 @@
 
           <div class="grid-row">
             <div class="form-group" data-field>
-              <label for="email">Email Address *</label>
-              <input id="email" type="email" name="email" required maxlength="160" autocomplete="email" placeholder="name@example.com">
-              <div class="field-error">Please enter a valid email address.</div>
+              <label for="email"><span data-i18n="emailAddress">Email Address</span> *</label>
+              <input id="email" type="email" name="email" required maxlength="160" autocomplete="email" placeholder="name@example.com" data-i18n-attr="placeholder:phEmail">
+              <div class="field-error" data-i18n="errEmail">Please enter a valid email address.</div>
             </div>
             <div class="form-group" data-field>
-              <label for="phone">Mobile Phone *</label>
-              <div class="hint">Tip: include country code if outside the U.S. (example: +233 ...).</div>
-              <input id="phone" type="tel" name="phone" required maxlength="30" inputmode="tel" autocomplete="tel" placeholder="e.g. +1 313 555 0123">
-              <div class="field-error">Please enter a phone number.</div>
+              <label for="phone"><span data-i18n="mobilePhone">Mobile Phone</span> *</label>
+              <div class="hint" data-i18n="phoneHint">Tip: include country code if outside the U.S. (example: +233 ...).</div>
+              <input id="phone" type="tel" name="phone" required maxlength="30" inputmode="tel" autocomplete="tel" placeholder="e.g. +1 313 555 0123" data-i18n-attr="placeholder:phPhone">
+              <div class="field-error" data-i18n="errPhone">Please enter a phone number.</div>
             </div>
           </div>
 
           <div class="form-group" data-field>
-            <label for="location">Current Location (City, State, Country) *</label>
-            <input id="location" type="text" name="location" required maxlength="140" placeholder="e.g. Detroit, MI, USA">
-            <div class="field-error">Please enter your location.</div>
+            <label for="location"><span data-i18n="currentLocation">Current Location (City, State, Country)</span> *</label>
+            <input id="location" type="text" name="location" required maxlength="140" placeholder="e.g. Detroit, MI, USA" data-i18n-attr="placeholder:phLocation">
+            <div class="field-error" data-i18n="errLocation">Please enter your location.</div>
           </div>
 
           <div class="form-group" data-field>
-            <label for="linkedin_url">LinkedIn / Portfolio URL</label>
-            <input id="linkedin_url" type="url" name="linkedin_url" maxlength="240" autocomplete="url" placeholder="https://...">
-            <div class="field-error">That link does not look valid.</div>
+            <label for="linkedin_url" data-i18n="linkedinPortfolio">LinkedIn / Portfolio URL</label>
+            <input id="linkedin_url" type="url" name="linkedin_url" maxlength="240" autocomplete="url" placeholder="https://..." data-i18n-attr="placeholder:phUrl">
+            <div class="field-error" data-i18n="errUrl">That link does not look valid.</div>
           </div>
         </div>
       </section>
 
       <!-- STEP 2 -->
-      <section class="step" data-step="1">
+      <section class="step" data-step="1" aria-label="Position and logistics">
         <div class="form-section">
-          <div class="section-title"><i class="fas fa-briefcase"></i> Position & Logistics</div>
+          <div class="section-title"><i class="fas fa-briefcase"></i> <span data-i18n="positionLogistics">Position & Logistics</span></div>
 
           <div class="grid-row">
             <div class="form-group" data-field>
-              <label for="position">Position Applying For *</label>
+              <label for="position"><span data-i18n="positionApplying">Position Applying For</span> *</label>
               <select id="position" name="position" required>
-                <option value="" disabled selected>Select Role...</option>
-                <option>Director of NGO Programs</option>
-                <option>HR Specialist</option>
-                <option>Recruitment Specialist</option>
-                <option>Grant Manager</option>
-                <option>Software/DevOps Specialist</option>
-                <option>Project Manager</option>
-                <option>General Volunteer</option>
+                <option value="" disabled selected data-i18n="selectRole">Select Role...</option>
+
+                <!-- Keep stable backend values; translate display text only -->
+                <option value="Director of NGO Programs" data-i18n="roleDirector">Director of NGO Programs</option>
+                <option value="HR Specialist" data-i18n="roleHr">HR Specialist</option>
+                <option value="Recruitment Specialist" data-i18n="roleRecruitment">Recruitment Specialist</option>
+                <option value="Grant Manager" data-i18n="roleGrant">Grant Manager</option>
+                <option value="Software/DevOps Specialist" data-i18n="roleDevops">Software/DevOps Specialist</option>
+                <option value="Project Manager" data-i18n="rolePm">Project Manager</option>
+                <option value="General Volunteer" data-i18n="roleVolunteer">General Volunteer</option>
               </select>
-              <div class="field-error">Please select a position.</div>
+              <div class="field-error" data-i18n="errPosition">Please select a position.</div>
             </div>
+
             <div class="form-group" data-field>
-              <label for="start_date">Available Start Date *</label>
+              <label for="start_date"><span data-i18n="availableStart">Available Start Date</span> *</label>
               <input id="start_date" type="date" name="start_date" required>
-              <div class="field-error">Please choose a start date.</div>
+              <div class="field-error" data-i18n="errStartDate">Please choose a start date.</div>
             </div>
           </div>
 
           <div class="form-group" data-field>
-            <label>Work Style & Availability *</label>
-            <div class="hint">Select at least one.</div>
+            <label data-i18n="workStyleAvailability">Work Style & Availability</label> *
+            <div class="hint" data-i18n="selectAtLeastOne">Select at least one.</div>
             <div class="checkbox-group" id="availabilityGroup">
-              <label class="checkbox-pill"><input class="availability" type="checkbox" name="availability" value="Remote"><span class="pill-content"><i class="fas fa-laptop-house"></i> Remote</span></label>
-              <label class="checkbox-pill"><input class="availability" type="checkbox" name="availability" value="Part-time"><span class="pill-content"><i class="fas fa-clock"></i> Part-time</span></label>
-              <label class="checkbox-pill"><input class="availability" type="checkbox" name="availability" value="Weekends"><span class="pill-content"><i class="fas fa-calendar-alt"></i> Weekends</span></label>
-              <label class="checkbox-pill"><input class="availability" type="checkbox" name="availability" value="Evenings"><span class="pill-content"><i class="fas fa-moon"></i> Evenings</span></label>
+              <label class="checkbox-pill">
+                <input class="availability" type="checkbox" name="availability" value="Remote">
+                <span class="pill-content"><i class="fas fa-laptop-house"></i> <span data-i18n="avRemote">Remote</span></span>
+              </label>
+              <label class="checkbox-pill">
+                <input class="availability" type="checkbox" name="availability" value="Part-time">
+                <span class="pill-content"><i class="fas fa-clock"></i> <span data-i18n="avPartTime">Part-time</span></span>
+              </label>
+              <label class="checkbox-pill">
+                <input class="availability" type="checkbox" name="availability" value="Weekends">
+                <span class="pill-content"><i class="fas fa-calendar-alt"></i> <span data-i18n="avWeekends">Weekends</span></span>
+              </label>
+              <label class="checkbox-pill">
+                <input class="availability" type="checkbox" name="availability" value="Evenings">
+                <span class="pill-content"><i class="fas fa-moon"></i> <span data-i18n="avEvenings">Evenings</span></span>
+              </label>
             </div>
-            <div class="field-error" id="availErr" style="display:none;margin-top:10px">Please select at least one availability option.</div>
+            <div class="field-error" id="availErr" style="display:none;margin-top:10px" data-i18n="errAvailability">
+              Please select at least one availability option.
+            </div>
           </div>
 
           <div class="form-group" data-field>
-            <label for="time_constraints">Hours per week & Time Zone constraints</label>
-            <input id="time_constraints" type="text" name="time_constraints" maxlength="140" placeholder="e.g. 10–15 hours/week, EST evenings only">
+            <label for="time_constraints" data-i18n="timeConstraints">Hours per week & Time Zone constraints</label>
+            <input id="time_constraints" type="text" name="time_constraints" maxlength="140"
+              placeholder="e.g. 10–15 hours/week, EST evenings only"
+              data-i18n-attr="placeholder:phTimeConstraints">
             <div class="field-error"></div>
           </div>
         </div>
       </section>
 
       <!-- STEP 3 -->
-      <section class="step" data-step="2">
+      <section class="step" data-step="2" aria-label="Experience and qualifications">
         <div class="form-section">
-          <div class="section-title"><i class="fas fa-star"></i> Experience & Qualifications</div>
+          <div class="section-title"><i class="fas fa-star"></i> <span data-i18n="experienceQualifications">Experience & Qualifications</span></div>
 
           <div class="form-group" data-field>
-            <label for="education">Highest Degree Earned *</label>
+            <label for="education"><span data-i18n="highestDegree">Highest Degree Earned</span> *</label>
             <select id="education" name="education" required>
-              <option value="" disabled selected>Select one...</option>
-              <option value="High School">High School / GED</option>
-              <option value="Associate">Associate's Degree</option>
-              <option value="Bachelor">Bachelor's Degree</option>
-              <option value="Master">Master's Degree</option>
-              <option value="Doctorate">Doctorate / PhD</option>
+              <option value="" disabled selected data-i18n="selectOne">Select one...</option>
+              <option value="High School" data-i18n="eduHighSchool">High School / GED</option>
+              <option value="Associate" data-i18n="eduAssociate">Associate's Degree</option>
+              <option value="Bachelor" data-i18n="eduBachelor">Bachelor's Degree</option>
+              <option value="Master" data-i18n="eduMaster">Master's Degree</option>
+              <option value="Doctorate" data-i18n="eduDoctorate">Doctorate / PhD</option>
             </select>
-            <div class="field-error">Please select an education level.</div>
+            <div class="field-error" data-i18n="errEducation">Please select an education level.</div>
           </div>
 
           <div class="form-group" data-field>
-            <label for="experience_summary">Professional Experience Summary *</label>
-            <div class="hint">If relevant, mention fiscal sponsorship or grant management experience.</div>
+            <label for="experience_summary"><span data-i18n="experienceSummary">Professional Experience Summary</span> *</label>
+            <div class="hint" data-i18n="experienceHint">If relevant, mention fiscal sponsorship or grant management experience.</div>
             <textarea id="experience_summary" name="experience_summary" rows="5" required maxlength="4000"></textarea>
             <div class="counter" data-count-for="experience_summary"></div>
-            <div class="field-error">Please add a short experience summary.</div>
+            <div class="field-error" data-i18n="errExperience">Please add a short experience summary.</div>
           </div>
 
           <div class="form-group" data-field>
-            <label for="strengths">Top 2–3 Core Competencies *</label>
-            <textarea id="strengths" name="strengths" rows="3" required maxlength="600" placeholder="e.g. Project Management, Python/SQL, Community Outreach"></textarea>
+            <label for="strengths"><span data-i18n="coreCompetencies">Top 2–3 Core Competencies</span> *</label>
+            <textarea id="strengths" name="strengths" rows="3" required maxlength="600"
+              placeholder="e.g. Project Management, Python/SQL, Community Outreach"
+              data-i18n-attr="placeholder:phCompetencies"></textarea>
             <div class="counter" data-count-for="strengths"></div>
-            <div class="field-error">Please list your core competencies.</div>
+            <div class="field-error" data-i18n="errStrengths">Please list your core competencies.</div>
           </div>
 
           <div class="form-group" data-field>
-            <label for="tools">Technical Tools & Certifications</label>
-            <input id="tools" type="text" name="tools" maxlength="240" placeholder="e.g. Asana, Slack, Google Workspace, PMP">
+            <label for="tools" data-i18n="toolsCerts">Technical Tools & Certifications</label>
+            <input id="tools" type="text" name="tools" maxlength="240" placeholder="e.g. Asana, Slack, Google Workspace, PMP" data-i18n-attr="placeholder:phTools">
             <div class="field-error"></div>
           </div>
 
           <div class="form-group" data-field>
-            <label for="resume_link">Link to Resume (Google Drive/Dropbox) *</label>
-            <input id="resume_link" type="url" name="resume_link" required maxlength="240" autocomplete="url" placeholder="https://...">
-            <div class="hint" style="color:#e67e22"><i class="fas fa-exclamation-triangle"></i> Ensure the link is viewable by anyone.</div>
-            <div class="field-error">Please provide a valid resume link.</div>
+            <label for="resume_link"><span data-i18n="resumeLink">Link to Resume (Google Drive/Dropbox)</span> *</label>
+            <input id="resume_link" type="url" name="resume_link" required maxlength="240" autocomplete="url" placeholder="https://..." data-i18n-attr="placeholder:phUrl">
+            <div class="hint" style="color:#e67e22"><i class="fas fa-exclamation-triangle"></i> <span data-i18n="resumeShareHint">Ensure the link is viewable by anyone.</span></div>
+            <div class="field-error" data-i18n="errResumeLink">Please provide a valid resume link.</div>
           </div>
 
           <div class="form-group" data-field>
-            <label for="resume_file">Optional: Upload Resume (PDF/DOC/DOCX)</label>
-            <div class="hint">If you upload a file, HR can access it from your reference ID record.</div>
-            <input id="resume_file" type="file" name="resume_file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+            <label for="resume_file" data-i18n="optionalUpload">Optional: Upload Resume (PDF/DOC/DOCX)</label>
+            <div class="hint" data-i18n="uploadHint">If you upload a file, HR can access it from your reference ID record.</div>
+
+            <!-- Enhanced UX wrapper; keeps the real input unchanged -->
+            <div class="file-drop" id="fileDrop" aria-label="Resume upload">
+              <div class="file-meta">
+                <b data-i18n="dropTitle">Drag & drop your resume here (optional)</b>
+                <small id="filePickedText" data-i18n="noFilePicked">No file selected.</small>
+                <small data-i18n="fileLimits">Max file size: 2MB. Accepted: PDF, DOC, DOCX.</small>
+              </div>
+              <div class="file-actions">
+                <button type="button" class="mini-btn" id="btnChooseFile"><i class="fa-solid fa-upload"></i> <span data-i18n="chooseFile">Choose file</span></button>
+                <button type="button" class="mini-btn" id="btnClearFile" style="display:none"><i class="fa-regular fa-trash-can"></i> <span data-i18n="removeFile">Remove</span></button>
+              </div>
+            </div>
+
+            <input id="resume_file" type="file" name="resume_file"
+              accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              style="margin-top:12px">
             <div class="field-error" id="fileErr"></div>
           </div>
         </div>
       </section>
 
       <!-- STEP 4 -->
-      <section class="step" data-step="3">
+      <section class="step" data-step="3" aria-label="Mission alignment">
         <div class="form-section">
-          <div class="section-title"><i class="fas fa-globe-americas"></i> Mission Alignment</div>
+          <div class="section-title"><i class="fas fa-globe-americas"></i> <span data-i18n="missionAlignment">Mission Alignment</span></div>
 
           <div class="form-group" data-field>
-            <label for="inspiration">What inspires you to contribute to HPG's mission? *</label>
+            <label for="inspiration"><span data-i18n="inspirationQ">What inspires you to contribute to HPG's mission?</span> *</label>
             <textarea id="inspiration" name="inspiration" rows="4" required maxlength="2000"></textarea>
             <div class="counter" data-count-for="inspiration"></div>
-            <div class="field-error">Please add a short explanation.</div>
+            <div class="field-error" data-i18n="errInspiration">Please add a short explanation.</div>
           </div>
 
           <div class="form-group" data-field>
-            <label for="causes">Specific causes or regions you care about</label>
-            <input id="causes" type="text" name="causes" maxlength="240" placeholder="e.g. Education in East Africa, Digital Literacy, Women’s Health">
+            <label for="causes" data-i18n="causesRegions">Specific causes or regions you care about</label>
+            <input id="causes" type="text" name="causes" maxlength="240"
+              placeholder="e.g. Education in East Africa, Digital Literacy, Women’s Health"
+              data-i18n-attr="placeholder:phCauses">
             <div class="field-error"></div>
           </div>
         </div>
       </section>
 
       <!-- STEP 5 -->
-      <section class="step" data-step="4">
+      <section class="step" data-step="4" aria-label="Compliance and review">
         <div class="form-section">
-          <div class="section-title"><i class="fas fa-check-double"></i> Compliance & Review</div>
+          <div class="section-title"><i class="fas fa-check-double"></i> <span data-i18n="complianceReview">Compliance & Review</span></div>
 
           <div class="grid-row">
             <div class="form-group" data-field>
-              <label for="work_auth">Legally authorized to work in your country?</label>
+              <label for="work_auth" data-i18n="workAuth">Legally authorized to work in your country?</label>
               <select id="work_auth" name="work_auth">
-                <option value="Yes">Yes</option><option value="No">No</option>
+                <option value="Yes" data-i18n="yes">Yes</option>
+                <option value="No" data-i18n="no">No</option>
               </select>
               <div class="field-error"></div>
             </div>
             <div class="form-group" data-field>
-              <label for="sponsorship">Do you require sponsorship?</label>
+              <label for="sponsorship" data-i18n="needSponsorship">Do you require sponsorship?</label>
               <select id="sponsorship" name="sponsorship">
-                <option value="No">No</option><option value="Yes">Yes</option>
+                <option value="No" data-i18n="no">No</option>
+                <option value="Yes" data-i18n="yes">Yes</option>
               </select>
               <div class="field-error"></div>
             </div>
@@ -631,34 +1079,34 @@
           <div class="form-group" data-field>
             <label class="checkbox-pill" style="width:100%;">
               <input id="consent" type="checkbox" name="consent" required>
-              <span class="pill-content" style="width:100%;"><i class="fas fa-user-check"></i> I consent to Humanity Pathways Global processing my data for recruitment purposes.</span>
+              <span class="pill-content" style="width:100%;"><i class="fas fa-user-check"></i> <span data-i18n="consentText">I consent to Humanity Pathways Global processing my data for recruitment purposes.</span></span>
             </label>
-            <div class="hint">A submission receipt email will be sent to the address you entered.</div>
-            <div class="field-error">Consent is required to submit.</div>
+            <div class="hint" data-i18n="receiptEmailHint">A submission receipt email will be sent to the address you entered.</div>
+            <div class="field-error" data-i18n="errConsent">Consent is required to submit.</div>
           </div>
 
-          <div class="hint" style="margin-top:8px">
+          <div class="hint" style="margin-top:8px" data-i18n="reviewNextHint">
             Next, you’ll see a review screen before the final submit.
           </div>
         </div>
       </section>
 
-      <!-- NEW: Heads-up shown on final step -->
+      <!-- Heads-up shown on final step -->
       <div class="browser-note" id="browserNote">
         <i class="fa-solid fa-circle-info"></i>
-        <div>
+        <div data-i18n="browserHeadsUp">
           <b>Heads up:</b> Some browsers, privacy tools, or strict settings may block submissions.
           If you do not see an <b>“Application received”</b> confirmation after submitting, please try a different browser (Chrome, Edge, or Firefox) and resubmit.
           If you opened this page from a downloaded file, try opening the official hosted link instead.
         </div>
       </div>
 
-      <div class="actions">
-        <button type="button" class="btn btn-outline" id="btnPdf"><i class="fas fa-file-download"></i> Download PDF</button>
-        <button type="button" class="btn btn-ghost" id="btnBack"><i class="fa-solid fa-arrow-left"></i> Back</button>
-        <button type="button" class="btn btn-primary" id="btnNext">Next <i class="fa-solid fa-arrow-right"></i></button>
-        <button type="button" class="btn btn-primary" id="btnReview" style="display:none">Review <i class="fa-regular fa-clipboard"></i></button>
-        <button type="submit" class="btn btn-primary" id="btnSubmit" style="display:none">Submit <i class="fas fa-paper-plane"></i></button>
+      <div class="actions" aria-label="Form actions">
+        <button type="button" class="btn btn-outline" id="btnPdf"><i class="fas fa-file-download"></i> <span data-i18n="downloadPdf">Download PDF</span></button>
+        <button type="button" class="btn btn-ghost" id="btnBack"><i class="fa-solid fa-arrow-left"></i> <span data-i18n="back">Back</span></button>
+        <button type="button" class="btn btn-primary" id="btnNext"><span data-i18n="next">Next</span> <i class="fa-solid fa-arrow-right"></i></button>
+        <button type="button" class="btn btn-primary" id="btnReview" style="display:none"><span data-i18n="review">Review</span> <i class="fa-regular fa-clipboard"></i></button>
+        <button type="submit" class="btn btn-primary" id="btnSubmit" style="display:none"><span data-i18n="submit">Submit</span> <i class="fas fa-paper-plane"></i></button>
       </div>
     </form>
   </div>
@@ -667,63 +1115,93 @@
   <div class="modal" id="reviewModal" aria-hidden="true">
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="reviewTitle">
       <div class="modal-head">
-        <h3 id="reviewTitle"><i class="fa-regular fa-clipboard"></i> Review your application</h3>
+        <h3 id="reviewTitle"><i class="fa-regular fa-clipboard"></i> <span data-i18n="reviewYourApp">Review your application</span></h3>
         <button class="mini-btn" id="closeReview" aria-label="Close review">✕</button>
       </div>
       <div class="modal-body">
         <div class="summary" id="summaryGrid"></div>
 
-        <!-- NEW: Heads-up inside the review -->
         <div class="modal-note">
           <i class="fa-solid fa-circle-info"></i>
-          <div>
+          <div data-i18n="reviewBrowserNote">
             If you click <b>Confirm Submit</b> and do not see an <b>“Application received”</b> confirmation, try a different browser (Chrome, Edge, or Firefox) and submit again.
           </div>
         </div>
       </div>
       <div class="modal-actions">
-        <button class="btn btn-ghost" type="button" id="btnEdit"><i class="fa-solid fa-pen"></i> Edit</button>
-        <button class="btn btn-primary" type="button" id="btnConfirmSubmit"><i class="fas fa-paper-plane"></i> Confirm Submit</button>
+        <button class="btn btn-ghost" type="button" id="btnEdit"><i class="fa-solid fa-pen"></i> <span data-i18n="edit">Edit</span></button>
+        <button class="btn btn-primary" type="button" id="btnConfirmSubmit"><i class="fas fa-paper-plane"></i> <span data-i18n="confirmSubmit">Confirm Submit</span></button>
       </div>
     </div>
   </div>
 
-  <!-- NEW: Success Modal (receipt + confetti trigger) -->
+  <!-- Help Modal (front-end only) -->
+  <div class="modal" id="helpModal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+      <div class="modal-head">
+        <h3 id="helpTitle"><i class="fa-solid fa-circle-question"></i> <span data-i18n="helpTitle">Help & Troubleshooting</span></h3>
+        <button class="mini-btn" id="closeHelp" aria-label="Close help">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="kv" style="margin-bottom:12px">
+          <b data-i18n="helpAutosaveTitle">Draft autosave</b>
+          <span data-i18n="helpAutosaveBody">Your responses are saved locally in your browser while you type. Use “Clear saved draft” in the status banner if needed.</span>
+        </div>
+        <div class="kv" style="margin-bottom:12px">
+          <b data-i18n="helpPdfTitle">PDF download</b>
+          <span data-i18n="helpPdfBody">If the PDF download is blank, close any pop-up blockers and try again. On mobile, download may take a moment.</span>
+        </div>
+        <div class="kv" style="margin-bottom:12px">
+          <b data-i18n="helpSubmitTitle">Submission issues</b>
+          <span data-i18n="helpSubmitBody">If you do not see an “Application received” confirmation, try Chrome, Edge, or Firefox, disable strict privacy extensions for this page, and resubmit.</span>
+        </div>
+        <div class="kv">
+          <b data-i18n="helpPrivacyTitle">Privacy note</b>
+          <span data-i18n="helpPrivacyBody">Draft data is stored only on your device until you submit. The submission sends your form fields to the application endpoint.</span>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" type="button" id="helpCloseBtn"><i class="fa-solid fa-check"></i> <span data-i18n="gotIt">Got it</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Modal (receipt + confetti) -->
   <div class="modal" id="successModal" aria-hidden="true">
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="successTitle">
       <div class="modal-head">
-        <h3 id="successTitle"><i class="fa-solid fa-circle-check"></i> Submission completed</h3>
+        <h3 id="successTitle"><i class="fa-solid fa-circle-check"></i> <span data-i18n="submissionCompleted">Submission completed</span></h3>
         <button class="mini-btn" id="closeSuccess" aria-label="Close success">✕</button>
       </div>
       <div class="modal-body">
         <div class="success-hero">
           <div class="success-icon"><i class="fa-solid fa-check"></i></div>
           <div>
-            <div style="font-weight:900;color:var(--primary);font-size:1.1rem">Application received</div>
-            <div style="color:rgba(15,23,42,.70);font-size:.95rem">Your submission has been recorded successfully.</div>
+            <div style="font-weight:900;color:var(--primary);font-size:1.1rem" data-i18n="applicationReceived">Application received</div>
+            <div style="color:rgba(15,23,42,.70);font-size:.95rem" data-i18n="submissionRecorded">Your submission has been recorded successfully.</div>
           </div>
         </div>
 
-        <p class="success-sub" id="successSubText">
+        <p class="success-sub" id="successSubText" data-i18n="receiptArrive">
           A receipt email should arrive shortly at the address you entered.
         </p>
 
         <div class="success-kv">
-          <b>Reference ID</b>
+          <b data-i18n="referenceId">Reference ID</b>
           <span id="successRefId">(pending)</span>
         </div>
 
         <div class="success-kv">
-          <b>Next steps</b>
-          <span>
+          <b data-i18n="nextSteps">Next steps</b>
+          <span data-i18n="nextStepsBody">
             You may download a PDF copy now. If you do not receive a receipt email, check spam/junk, then try again using another browser.
           </span>
         </div>
       </div>
       <div class="modal-actions">
-        <button class="btn btn-ghost" type="button" id="successCopyId"><i class="fa-regular fa-copy"></i> Copy Reference ID</button>
-        <button class="btn btn-outline" type="button" id="successPdf"><i class="fa-solid fa-file-download"></i> Download PDF</button>
-        <button class="btn btn-primary" type="button" id="successNew"><i class="fa-solid fa-rotate-right"></i> Start New Application</button>
+        <button class="btn btn-ghost" type="button" id="successCopyId"><i class="fa-regular fa-copy"></i> <span data-i18n="copyRefId">Copy Reference ID</span></button>
+        <button class="btn btn-outline" type="button" id="successPdf"><i class="fa-solid fa-file-download"></i> <span data-i18n="downloadPdf">Download PDF</span></button>
+        <button class="btn btn-primary" type="button" id="successNew"><i class="fa-solid fa-rotate-right"></i> <span data-i18n="startNew">Start New Application</span></button>
       </div>
     </div>
   </div>
@@ -733,10 +1211,705 @@
       const $ = (s, r=document) => r.querySelector(s);
       const $$ = (s, r=document) => [...r.querySelectorAll(s)];
 
+      /* ===== BACKEND CONNECTIONS (UNCHANGED) ===== */
       const CONFIG = {
         functionUrl: 'https://mlmjlgmsrkemsuwdohsa.supabase.co/functions/v1/submit-application',
         supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1sbWpsZ21zcmtlbXN1d2RvaHNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU1MTE0MTgsImV4cCI6MjA4MTA4NzQxOH0.NW6sYH5TC-Pa591FZd09coSiJFhoAOg3oz27he6XV1I',
         maxUploadBytes: 2 * 1024 * 1024
+      };
+
+      /* ===== i18n (front-end only) ===== */
+      const I18N = {
+        en: {
+          skipToForm: "Skip to form",
+          language: "Language",
+          theme: "Theme",
+          help: "Help",
+          joinMovement: "Join the Movement",
+          careerVolunteer: "Career & Volunteer Application",
+          stepPersonal: "Personal",
+          stepPosition: "Position",
+          stepExperience: "Experience",
+          stepAlignment: "Alignment",
+          stepReview: "Review",
+
+          personalInfo: "Personal Information",
+          legalFullName: "Legal Full Name",
+          preferredName: "Preferred Name",
+          emailAddress: "Email Address",
+          mobilePhone: "Mobile Phone",
+          currentLocation: "Current Location (City, State, Country)",
+          linkedinPortfolio: "LinkedIn / Portfolio URL",
+
+          positionLogistics: "Position & Logistics",
+          positionApplying: "Position Applying For",
+          selectRole: "Select Role...",
+          roleDirector: "Director of NGO Programs",
+          roleHr: "HR Specialist",
+          roleRecruitment: "Recruitment Specialist",
+          roleGrant: "Grant Manager",
+          roleDevops: "Software/DevOps Specialist",
+          rolePm: "Project Manager",
+          roleVolunteer: "General Volunteer",
+
+          availableStart: "Available Start Date",
+          workStyleAvailability: "Work Style & Availability",
+          selectAtLeastOne: "Select at least one.",
+          avRemote: "Remote",
+          avPartTime: "Part-time",
+          avWeekends: "Weekends",
+          avEvenings: "Evenings",
+          timeConstraints: "Hours per week & Time Zone constraints",
+
+          experienceQualifications: "Experience & Qualifications",
+          highestDegree: "Highest Degree Earned",
+          selectOne: "Select one...",
+          eduHighSchool: "High School / GED",
+          eduAssociate: "Associate's Degree",
+          eduBachelor: "Bachelor's Degree",
+          eduMaster: "Master's Degree",
+          eduDoctorate: "Doctorate / PhD",
+
+          experienceSummary: "Professional Experience Summary",
+          experienceHint: "If relevant, mention fiscal sponsorship or grant management experience.",
+          coreCompetencies: "Top 2–3 Core Competencies",
+          toolsCerts: "Technical Tools & Certifications",
+          resumeLink: "Link to Resume (Google Drive/Dropbox)",
+          resumeShareHint: "Ensure the link is viewable by anyone.",
+          optionalUpload: "Optional: Upload Resume (PDF/DOC/DOCX)",
+          uploadHint: "If you upload a file, HR can access it from your reference ID record.",
+          dropTitle: "Drag & drop your resume here (optional)",
+          noFilePicked: "No file selected.",
+          fileLimits: "Max file size: 2MB. Accepted: PDF, DOC, DOCX.",
+          chooseFile: "Choose file",
+          removeFile: "Remove",
+
+          missionAlignment: "Mission Alignment",
+          inspirationQ: "What inspires you to contribute to HPG's mission?",
+          causesRegions: "Specific causes or regions you care about",
+
+          complianceReview: "Compliance & Review",
+          workAuth: "Legally authorized to work in your country?",
+          needSponsorship: "Do you require sponsorship?",
+          yes: "Yes",
+          no: "No",
+          consentText: "I consent to Humanity Pathways Global processing my data for recruitment purposes.",
+          receiptEmailHint: "A submission receipt email will be sent to the address you entered.",
+          reviewNextHint: "Next, you’ll see a review screen before the final submit.",
+
+          browserHeadsUp: "<b>Heads up:</b> Some browsers, privacy tools, or strict settings may block submissions. If you do not see an <b>“Application received”</b> confirmation after submitting, please try a different browser (Chrome, Edge, or Firefox) and resubmit. If you opened this page from a downloaded file, try opening the official hosted link instead.",
+
+          downloadPdf: "Download PDF",
+          back: "Back",
+          next: "Next",
+          review: "Review",
+          submit: "Submit",
+
+          reviewYourApp: "Review your application",
+          reviewBrowserNote: "If you click <b>Confirm Submit</b> and do not see an <b>“Application received”</b> confirmation, try a different browser (Chrome, Edge, or Firefox) and submit again.",
+          edit: "Edit",
+          confirmSubmit: "Confirm Submit",
+
+          helpTitle: "Help & Troubleshooting",
+          helpAutosaveTitle: "Draft autosave",
+          helpAutosaveBody: "Your responses are saved locally in your browser while you type. Use “Clear saved draft” in the status banner if needed.",
+          helpPdfTitle: "PDF download",
+          helpPdfBody: "If the PDF download is blank, close any pop-up blockers and try again. On mobile, download may take a moment.",
+          helpSubmitTitle: "Submission issues",
+          helpSubmitBody: "If you do not see an “Application received” confirmation, try Chrome, Edge, or Firefox, disable strict privacy extensions for this page, and resubmit.",
+          helpPrivacyTitle: "Privacy note",
+          helpPrivacyBody: "Draft data is stored only on your device until you submit. The submission sends your form fields to the application endpoint.",
+          gotIt: "Got it",
+
+          submissionCompleted: "Submission completed",
+          applicationReceived: "Application received",
+          submissionRecorded: "Your submission has been recorded successfully.",
+          receiptArrive: "A receipt email should arrive shortly at the address you entered.",
+          referenceId: "Reference ID",
+          nextSteps: "Next steps",
+          nextStepsBody: "You may download a PDF copy now. If you do not receive a receipt email, check spam/junk, then try again using another browser.",
+          copyRefId: "Copy Reference ID",
+          startNew: "Start New Application",
+
+          // Placeholders
+          phAsListedOnId: "As listed on ID",
+          phEmail: "name@example.com",
+          phPhone: "e.g. +1 313 555 0123",
+          phLocation: "e.g. Detroit, MI, USA",
+          phUrl: "https://...",
+          phTimeConstraints: "e.g. 10–15 hours/week, EST evenings only",
+          phCompetencies: "e.g. Project Management, Python/SQL, Community Outreach",
+          phTools: "e.g. Asana, Slack, Google Workspace, PMP",
+          phCauses: "e.g. Education in East Africa, Digital Literacy, Women’s Health",
+
+          // Errors
+          errFullName: "Please enter your full legal name.",
+          errEmail: "Please enter a valid email address.",
+          errPhone: "Please enter a phone number.",
+          errLocation: "Please enter your location.",
+          errUrl: "That link does not look valid.",
+          errPosition: "Please select a position.",
+          errStartDate: "Please choose a start date.",
+          errAvailability: "Please select at least one availability option.",
+          errEducation: "Please select an education level.",
+          errExperience: "Please add a short experience summary.",
+          errStrengths: "Please list your core competencies.",
+          errResumeLink: "Please provide a valid resume link.",
+          errInspiration: "Please add a short explanation.",
+          errConsent: "Consent is required to submit.",
+
+          // Status / UI
+          draftNotSaved: "Draft not saved yet",
+          draftSaved: "Draft saved",
+          draftRestored: "Draft restored.",
+          lastSaved: "Last saved: {when}",
+          savedDraftCleared: "Saved draft cleared.",
+          submitting: "Submitting your application…",
+          received: "Application received.",
+          refIdLine: "Reference ID: {id}. A receipt email should arrive shortly.",
+          receiptLine: "A receipt email should arrive shortly.",
+          copyReferenceId: "Copy Reference ID",
+          clearDraft: "Clear saved draft",
+          waitMoment: "Please wait a moment before submitting again.",
+          tryAgainIn: "Try again in {sec} seconds.",
+          adjustResume: "Please adjust your resume upload.",
+          fileTooLarge: "File is too large. Max {mb}MB.",
+          submitWentWrong: "Something went wrong while submitting.",
+          tryAgain: "Please try again.",
+          preparingPdf: "Preparing PDF...",
+          pdfFailed: "PDF generation failed. Please try again.",
+          referenceCopied: "Reference ID copied.",
+          startNewInfo: "You may start a new application now.",
+
+          toastSavedTitle: "Saved",
+          toastSavedBody: "Draft updated.",
+          toastCopiedTitle: "Copied",
+          toastCopiedBody: "Reference ID copied to clipboard.",
+          toastFileRemovedTitle: "Removed",
+          toastFileRemovedBody: "File cleared.",
+          toastFilePickedTitle: "Selected",
+          toastFilePickedBody: "File attached.",
+          toastThemeTitle: "Theme",
+          toastThemeBody: "Theme updated.",
+          toastLanguageTitle: "Language",
+          toastLanguageBody: "Language updated."
+        },
+
+        es: {
+          skipToForm: "Saltar al formulario",
+          language: "Idioma",
+          theme: "Tema",
+          help: "Ayuda",
+          joinMovement: "Únete al Movimiento",
+          careerVolunteer: "Solicitud de Carrera y Voluntariado",
+          stepPersonal: "Personal",
+          stepPosition: "Puesto",
+          stepExperience: "Experiencia",
+          stepAlignment: "Afinidad",
+          stepReview: "Revisar",
+
+          personalInfo: "Información Personal",
+          legalFullName: "Nombre legal completo",
+          preferredName: "Nombre preferido",
+          emailAddress: "Correo electrónico",
+          mobilePhone: "Teléfono móvil",
+          currentLocation: "Ubicación actual (Ciudad, Estado, País)",
+          linkedinPortfolio: "LinkedIn / Portafolio (URL)",
+
+          positionLogistics: "Puesto y logística",
+          positionApplying: "Puesto al que postulas",
+          selectRole: "Selecciona un puesto...",
+          roleDirector: "Director/a de Programas de ONG",
+          roleHr: "Especialista de RR. HH.",
+          roleRecruitment: "Especialista de reclutamiento",
+          roleGrant: "Gerente de subvenciones",
+          roleDevops: "Especialista de Software/DevOps",
+          rolePm: "Gerente de proyectos",
+          roleVolunteer: "Voluntario/a general",
+
+          availableStart: "Fecha disponible de inicio",
+          workStyleAvailability: "Modalidad y disponibilidad",
+          selectAtLeastOne: "Selecciona al menos una.",
+          avRemote: "Remoto",
+          avPartTime: "Medio tiempo",
+          avWeekends: "Fines de semana",
+          avEvenings: "Noches",
+          timeConstraints: "Horas por semana y zona horaria",
+
+          experienceQualifications: "Experiencia y calificaciones",
+          highestDegree: "Nivel educativo más alto",
+          selectOne: "Selecciona uno...",
+          eduHighSchool: "Secundaria / GED",
+          eduAssociate: "Técnico / Asociado",
+          eduBachelor: "Licenciatura",
+          eduMaster: "Maestría",
+          eduDoctorate: "Doctorado / PhD",
+
+          experienceSummary: "Resumen de experiencia profesional",
+          experienceHint: "Si aplica, menciona experiencia en patrocinio fiscal o gestión de subvenciones.",
+          coreCompetencies: "2–3 competencias principales",
+          toolsCerts: "Herramientas y certificaciones",
+          resumeLink: "Enlace a tu CV (Google Drive/Dropbox)",
+          resumeShareHint: "Asegúrate de que el enlace sea visible para cualquiera.",
+          optionalUpload: "Opcional: subir CV (PDF/DOC/DOCX)",
+          uploadHint: "Si subes un archivo, RR. HH. puede acceder desde tu ID de referencia.",
+          dropTitle: "Arrastra y suelta tu CV aquí (opcional)",
+          noFilePicked: "Ningún archivo seleccionado.",
+          fileLimits: "Tamaño máx.: 2MB. Acepta: PDF, DOC, DOCX.",
+          chooseFile: "Elegir archivo",
+          removeFile: "Quitar",
+
+          missionAlignment: "Afinidad con la misión",
+          inspirationQ: "¿Qué te inspira a contribuir a la misión de HPG?",
+          causesRegions: "Causas o regiones que te interesan",
+
+          complianceReview: "Cumplimiento y revisión",
+          workAuth: "¿Autorizado/a legalmente para trabajar en tu país?",
+          needSponsorship: "¿Necesitas patrocinio?",
+          yes: "Sí",
+          no: "No",
+          consentText: "Consiento que Humanity Pathways Global procese mis datos para fines de reclutamiento.",
+          receiptEmailHint: "Se enviará un comprobante al correo electrónico indicado.",
+          reviewNextHint: "Luego verás una pantalla de revisión antes del envío final.",
+
+          browserHeadsUp: "<b>Atención:</b> Algunos navegadores, herramientas de privacidad o configuraciones estrictas pueden bloquear envíos. Si no ves la confirmación <b>“Solicitud recibida”</b>, prueba otro navegador (Chrome, Edge o Firefox) y vuelve a enviar. Si abriste esta página desde un archivo descargado, intenta abrir el enlace oficial alojado.",
+
+          downloadPdf: "Descargar PDF",
+          back: "Atrás",
+          next: "Siguiente",
+          review: "Revisar",
+          submit: "Enviar",
+
+          reviewYourApp: "Revisa tu solicitud",
+          reviewBrowserNote: "Si haces clic en <b>Confirmar envío</b> y no ves la confirmación <b>“Solicitud recibida”</b>, prueba otro navegador (Chrome, Edge o Firefox) y vuelve a enviar.",
+          edit: "Editar",
+          confirmSubmit: "Confirmar envío",
+
+          helpTitle: "Ayuda y solución de problemas",
+          helpAutosaveTitle: "Guardado automático",
+          helpAutosaveBody: "Tus respuestas se guardan localmente en el navegador mientras escribes. Usa “Borrar borrador” si lo necesitas.",
+          helpPdfTitle: "Descarga de PDF",
+          helpPdfBody: "Si el PDF sale en blanco, cierra bloqueadores emergentes e inténtalo de nuevo. En móvil puede tardar.",
+          helpSubmitTitle: "Problemas al enviar",
+          helpSubmitBody: "Si no ves la confirmación, prueba Chrome/Edge/Firefox, desactiva extensiones estrictas y reenvía.",
+          helpPrivacyTitle: "Privacidad",
+          helpPrivacyBody: "El borrador se guarda solo en tu dispositivo hasta que envíes. El envío transmite los campos al endpoint.",
+          gotIt: "Entendido",
+
+          submissionCompleted: "Envío completado",
+          applicationReceived: "Solicitud recibida",
+          submissionRecorded: "Tu envío se registró correctamente.",
+          receiptArrive: "El comprobante debería llegar pronto al correo indicado.",
+          referenceId: "ID de referencia",
+          nextSteps: "Siguientes pasos",
+          nextStepsBody: "Puedes descargar un PDF ahora. Si no recibes el correo, revisa spam y prueba con otro navegador.",
+          copyRefId: "Copiar ID",
+          startNew: "Nueva solicitud",
+
+          phAsListedOnId: "Como aparece en tu identificación",
+          phEmail: "nombre@ejemplo.com",
+          phPhone: "p. ej. +1 313 555 0123",
+          phLocation: "p. ej. Detroit, MI, USA",
+          phUrl: "https://...",
+          phTimeConstraints: "p. ej. 10–15 h/semana, solo noches EST",
+          phCompetencies: "p. ej. Gestión de proyectos, Python/SQL, Alcance comunitario",
+          phTools: "p. ej. Asana, Slack, Google Workspace, PMP",
+          phCauses: "p. ej. Educación en África Oriental, alfabetización digital, salud de mujeres",
+
+          errFullName: "Ingresa tu nombre legal completo.",
+          errEmail: "Ingresa un correo válido.",
+          errPhone: "Ingresa un número de teléfono.",
+          errLocation: "Ingresa tu ubicación.",
+          errUrl: "Ese enlace no parece válido.",
+          errPosition: "Selecciona un puesto.",
+          errStartDate: "Elige una fecha de inicio.",
+          errAvailability: "Selecciona al menos una disponibilidad.",
+          errEducation: "Selecciona un nivel educativo.",
+          errExperience: "Agrega un resumen de experiencia.",
+          errStrengths: "Enumera tus competencias.",
+          errResumeLink: "Proporciona un enlace válido a tu CV.",
+          errInspiration: "Agrega una explicación breve.",
+          errConsent: "El consentimiento es obligatorio.",
+
+          draftNotSaved: "Borrador aún no guardado",
+          draftSaved: "Borrador guardado",
+          draftRestored: "Borrador restaurado.",
+          lastSaved: "Último guardado: {when}",
+          savedDraftCleared: "Borrador borrado.",
+          submitting: "Enviando tu solicitud…",
+          received: "Solicitud recibida.",
+          refIdLine: "ID de referencia: {id}. El comprobante llegará pronto.",
+          receiptLine: "El comprobante llegará pronto.",
+          copyReferenceId: "Copiar ID",
+          clearDraft: "Borrar borrador",
+          waitMoment: "Espera un momento antes de reenviar.",
+          tryAgainIn: "Intenta de nuevo en {sec} segundos.",
+          adjustResume: "Ajusta la carga de tu CV.",
+          fileTooLarge: "El archivo es demasiado grande. Máx. {mb}MB.",
+          submitWentWrong: "Ocurrió un error al enviar.",
+          tryAgain: "Vuelve a intentarlo.",
+          preparingPdf: "Preparando PDF...",
+          pdfFailed: "Falló la generación del PDF. Inténtalo de nuevo.",
+          referenceCopied: "ID copiado.",
+          startNewInfo: "Ya puedes iniciar una nueva solicitud.",
+
+          toastSavedTitle: "Guardado",
+          toastSavedBody: "Borrador actualizado.",
+          toastCopiedTitle: "Copiado",
+          toastCopiedBody: "ID copiado al portapapeles.",
+          toastFileRemovedTitle: "Eliminado",
+          toastFileRemovedBody: "Archivo quitado.",
+          toastFilePickedTitle: "Seleccionado",
+          toastFilePickedBody: "Archivo adjunto.",
+          toastThemeTitle: "Tema",
+          toastThemeBody: "Tema actualizado.",
+          toastLanguageTitle: "Idioma",
+          toastLanguageBody: "Idioma actualizado."
+        },
+
+        fr: {
+          skipToForm: "Aller au formulaire",
+          language: "Langue",
+          theme: "Thème",
+          help: "Aide",
+          joinMovement: "Rejoignez le Mouvement",
+          careerVolunteer: "Candidature Carrière & Bénévolat",
+          stepPersonal: "Personnel",
+          stepPosition: "Poste",
+          stepExperience: "Expérience",
+          stepAlignment: "Alignement",
+          stepReview: "Revue",
+
+          personalInfo: "Informations personnelles",
+          legalFullName: "Nom légal complet",
+          preferredName: "Nom d’usage",
+          emailAddress: "Adresse e-mail",
+          mobilePhone: "Téléphone mobile",
+          currentLocation: "Lieu actuel (Ville, État, Pays)",
+          linkedinPortfolio: "LinkedIn / Portfolio (URL)",
+
+          positionLogistics: "Poste & logistique",
+          positionApplying: "Poste visé",
+          selectRole: "Sélectionner un poste...",
+          roleDirector: "Directeur/Directrice des programmes ONG",
+          roleHr: "Spécialiste RH",
+          roleRecruitment: "Spécialiste recrutement",
+          roleGrant: "Responsable subventions",
+          roleDevops: "Spécialiste Software/DevOps",
+          rolePm: "Chef/fe de projet",
+          roleVolunteer: "Bénévole général",
+
+          availableStart: "Date de disponibilité",
+          workStyleAvailability: "Mode de travail & disponibilité",
+          selectAtLeastOne: "Sélectionnez au moins une option.",
+          avRemote: "Télétravail",
+          avPartTime: "Temps partiel",
+          avWeekends: "Week-ends",
+          avEvenings: "Soirs",
+          timeConstraints: "Heures/semaine & contraintes de fuseau",
+
+          experienceQualifications: "Expérience & qualifications",
+          highestDegree: "Diplôme le plus élevé",
+          selectOne: "Choisir...",
+          eduHighSchool: "Lycée / GED",
+          eduAssociate: "Bac+2 / Associate",
+          eduBachelor: "Licence",
+          eduMaster: "Master",
+          eduDoctorate: "Doctorat / PhD",
+
+          experienceSummary: "Résumé d’expérience professionnelle",
+          experienceHint: "Si pertinent, mentionnez le parrainage fiscal ou la gestion de subventions.",
+          coreCompetencies: "2–3 compétences clés",
+          toolsCerts: "Outils & certifications",
+          resumeLink: "Lien vers CV (Google Drive/Dropbox)",
+          resumeShareHint: "Assurez-vous que le lien est accessible à tous.",
+          optionalUpload: "Optionnel : téléverser le CV (PDF/DOC/DOCX)",
+          uploadHint: "Si vous téléversez un fichier, RH pourra l’ouvrir via l’ID de référence.",
+          dropTitle: "Glissez-déposez votre CV ici (optionnel)",
+          noFilePicked: "Aucun fichier sélectionné.",
+          fileLimits: "Taille max : 2 Mo. Formats : PDF, DOC, DOCX.",
+          chooseFile: "Choisir un fichier",
+          removeFile: "Retirer",
+
+          missionAlignment: "Alignement avec la mission",
+          inspirationQ: "Qu’est-ce qui vous motive à contribuer à la mission de HPG ?",
+          causesRegions: "Causes ou régions qui vous importent",
+
+          complianceReview: "Conformité & revue",
+          workAuth: "Autorisé(e) légalement à travailler dans votre pays ?",
+          needSponsorship: "Avez-vous besoin de sponsoring ?",
+          yes: "Oui",
+          no: "Non",
+          consentText: "Je consens à ce que Humanity Pathways Global traite mes données à des fins de recrutement.",
+          receiptEmailHint: "Un reçu sera envoyé à l’adresse e-mail indiquée.",
+          reviewNextHint: "Vous verrez ensuite un écran de revue avant l’envoi final.",
+
+          browserHeadsUp: "<b>Info :</b> Certains navigateurs ou outils de confidentialité peuvent bloquer l’envoi. Si vous ne voyez pas la confirmation <b>« Candidature reçue »</b>, essayez un autre navigateur (Chrome, Edge ou Firefox) et renvoyez. Si cette page vient d’un fichier téléchargé, ouvrez plutôt le lien officiel hébergé.",
+
+          downloadPdf: "Télécharger le PDF",
+          back: "Retour",
+          next: "Suivant",
+          review: "Revoir",
+          submit: "Envoyer",
+
+          reviewYourApp: "Revoir votre candidature",
+          reviewBrowserNote: "Si vous cliquez <b>Confirmer l’envoi</b> et ne voyez pas la confirmation <b>« Candidature reçue »</b>, essayez un autre navigateur (Chrome, Edge ou Firefox) puis renvoyez.",
+          edit: "Modifier",
+          confirmSubmit: "Confirmer l’envoi",
+
+          helpTitle: "Aide & dépannage",
+          helpAutosaveTitle: "Sauvegarde automatique",
+          helpAutosaveBody: "Vos réponses sont sauvegardées localement pendant la saisie. Utilisez « Effacer le brouillon » si nécessaire.",
+          helpPdfTitle: "Téléchargement PDF",
+          helpPdfBody: "Si le PDF est vide, fermez les bloqueurs de pop-up et réessayez. Sur mobile, cela peut prendre un moment.",
+          helpSubmitTitle: "Problèmes d’envoi",
+          helpSubmitBody: "Si vous ne voyez pas la confirmation, essayez Chrome/Edge/Firefox, désactivez les extensions strictes et renvoyez.",
+          helpPrivacyTitle: "Confidentialité",
+          helpPrivacyBody: "Le brouillon reste sur votre appareil jusqu’à l’envoi. L’envoi transmet les champs à l’endpoint.",
+          gotIt: "Compris",
+
+          submissionCompleted: "Envoi terminé",
+          applicationReceived: "Candidature reçue",
+          submissionRecorded: "Votre envoi a été enregistré.",
+          receiptArrive: "Un reçu devrait arriver bientôt à l’adresse e-mail indiquée.",
+          referenceId: "ID de référence",
+          nextSteps: "Étapes suivantes",
+          nextStepsBody: "Vous pouvez télécharger un PDF maintenant. Si vous ne recevez pas l’e-mail, vérifiez les spams et essayez un autre navigateur.",
+          copyRefId: "Copier l’ID",
+          startNew: "Nouvelle candidature",
+
+          phAsListedOnId: "Comme sur votre pièce d’identité",
+          phEmail: "nom@exemple.com",
+          phPhone: "ex. +1 313 555 0123",
+          phLocation: "ex. Detroit, MI, USA",
+          phUrl: "https://...",
+          phTimeConstraints: "ex. 10–15 h/semaine, soirs EST uniquement",
+          phCompetencies: "ex. Gestion de projet, Python/SQL, mobilisation communautaire",
+          phTools: "ex. Asana, Slack, Google Workspace, PMP",
+          phCauses: "ex. Éducation en Afrique de l’Est, littératie numérique, santé des femmes",
+
+          errFullName: "Veuillez saisir votre nom légal complet.",
+          errEmail: "Veuillez saisir une adresse e-mail valide.",
+          errPhone: "Veuillez saisir un numéro de téléphone.",
+          errLocation: "Veuillez saisir votre lieu.",
+          errUrl: "Ce lien ne semble pas valide.",
+          errPosition: "Veuillez sélectionner un poste.",
+          errStartDate: "Veuillez choisir une date.",
+          errAvailability: "Veuillez sélectionner au moins une option.",
+          errEducation: "Veuillez sélectionner un niveau d’études.",
+          errExperience: "Veuillez ajouter un résumé d’expérience.",
+          errStrengths: "Veuillez indiquer vos compétences.",
+          errResumeLink: "Veuillez fournir un lien CV valide.",
+          errInspiration: "Veuillez ajouter une brève explication.",
+          errConsent: "Le consentement est requis.",
+
+          draftNotSaved: "Brouillon non sauvegardé",
+          draftSaved: "Brouillon sauvegardé",
+          draftRestored: "Brouillon restauré.",
+          lastSaved: "Dernière sauvegarde : {when}",
+          savedDraftCleared: "Brouillon effacé.",
+          submitting: "Envoi de votre candidature…",
+          received: "Candidature reçue.",
+          refIdLine: "ID de référence : {id}. Un reçu devrait arriver bientôt.",
+          receiptLine: "Un reçu devrait arriver bientôt.",
+          copyReferenceId: "Copier l’ID",
+          clearDraft: "Effacer le brouillon",
+          waitMoment: "Veuillez attendre un moment avant de renvoyer.",
+          tryAgainIn: "Réessayez dans {sec} secondes.",
+          adjustResume: "Veuillez ajuster le fichier CV.",
+          fileTooLarge: "Fichier trop volumineux. Max {mb} Mo.",
+          submitWentWrong: "Un problème est survenu lors de l’envoi.",
+          tryAgain: "Veuillez réessayer.",
+          preparingPdf: "Préparation du PDF...",
+          pdfFailed: "Échec de la génération du PDF. Réessayez.",
+          referenceCopied: "ID copié.",
+          startNewInfo: "Vous pouvez commencer une nouvelle candidature.",
+
+          toastSavedTitle: "Sauvegardé",
+          toastSavedBody: "Brouillon mis à jour.",
+          toastCopiedTitle: "Copié",
+          toastCopiedBody: "ID copié dans le presse-papiers.",
+          toastFileRemovedTitle: "Retiré",
+          toastFileRemovedBody: "Fichier supprimé.",
+          toastFilePickedTitle: "Sélectionné",
+          toastFilePickedBody: "Fichier joint.",
+          toastThemeTitle: "Thème",
+          toastThemeBody: "Thème mis à jour.",
+          toastLanguageTitle: "Langue",
+          toastLanguageBody: "Langue mise à jour."
+        },
+
+        ar: {
+          skipToForm: "انتقل إلى النموذج",
+          language: "اللغة",
+          theme: "المظهر",
+          help: "مساعدة",
+          joinMovement: "انضم إلى الحركة",
+          careerVolunteer: "طلب تطوع/عمل",
+          stepPersonal: "شخصي",
+          stepPosition: "المنصب",
+          stepExperience: "الخبرة",
+          stepAlignment: "الملاءمة",
+          stepReview: "مراجعة",
+
+          personalInfo: "المعلومات الشخصية",
+          legalFullName: "الاسم القانوني الكامل",
+          preferredName: "الاسم المفضل",
+          emailAddress: "البريد الإلكتروني",
+          mobilePhone: "الهاتف المحمول",
+          currentLocation: "الموقع الحالي (مدينة، ولاية، دولة)",
+          linkedinPortfolio: "لينكدإن / ملف أعمال (رابط)",
+
+          positionLogistics: "المنصب واللوجستيات",
+          positionApplying: "المنصب المتقدم له",
+          selectRole: "اختر المنصب...",
+          roleDirector: "مدير برامج المنظمات",
+          roleHr: "أخصائي موارد بشرية",
+          roleRecruitment: "أخصائي توظيف",
+          roleGrant: "مدير منح",
+          roleDevops: "أخصائي برمجيات/DevOps",
+          rolePm: "مدير مشاريع",
+          roleVolunteer: "متطوع عام",
+
+          availableStart: "تاريخ البدء المتاح",
+          workStyleAvailability: "نمط العمل والتوفر",
+          selectAtLeastOne: "اختر خيارًا واحدًا على الأقل.",
+          avRemote: "عن بُعد",
+          avPartTime: "دوام جزئي",
+          avWeekends: "عطلات نهاية الأسبوع",
+          avEvenings: "المساء",
+          timeConstraints: "الساعات أسبوعيًا وقيود المنطقة الزمنية",
+
+          experienceQualifications: "الخبرة والمؤهلات",
+          highestDegree: "أعلى مؤهل تعليمي",
+          selectOne: "اختر...",
+          eduHighSchool: "ثانوي / GED",
+          eduAssociate: "دبلوم / مشارك",
+          eduBachelor: "بكالوريوس",
+          eduMaster: "ماجستير",
+          eduDoctorate: "دكتوراه / PhD",
+
+          experienceSummary: "ملخص الخبرة المهنية",
+          experienceHint: "إن كان مناسبًا، اذكر خبرة في الرعاية المالية أو إدارة المنح.",
+          coreCompetencies: "أهم 2–3 مهارات",
+          toolsCerts: "الأدوات والشهادات",
+          resumeLink: "رابط السيرة الذاتية (Google Drive/Dropbox)",
+          resumeShareHint: "تأكد أن الرابط متاح للعرض للجميع.",
+          optionalUpload: "اختياري: رفع السيرة (PDF/DOC/DOCX)",
+          uploadHint: "إذا رفعت ملفًا، يمكن للموارد البشرية الوصول إليه عبر رقم المرجع.",
+          dropTitle: "اسحب وأسقط السيرة هنا (اختياري)",
+          noFilePicked: "لم يتم اختيار ملف.",
+          fileLimits: "الحجم الأقصى: 2MB. الصيغ: PDF, DOC, DOCX.",
+          chooseFile: "اختر ملفًا",
+          removeFile: "إزالة",
+
+          missionAlignment: "الملاءمة مع الرسالة",
+          inspirationQ: "ما الذي يلهمك للمساهمة في رسالة HPG؟",
+          causesRegions: "قضايا أو مناطق تهمك",
+
+          complianceReview: "الامتثال والمراجعة",
+          workAuth: "هل أنت مخول قانونيًا للعمل في بلدك؟",
+          needSponsorship: "هل تحتاج إلى كفالة؟",
+          yes: "نعم",
+          no: "لا",
+          consentText: "أوافق على معالجة Humanity Pathways Global لبياناتي لأغراض التوظيف.",
+          receiptEmailHint: "سيتم إرسال إيصال إلى البريد الإلكتروني الذي أدخلته.",
+          reviewNextHint: "بعد ذلك ستظهر شاشة مراجعة قبل الإرسال النهائي.",
+
+          browserHeadsUp: "<b>تنبيه:</b> بعض المتصفحات أو أدوات الخصوصية قد تمنع الإرسال. إذا لم ترَ تأكيد <b>«تم استلام الطلب»</b> بعد الإرسال، جرّب متصفحًا آخر (Chrome أو Edge أو Firefox) وأعد الإرسال. إذا فتحت الصفحة من ملف تم تنزيله، افتح الرابط الرسمي المستضاف.",
+
+          downloadPdf: "تحميل PDF",
+          back: "رجوع",
+          next: "التالي",
+          review: "مراجعة",
+          submit: "إرسال",
+
+          reviewYourApp: "مراجعة الطلب",
+          reviewBrowserNote: "إذا ضغطت <b>تأكيد الإرسال</b> ولم ترَ تأكيد <b>«تم استلام الطلب»</b>، جرّب متصفحًا آخر ثم أعد الإرسال.",
+          edit: "تعديل",
+          confirmSubmit: "تأكيد الإرسال",
+
+          helpTitle: "مساعدة واستكشاف الأخطاء",
+          helpAutosaveTitle: "حفظ تلقائي",
+          helpAutosaveBody: "يتم حفظ الإجابات محليًا في المتصفح أثناء الكتابة. استخدم «مسح المسودة» عند الحاجة.",
+          helpPdfTitle: "تحميل PDF",
+          helpPdfBody: "إذا كان PDF فارغًا، أغلق مانعات النوافذ المنبثقة ثم جرّب مرة أخرى. على الهاتف قد يستغرق وقتًا.",
+          helpSubmitTitle: "مشكلات الإرسال",
+          helpSubmitBody: "إذا لم ترَ التأكيد، جرّب Chrome/Edge/Firefox، وأوقف الإضافات الصارمة ثم أعد الإرسال.",
+          helpPrivacyTitle: "ملاحظة الخصوصية",
+          helpPrivacyBody: "المسودة تُخزن على جهازك فقط حتى الإرسال. الإرسال يرسل الحقول إلى نقطة النهاية.",
+          gotIt: "تم",
+
+          submissionCompleted: "اكتمل الإرسال",
+          applicationReceived: "تم استلام الطلب",
+          submissionRecorded: "تم تسجيل الإرسال بنجاح.",
+          receiptArrive: "من المتوقع وصول إيصال قريبًا إلى بريدك الإلكتروني.",
+          referenceId: "رقم المرجع",
+          nextSteps: "الخطوات التالية",
+          nextStepsBody: "يمكنك تحميل نسخة PDF الآن. إذا لم يصلك البريد، افحص الرسائل غير المرغوب فيها ثم جرّب متصفحًا آخر.",
+          copyRefId: "نسخ رقم المرجع",
+          startNew: "بدء طلب جديد",
+
+          phAsListedOnId: "كما هو مذكور في الهوية",
+          phEmail: "name@example.com",
+          phPhone: "مثال: +1 313 555 0123",
+          phLocation: "مثال: Detroit, MI, USA",
+          phUrl: "https://...",
+          phTimeConstraints: "مثال: 10–15 ساعة/أسبوع، مساءً فقط",
+          phCompetencies: "مثال: إدارة مشاريع، Python/SQL، تواصل مجتمعي",
+          phTools: "مثال: Asana, Slack, Google Workspace, PMP",
+          phCauses: "مثال: التعليم، الثقافة الرقمية، صحة المرأة",
+
+          errFullName: "يرجى إدخال اسمك القانوني الكامل.",
+          errEmail: "يرجى إدخال بريد إلكتروني صالح.",
+          errPhone: "يرجى إدخال رقم هاتف.",
+          errLocation: "يرجى إدخال موقعك.",
+          errUrl: "يبدو أن الرابط غير صالح.",
+          errPosition: "يرجى اختيار منصب.",
+          errStartDate: "يرجى اختيار تاريخ.",
+          errAvailability: "يرجى اختيار خيار توفر واحد على الأقل.",
+          errEducation: "يرجى اختيار المستوى التعليمي.",
+          errExperience: "يرجى إضافة ملخص الخبرة.",
+          errStrengths: "يرجى إدخال المهارات.",
+          errResumeLink: "يرجى إدخال رابط سيرة صالح.",
+          errInspiration: "يرجى إضافة شرح مختصر.",
+          errConsent: "الموافقة مطلوبة للإرسال.",
+
+          draftNotSaved: "لم يتم حفظ المسودة بعد",
+          draftSaved: "تم حفظ المسودة",
+          draftRestored: "تمت استعادة المسودة.",
+          lastSaved: "آخر حفظ: {when}",
+          savedDraftCleared: "تم مسح المسودة.",
+          submitting: "جارٍ إرسال الطلب…",
+          received: "تم استلام الطلب.",
+          refIdLine: "رقم المرجع: {id}. سيصل الإيصال قريبًا.",
+          receiptLine: "سيصل الإيصال قريبًا.",
+          copyReferenceId: "نسخ رقم المرجع",
+          clearDraft: "مسح المسودة",
+          waitMoment: "يرجى الانتظار قليلًا قبل إعادة الإرسال.",
+          tryAgainIn: "حاول مجددًا بعد {sec} ثانية.",
+          adjustResume: "يرجى تعديل ملف السيرة.",
+          fileTooLarge: "الملف كبير جدًا. الحد {mb}MB.",
+          submitWentWrong: "حدث خطأ أثناء الإرسال.",
+          tryAgain: "يرجى المحاولة مرة أخرى.",
+          preparingPdf: "جارٍ إعداد PDF...",
+          pdfFailed: "فشل إنشاء PDF. حاول مرة أخرى.",
+          referenceCopied: "تم نسخ رقم المرجع.",
+          startNewInfo: "يمكنك بدء طلب جديد الآن.",
+
+          toastSavedTitle: "تم الحفظ",
+          toastSavedBody: "تم تحديث المسودة.",
+          toastCopiedTitle: "تم النسخ",
+          toastCopiedBody: "تم نسخ الرقم إلى الحافظة.",
+          toastFileRemovedTitle: "تمت الإزالة",
+          toastFileRemovedBody: "تم مسح الملف.",
+          toastFilePickedTitle: "تم الاختيار",
+          toastFilePickedBody: "تم إرفاق الملف.",
+          toastThemeTitle: "المظهر",
+          toastThemeBody: "تم تحديث المظهر.",
+          toastLanguageTitle: "اللغة",
+          toastLanguageBody: "تم تحديث اللغة."
+        }
       };
 
       const form = $('#appForm');
@@ -767,61 +1940,235 @@
       const successPdf = $('#successPdf');
       const successNew = $('#successNew');
 
-      let lastSuccessfulId = '';
+      const helpModal = $('#helpModal');
+      const btnHelp = $('#btnHelp');
+      const closeHelp = $('#closeHelp');
+      const helpCloseBtn = $('#helpCloseBtn');
 
+      const langSelect = $('#langSelect');
+      const themeToggle = $('#themeToggle');
+      const rootHtml = $('#rootHtml');
+
+      const saveIndicator = $('#saveIndicator');
+      const saveDot = $('#saveDot');
+      const saveText = $('#saveText');
+
+      const toasts = $('#toasts');
+
+      const fileDrop = $('#fileDrop');
+      const resumeFile = $('#resume_file');
+      const btnChooseFile = $('#btnChooseFile');
+      const btnClearFile = $('#btnClearFile');
+      const filePickedText = $('#filePickedText');
+
+      let lastSuccessfulId = '';
+      let cur = 0;
+
+      /* ===== Language selection + RTL ===== */
+      const LANG_KEY = 'hpg_app_lang_v1';
+      const THEME_KEY = 'hpg_app_theme_v1';
+
+      function getInitialLang(){
+        const saved = localStorage.getItem(LANG_KEY);
+        if (saved && I18N[saved]) return saved;
+        const nav = (navigator.language || 'en').slice(0,2).toLowerCase();
+        if (I18N[nav]) return nav;
+        return 'en';
+      }
+
+      function isRtl(lang){ return lang === 'ar'; }
+
+      let lang = getInitialLang();
+      langSelect.value = lang;
+
+      function t(key, vars={}){
+        const dict = I18N[lang] || I18N.en;
+        let s = (dict && dict[key]) ? dict[key] : (I18N.en[key] || key);
+        s = String(s);
+        for (const [k,v] of Object.entries(vars)){
+          s = s.replaceAll(`{${k}}`, String(v));
+        }
+        return s;
+      }
+
+      function applyI18n(){
+        // text nodes
+        $$('[data-i18n]').forEach(el=>{
+          const key = el.getAttribute('data-i18n');
+          const val = t(key);
+          // allow safe HTML for certain blocks (explicitly used for browser notes)
+          if (key === 'browserHeadsUp' || key === 'reviewBrowserNote'){
+            el.innerHTML = val;
+          } else {
+            el.textContent = val;
+          }
+        });
+
+        // attributes (placeholder etc)
+        $$('[data-i18n-attr]').forEach(el=>{
+          // format: "placeholder:key"
+          const spec = el.getAttribute('data-i18n-attr') || '';
+          const pairs = spec.split(',').map(x=>x.trim()).filter(Boolean);
+          pairs.forEach(p=>{
+            const [attr, key] = p.split(':').map(x=>x.trim());
+            if (!attr || !key) return;
+            el.setAttribute(attr, t(key));
+          });
+        });
+
+        // update html lang/dir
+        rootHtml.setAttribute('lang', lang);
+        rootHtml.setAttribute('dir', isRtl(lang) ? 'rtl' : 'ltr');
+
+        toast('info', t('toastLanguageTitle'), t('toastLanguageBody'));
+      }
+
+      langSelect.addEventListener('change', ()=>{
+        const next = langSelect.value;
+        if (!I18N[next]) return;
+        lang = next;
+        localStorage.setItem(LANG_KEY, lang);
+        applyI18n();
+        updateCounters();
+        renderWizard();
+      });
+
+      /* ===== Theme toggle ===== */
+      function getInitialTheme(){
+        const saved = localStorage.getItem(THEME_KEY);
+        if (saved === 'dark' || saved === 'light') return saved;
+        return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      let theme = getInitialTheme();
+      document.documentElement.setAttribute('data-theme', theme);
+
+      function updateThemeIcon(){
+        const icon = themeToggle.querySelector('i');
+        if (!icon) return;
+        icon.className = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+      }
+      updateThemeIcon();
+
+      themeToggle.addEventListener('click', ()=>{
+        theme = (theme === 'dark') ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem(THEME_KEY, theme);
+        updateThemeIcon();
+        toast('info', t('toastThemeTitle'), t('toastThemeBody'));
+      });
+
+      /* ===== Help modal ===== */
+      function openModal(modal){
+        modal.classList.add('show');
+        modal.setAttribute('aria-hidden','false');
+      }
+      function closeModal(modal){
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden','true');
+      }
+
+      btnHelp.addEventListener('click', ()=> openModal(helpModal));
+      closeHelp.addEventListener('click', ()=> closeModal(helpModal));
+      helpCloseBtn.addEventListener('click', ()=> closeModal(helpModal));
+      helpModal.addEventListener('click', (e)=>{ if (e.target === helpModal) closeModal(helpModal); });
+
+      /* ===== Start date min ===== */
       const startDate = $('#start_date');
       const today = new Date();
       startDate.min = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
 
-      btnPdf.addEventListener('click', savePDF);
-      successPdf.addEventListener('click', savePDF);
+      /* ===== Toasts ===== */
+      function toast(type, title, body, ttl=2800){
+        const el = document.createElement('div');
+        el.className = 'toast';
+        const ic = type === 'ok' ? 'fa-circle-check' : type === 'bad' ? 'fa-triangle-exclamation' : 'fa-circle-info';
+        el.innerHTML = `
+          <div class="t-ic ${type}"><i class="fa-solid ${ic}"></i></div>
+          <div class="t-body">
+            <b>${escapeHtml(title)}</b>
+            <div>${escapeHtml(body)}</div>
+          </div>
+          <button class="t-close" aria-label="Close">✕</button>
+        `;
+        const closeBtn = el.querySelector('.t-close');
+        closeBtn.addEventListener('click', ()=> el.remove());
+        toasts.appendChild(el);
+        setTimeout(()=>{ if (el.isConnected) el.remove(); }, ttl);
+      }
 
+      /* ===== Status banner ===== */
       function setStatus(message, type='info', extra='', withCopyId=''){
         status.className = `status show ${type}`;
         let html = message + (extra ? `<small>${extra}</small>` : '');
+        const copyLabel = t('copyReferenceId');
+        const clearLabel = t('clearDraft');
+
         if (withCopyId){
           html += `<div class="mini-actions">
-            <button type="button" class="mini-btn" id="copyIdBtn"><i class="fa-regular fa-copy"></i> Copy Reference ID</button>
-            <button type="button" class="mini-btn" id="clearDraftBtn"><i class="fa-regular fa-trash-can"></i> Clear saved draft</button>
+            <button type="button" class="mini-btn" id="copyIdBtn"><i class="fa-regular fa-copy"></i> ${copyLabel}</button>
+            <button type="button" class="mini-btn" id="clearDraftBtn"><i class="fa-regular fa-trash-can"></i> ${clearLabel}</button>
           </div>`;
         } else {
           html += `<div class="mini-actions">
-            <button type="button" class="mini-btn" id="clearDraftBtn"><i class="fa-regular fa-trash-can"></i> Clear saved draft</button>
+            <button type="button" class="mini-btn" id="clearDraftBtn"><i class="fa-regular fa-trash-can"></i> ${clearLabel}</button>
           </div>`;
         }
+
         status.innerHTML = html;
+
         $('#clearDraftBtn')?.addEventListener('click', clearDraft);
         $('#copyIdBtn')?.addEventListener('click', () => navigator.clipboard.writeText(withCopyId).then(() => {
-          setStatus('Reference ID copied.', 'ok');
+          setStatus(t('referenceCopied'), 'ok');
+          toast('ok', t('toastCopiedTitle'), t('toastCopiedBody'));
         }).catch(() => {}));
+
         status.scrollIntoView({behavior:'smooth', block:'start'});
       }
       function clearStatus(){ status.className='status'; status.innerHTML=''; }
 
-      let cur = 0;
+      /* ===== Wizard ===== */
       function renderWizard(){
         steps.forEach((s,i)=>s.classList.toggle('active', i===cur));
+
         const total = steps.length - 1;
         const p = Math.round((cur / total) * 100);
         barFill.style.width = p + '%';
         pct.textContent = p + '%';
+
         chips.forEach((c,i)=>{
           c.classList.toggle('active', i===cur);
           c.classList.toggle('done', i<cur);
         });
+
         btnBack.style.display = cur===0 ? 'none' : '';
         btnNext.style.display = cur < total ? '' : 'none';
         btnReview.style.display = cur===total ? '' : 'none';
         btnSubmit.style.display = 'none';
+
         browserNote.classList.toggle('show', cur===total);
+
         clearStatus();
       }
       renderWizard();
 
-      btnBack.addEventListener('click', ()=>{ if (cur>0){ cur--; renderWizard(); steps[cur].scrollIntoView({behavior:'smooth',block:'start'}); }});
+      btnPdf.addEventListener('click', savePDF);
+      successPdf.addEventListener('click', savePDF);
+
+      btnBack.addEventListener('click', ()=>{
+        if (cur>0){
+          cur--;
+          renderWizard();
+          steps[cur].scrollIntoView({behavior:'smooth',block:'start'});
+        }
+      });
+
       btnNext.addEventListener('click', ()=>{
         if (!validateStep(cur)) return;
-        if (cur < steps.length-1){ cur++; renderWizard(); steps[cur].scrollIntoView({behavior:'smooth',block:'start'}); }
+        if (cur < steps.length-1){
+          cur++;
+          renderWizard();
+          steps[cur].scrollIntoView({behavior:'smooth',block:'start'});
+        }
       });
 
       btnReview.addEventListener('click', ()=>{
@@ -829,12 +2176,29 @@
         openReview();
       });
 
+      /* Keyboard helpers: Ctrl+Enter to open review on last step, or go next */
+      document.addEventListener('keydown', (e)=>{
+        const isMac = /Mac|iPhone|iPad|iPod/.test(navigator.platform);
+        const meta = isMac ? e.metaKey : e.ctrlKey;
+        if (meta && e.key === 'Enter'){
+          e.preventDefault();
+          if (cur < steps.length - 1){
+            btnNext.click();
+          } else {
+            btnReview.click();
+          }
+        }
+      });
+
+      /* ===== Validation ===== */
       function markField(group, ok){ group.classList.toggle('invalid', !ok); }
+
       function validateAvailability(){
         const picked = $$('.availability').some(c => c.checked);
         $('#availErr').style.display = picked ? 'none' : 'block';
         return picked;
       }
+
       function validateGroup(el){
         const group = el.closest('[data-field]');
         if (!group) return true;
@@ -842,6 +2206,7 @@
         markField(group, ok);
         return ok;
       }
+
       $$('input,select,textarea', form).forEach(el=>{
         el.addEventListener('blur', ()=> validateGroup(el));
         el.addEventListener('input', ()=> {
@@ -849,18 +2214,30 @@
           scheduleDraftSave();
           updateCountersFor(el);
         });
+        el.addEventListener('change', ()=> scheduleDraftSave());
       });
 
       function validateStep(stepIndex){
         clearStatus();
         const stepEl = steps[stepIndex];
         let ok = true;
+
         if (stepIndex === 1) ok = validateAvailability() && ok;
+
         const fields = $$('input,select,textarea', stepEl).filter(x => x.type !== 'file');
         fields.forEach(el => { if (!el.checkValidity()) ok = false; validateGroup(el); });
 
         if (!ok){
-          setStatus('Please review the highlighted fields and try again.', 'bad');
+          setStatus(t('submitWentWrong'), 'bad', t('tryAgain'));
+          // More specific prompt:
+          setStatus(t('submitWentWrong'), 'bad', t('tryAgain'));
+          // Replace with a clearer message:
+          setStatus(
+            (lang === 'en') ? 'Please review the highlighted fields and try again.' : t('submitWentWrong'),
+            'bad',
+            (lang === 'en') ? '' : t('tryAgain')
+          );
+
           const firstInvalid = stepEl.querySelector('.invalid input, .invalid select, .invalid textarea');
           if (firstInvalid) firstInvalid.focus({preventScroll:true});
           return false;
@@ -868,6 +2245,7 @@
         return true;
       }
 
+      /* ===== Phone formatting helper ===== */
       const phone = $('#phone');
       phone.addEventListener('blur', () => {
         const v = (phone.value||'').trim();
@@ -881,6 +2259,7 @@
         }
       });
 
+      /* ===== Counters ===== */
       function updateCounters(){
         $$('[data-count-for]').forEach(c=>{
           const id = c.getAttribute('data-count-for');
@@ -895,9 +2274,19 @@
       }
       updateCounters();
 
-      const DRAFT_KEY = 'hpg_career_app_draft_v1';
-      const DRAFT_TS = 'hpg_career_app_draft_ts_v1';
+      /* ===== Draft save / restore ===== */
+      const DRAFT_KEY = 'hpg_career_app_draft_v2';
+      const DRAFT_TS = 'hpg_career_app_draft_ts_v2';
       let draftTimer = null;
+
+      function setSaveIndicator(saved, whenText=''){
+        saveDot.classList.toggle('on', !!saved);
+        if (!saved){
+          saveText.textContent = t('draftNotSaved');
+        } else {
+          saveText.textContent = whenText ? `${t('draftSaved')} • ${whenText}` : t('draftSaved');
+        }
+      }
 
       function serializeDraft(){
         const data = {};
@@ -907,6 +2296,7 @@
           if (name === 'company') return;
           if (el.type === 'file') return;
           if (name === 'application_id') return;
+
           if (el.type === 'checkbox'){
             data[name] = el.checked;
           } else {
@@ -922,27 +2312,34 @@
           const raw = localStorage.getItem(DRAFT_KEY);
           if (!raw) return false;
           const data = JSON.parse(raw);
+
           $$('input,select,textarea', form).forEach(el=>{
             const name = el.name || el.id;
             if (!name || name==='company' || el.type==='file') return;
             if (name === 'application_id') return;
+
             if (el.type === 'checkbox'){
               if (typeof data[name] === 'boolean') el.checked = data[name];
             } else if (data[name] != null) {
               el.value = data[name];
             }
           });
+
           const av = Array.isArray(data.availability) ? data.availability : [];
           $$('input[name="availability"]').forEach(ch => ch.checked = av.includes(ch.value));
+
           updateCounters();
           return true;
-        } catch { return false; }
+        } catch {
+          return false;
+        }
       }
 
       function clearDraft(){
         localStorage.removeItem(DRAFT_KEY);
         localStorage.removeItem(DRAFT_TS);
-        setStatus('Saved draft cleared.', 'ok');
+        setSaveIndicator(false);
+        setStatus(t('savedDraftCleared'), 'ok');
       }
 
       function scheduleDraftSave(){
@@ -950,15 +2347,23 @@
         draftTimer = setTimeout(() => {
           localStorage.setItem(DRAFT_KEY, JSON.stringify(serializeDraft()));
           localStorage.setItem(DRAFT_TS, String(Date.now()));
+
+          const when = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+          setSaveIndicator(true, when);
+          toast('ok', t('toastSavedTitle'), t('toastSavedBody'), 1200);
         }, 450);
       }
 
       if (restoreDraft()){
         const ts = Number(localStorage.getItem(DRAFT_TS)||'0');
         const when = ts ? new Date(ts).toLocaleString() : '';
-        setStatus('Draft restored.', 'info', when ? `Last saved: ${when}` : '');
+        setSaveIndicator(true, when ? when : '');
+        setStatus(t('draftRestored'), 'info', when ? t('lastSaved', {when}) : '');
+      } else {
+        setSaveIndicator(false);
       }
 
+      /* ===== Cooldown anti-double-submit ===== */
       function cooldownActive(){
         const key='hpg_app_last_submit';
         const now=Date.now();
@@ -969,14 +2374,26 @@
         return 0;
       }
 
+      /* ===== Review Modal ===== */
       const REVIEW_FIELDS = [
-        ['Full name','full_name'],['Preferred name','preferred_name'],['Email','email'],['Phone','phone'],
-        ['Location','location'],['LinkedIn/Portfolio','linkedin_url'],
-        ['Position','position'],['Start date','start_date'],['Availability','availability'],
-        ['Time constraints','time_constraints'],['Education','education'],
-        ['Experience summary','experience_summary'],['Core competencies','strengths'],
-        ['Tools','tools'],['Resume link','resume_link'],
-        ['Causes/regions','causes'],['Work authorization','work_auth'],['Sponsorship','sponsorship']
+        ['Full name','full_name'],
+        ['Preferred name','preferred_name'],
+        ['Email','email'],
+        ['Phone','phone'],
+        ['Location','location'],
+        ['LinkedIn/Portfolio','linkedin_url'],
+        ['Position','position'],
+        ['Start date','start_date'],
+        ['Availability','availability'],
+        ['Time constraints','time_constraints'],
+        ['Education','education'],
+        ['Experience summary','experience_summary'],
+        ['Core competencies','strengths'],
+        ['Tools','tools'],
+        ['Resume link','resume_link'],
+        ['Causes/regions','causes'],
+        ['Work authorization','work_auth'],
+        ['Sponsorship','sponsorship']
       ];
 
       function getValueByName(name){
@@ -990,76 +2407,61 @@
       function openReview(){
         summaryGrid.innerHTML = REVIEW_FIELDS.map(([label,name])=>{
           const val = getValueByName(name);
-          return `<div class="kv"><b>${label}</b><span>${escapeHtml(val)}</span></div>`;
+          return `<div class="kv"><b>${escapeHtml(label)}</b><span>${escapeHtml(val)}</span></div>`;
         }).join('');
-        reviewModal.classList.add('show');
-        reviewModal.setAttribute('aria-hidden','false');
+
+        openModal(reviewModal);
       }
 
-      function closeReviewModal(){
-        reviewModal.classList.remove('show');
-        reviewModal.setAttribute('aria-hidden','true');
-      }
-
-      closeReview.addEventListener('click', closeReviewModal);
-      btnEdit.addEventListener('click', ()=>{ closeReviewModal(); });
-      reviewModal.addEventListener('click', (e)=>{ if (e.target === reviewModal) closeReviewModal(); });
+      closeReview.addEventListener('click', ()=> closeModal(reviewModal));
+      btnEdit.addEventListener('click', ()=> closeModal(reviewModal));
+      reviewModal.addEventListener('click', (e)=>{ if (e.target === reviewModal) closeModal(reviewModal); });
 
       btnConfirmSubmit.addEventListener('click', async ()=>{
-        closeReviewModal();
+        closeModal(reviewModal);
         form.requestSubmit();
       });
 
-      function escapeHtml(s){
-        return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-      }
-
+      /* ===== Success modal ===== */
       function openSuccessModal(appId){
         lastSuccessfulId = appId || '';
         successRefId.textContent = lastSuccessfulId || '(not provided)';
         successSubText.textContent = lastSuccessfulId
-          ? 'A receipt email should arrive shortly. Save your Reference ID in case you need to follow up.'
-          : 'A receipt email should arrive shortly.';
+          ? t('refIdLine', {id:lastSuccessfulId})
+          : t('receiptLine');
 
-        successModal.classList.add('show');
-        successModal.setAttribute('aria-hidden','false');
-
-        // confetti burst (with safe fallback)
+        openModal(successModal);
         fireConfetti();
       }
 
-      function closeSuccessModal(){
-        successModal.classList.remove('show');
-        successModal.setAttribute('aria-hidden','true');
-      }
-
-      closeSuccess.addEventListener('click', closeSuccessModal);
-      successModal.addEventListener('click', (e)=>{ if (e.target === successModal) closeSuccessModal(); });
+      closeSuccess.addEventListener('click', ()=> closeModal(successModal));
+      successModal.addEventListener('click', (e)=>{ if (e.target === successModal) closeModal(successModal); });
 
       successCopyId.addEventListener('click', ()=>{
         if (!lastSuccessfulId) return;
         navigator.clipboard.writeText(lastSuccessfulId).then(()=>{
-          setStatus('Reference ID copied.', 'ok');
+          toast('ok', t('toastCopiedTitle'), t('toastCopiedBody'));
+          setStatus(t('referenceCopied'), 'ok');
         }).catch(()=>{});
       });
 
       successNew.addEventListener('click', ()=>{
-        closeSuccessModal();
+        closeModal(successModal);
         startNewApplication();
       });
 
       function startNewApplication(){
-        // Clear draft + reset the form and wizard
         localStorage.removeItem(DRAFT_KEY);
         localStorage.removeItem(DRAFT_TS);
         form.reset();
         updateCounters();
         $('#application_id').value = '';
         lastSuccessfulId = '';
+        setSaveIndicator(false);
         cur = 0;
         renderWizard();
         steps[cur].scrollIntoView({behavior:'smooth',block:'start'});
-        setStatus('You may start a new application now.', 'info');
+        setStatus(t('startNewInfo'), 'info');
       }
 
       function fireConfetti(){
@@ -1078,6 +2480,57 @@
         } catch {}
       }
 
+      /* ===== Enhanced file UX (keeps the real input unchanged) ===== */
+      function updateFileUI(){
+        const f = resumeFile.files && resumeFile.files[0];
+        if (!f){
+          filePickedText.textContent = t('noFilePicked');
+          btnClearFile.style.display = 'none';
+          return;
+        }
+        const kb = Math.round(f.size/1024);
+        filePickedText.textContent = `${f.name} • ${kb} KB`;
+        btnClearFile.style.display = '';
+      }
+
+      btnChooseFile.addEventListener('click', ()=> resumeFile.click());
+      btnClearFile.addEventListener('click', ()=>{
+        resumeFile.value = '';
+        updateFileUI();
+        toast('info', t('toastFileRemovedTitle'), t('toastFileRemovedBody'));
+      });
+
+      resumeFile.addEventListener('change', ()=>{
+        updateFileUI();
+        if (resumeFile.files && resumeFile.files[0]){
+          toast('info', t('toastFilePickedTitle'), t('toastFilePickedBody'));
+        }
+      });
+
+      ;['dragenter','dragover'].forEach(evt=>{
+        fileDrop.addEventListener(evt, (e)=>{
+          e.preventDefault(); e.stopPropagation();
+          fileDrop.classList.add('dragover');
+        });
+      });
+      ;['dragleave','drop'].forEach(evt=>{
+        fileDrop.addEventListener(evt, (e)=>{
+          e.preventDefault(); e.stopPropagation();
+          fileDrop.classList.remove('dragover');
+        });
+      });
+      fileDrop.addEventListener('drop', (e)=>{
+        const dt = e.dataTransfer;
+        if (!dt || !dt.files || !dt.files.length) return;
+        // assign files to the real input
+        resumeFile.files = dt.files;
+        updateFileUI();
+        toast('info', t('toastFilePickedTitle'), t('toastFilePickedBody'));
+      });
+
+      updateFileUI();
+
+      /* ===== Submit (backend payload/headers preserved) ===== */
       form.addEventListener('submit', async (e)=>{
         e.preventDefault();
         clearStatus();
@@ -1085,21 +2538,27 @@
         const hp = form.querySelector('input[name="company"]');
         if (hp && hp.value.trim()) return;
 
+        // Validate all steps
         for (let i=0;i<steps.length;i++){
-          if (!validateStep(i)){ cur = i; renderWizard(); steps[cur].scrollIntoView({behavior:'smooth',block:'start'}); return; }
+          if (!validateStep(i)){
+            cur = i;
+            renderWizard();
+            steps[cur].scrollIntoView({behavior:'smooth',block:'start'});
+            return;
+          }
         }
 
         const cd = cooldownActive();
         if (cd > 0){
-          setStatus('Please wait a moment before submitting again.', 'info', `Try again in ${cd} seconds.`);
+          setStatus(t('waitMoment'), 'info', t('tryAgainIn', {sec: cd}));
           return;
         }
 
-        const file = $('#resume_file')?.files?.[0] || null;
+        const file = resumeFile?.files?.[0] || null;
         if (file){
           if (file.size > CONFIG.maxUploadBytes){
-            $('#fileErr').textContent = `File is too large. Max ${(CONFIG.maxUploadBytes/1024/1024).toFixed(0)}MB.`;
-            setStatus('Please adjust your resume upload.', 'bad');
+            $('#fileErr').textContent = t('fileTooLarge', {mb: (CONFIG.maxUploadBytes/1024/1024).toFixed(0)});
+            setStatus(t('adjustResume'), 'bad');
             cur = 2; renderWizard(); steps[cur].scrollIntoView({behavior:'smooth',block:'start'});
             return;
           }
@@ -1108,15 +2567,18 @@
 
         btnBack.disabled = btnNext.disabled = btnReview.disabled = btnSubmit.disabled = btnPdf.disabled = true;
         btnConfirmSubmit.disabled = true;
+        btnChooseFile.disabled = true;
+        btnClearFile.disabled = true;
 
         const original = btnSubmit.innerHTML;
-        btnSubmit.innerHTML = 'Submitting...';
+        btnSubmit.innerHTML = `...`;
 
         try{
-          setStatus('Submitting your application…', 'info');
+          setStatus(t('submitting'), 'info');
 
           const fd = new FormData(form);
           const data = {};
+
           for (const [k,v] of fd.entries()){
             if (k === 'availability' || k === 'company' || k === 'resume_file' || k === 'application_id') continue;
             data[k] = (v ?? '').toString().trim();
@@ -1135,6 +2597,7 @@
             };
           }
 
+          // BACKEND CONNECTIONS: URL + headers kept the same
           const res = await fetch(CONFIG.functionUrl, {
             method:'POST',
             headers:{
@@ -1151,35 +2614,39 @@
           const appId = out.id ? String(out.id) : '';
           $('#application_id').value = appId;
 
+          // Clear saved draft (front-end only)
           localStorage.removeItem(DRAFT_KEY);
           localStorage.removeItem(DRAFT_TS);
+          setSaveIndicator(false);
 
           setStatus(
-            'Application received.',
+            t('received'),
             'ok',
-            appId ? `Reference ID: ${appId}. A receipt email should arrive shortly.` : 'A receipt email should arrive shortly.',
+            appId ? t('refIdLine', {id: appId}) : t('receiptLine'),
             appId
           );
 
-          // NEW: pop success receipt modal + confetti
           openSuccessModal(appId);
 
-          // Keep form contents visible so user can still download PDF if they want.
-          // They can start a new application from the success modal.
+          // Keep form values so PDF can reflect what they typed.
+          // User can click "Start New Application" in success modal.
 
         } catch(err){
           console.error(err);
+          const msg = (err && err.message) ? err.message : t('tryAgain');
+          const lower = String(msg).toLowerCase();
 
-          const msg = (err && err.message) ? err.message : 'Please try again.';
-          const extra = msg.toLowerCase().includes('failed to fetch')
-            ? 'Your browser or network may have blocked the request. If you do not get a completion notice, try Chrome, Edge, or Firefox and resubmit.'
+          const extra = lower.includes('failed to fetch')
+            ? t('browserHeadsUp').replace(/<[^>]*>/g,'')
             : msg;
 
-          setStatus('Something went wrong while submitting.', 'bad', extra);
+          setStatus(t('submitWentWrong'), 'bad', extra);
         } finally {
           btnSubmit.innerHTML = original;
           btnBack.disabled = btnNext.disabled = btnReview.disabled = btnSubmit.disabled = btnPdf.disabled = false;
           btnConfirmSubmit.disabled = false;
+          btnChooseFile.disabled = false;
+          btnClearFile.disabled = false;
         }
       });
 
@@ -1197,11 +2664,12 @@
         const card = document.getElementById('applicationCard');
         const actions = document.querySelector('.actions');
 
-        const original = btnPdf.innerHTML;
         btnPdf.disabled = true;
-        btnPdf.innerHTML = 'Preparing PDF...';
+        const original = btnPdf.innerHTML;
+        btnPdf.innerHTML = t('preparingPdf');
 
         actions.style.display = 'none';
+
         const opt = {
           margin:[0.5,0.5],
           filename:'HPG_Application.pdf',
@@ -1211,13 +2679,55 @@
         };
 
         html2pdf().set(opt).from(card).save()
-          .catch(()=>setStatus('PDF generation failed. Please try again.', 'bad'))
+          .catch(()=>setStatus(t('pdfFailed'), 'bad'))
           .finally(()=>{
             actions.style.display='flex';
             btnPdf.disabled=false;
             btnPdf.innerHTML=original;
           });
       }
+
+      function escapeHtml(s){
+        return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+      }
+
+      /* ===== Apply i18n immediately ===== */
+      applyI18n();
+
+      /* Improve wizard chips: click to jump (validation-safe) */
+      chips.forEach((chip, i)=>{
+        chip.style.cursor = 'pointer';
+        chip.addEventListener('click', ()=>{
+          // allow backward freely; forward only if current step is valid
+          if (i <= cur){
+            cur = i;
+            renderWizard();
+            steps[cur].scrollIntoView({behavior:'smooth',block:'start'});
+            return;
+          }
+          // moving forward: validate each intermediate step
+          for (let s=cur; s<i; s++){
+            if (!validateStep(s)){
+              cur = s;
+              renderWizard();
+              steps[cur].scrollIntoView({behavior:'smooth',block:'start'});
+              return;
+            }
+          }
+          cur = i;
+          renderWizard();
+          steps[cur].scrollIntoView({behavior:'smooth',block:'start'});
+        });
+      });
+
+      /* Small quality-of-life: mark required fields (ARIA) */
+      $$('input[required],select[required],textarea[required]').forEach(el=>{
+        el.setAttribute('aria-required','true');
+      });
+
+      /* Make submit button visible only via review flow (as you designed) */
+      // (No change needed: btnSubmit remains hidden; Confirm Submit triggers requestSubmit)
+
     });
   </script>
 </body>
