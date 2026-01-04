@@ -998,11 +998,12 @@
             <div class="field-error"></div>
           </div>
 
-          <div class="form-group" data-field>
-            <label for="resume_link"><span data-i18n="resumeLink">Link to Resume (Google Drive/Dropbox)</span> *</label>
-            <input id="resume_link" type="url" name="resume_link" required maxlength="240" autocomplete="url" placeholder="https://..." data-i18n-attr="placeholder:phUrl">
-            <div class="hint" style="color:#e67e22"><i class="fas fa-exclamation-triangle"></i> <span data-i18n="resumeShareHint">Ensure the link is viewable by anyone.</span></div>
-            <div class="field-error" data-i18n="errResumeLink">Please provide a valid resume link.</div>
+          <!-- RESUME FIX: link is no longer required by HTML; custom validation enforces (link OR upload) -->
+          <div class="form-group" data-field id="resumeLinkGroup">
+            <label for="resume_link"><span data-i18n="resumeLink">Resume (link or upload below)</span> *</label>
+            <input id="resume_link" type="url" name="resume_link" maxlength="240" autocomplete="url" placeholder="https://..." data-i18n-attr="placeholder:phUrl">
+            <div class="hint" style="color:#e67e22"><i class="fas fa-exclamation-triangle"></i> <span data-i18n="resumeShareHint">If using a link, ensure it is viewable by anyone.</span></div>
+            <div class="field-error" data-i18n="errResumeLink">Please provide a resume link or upload a file.</div>
           </div>
 
           <div class="form-group" data-field>
@@ -1238,6 +1239,7 @@
           preferredName: "Preferred Name",
           emailAddress: "Email Address",
           mobilePhone: "Mobile Phone",
+          phoneHint: "Tip: include country code if outside the U.S. (example: +233 ...).",
           currentLocation: "Current Location (City, State, Country)",
           linkedinPortfolio: "LinkedIn / Portfolio URL",
 
@@ -1274,8 +1276,8 @@
           experienceHint: "If relevant, mention fiscal sponsorship or grant management experience.",
           coreCompetencies: "Top 2–3 Core Competencies",
           toolsCerts: "Technical Tools & Certifications",
-          resumeLink: "Link to Resume (Google Drive/Dropbox)",
-          resumeShareHint: "Ensure the link is viewable by anyone.",
+          resumeLink: "Resume (link or upload below)",
+          resumeShareHint: "If using a link, ensure it is viewable by anyone.",
           optionalUpload: "Optional: Upload Resume (PDF/DOC/DOCX)",
           uploadHint: "If you upload a file, HR can access it from your reference ID record.",
           dropTitle: "Drag & drop your resume here (optional)",
@@ -1354,9 +1356,10 @@
           errEducation: "Please select an education level.",
           errExperience: "Please add a short experience summary.",
           errStrengths: "Please list your core competencies.",
-          errResumeLink: "Please provide a valid resume link.",
+          errResumeLink: "Please provide a resume link or upload a file.",
           errInspiration: "Please add a short explanation.",
           errConsent: "Consent is required to submit.",
+          errReviewFields: "Please review the highlighted fields and try again.",
 
           // Status / UI
           draftNotSaved: "Draft not saved yet",
@@ -1380,6 +1383,7 @@
           pdfFailed: "PDF generation failed. Please try again.",
           referenceCopied: "Reference ID copied.",
           startNewInfo: "You may start a new application now.",
+          urlAutoFixed: "We added https:// to your link.",
 
           toastSavedTitle: "Saved",
           toastSavedBody: "Draft updated.",
@@ -1392,7 +1396,9 @@
           toastThemeTitle: "Theme",
           toastThemeBody: "Theme updated.",
           toastLanguageTitle: "Language",
-          toastLanguageBody: "Language updated."
+          toastLanguageBody: "Language updated.",
+          toastPdfTitle: "PDF",
+          toastPdfBody: "Generating PDF..."
         },
 
         es: {
@@ -1413,6 +1419,7 @@
           preferredName: "Nombre preferido",
           emailAddress: "Correo electrónico",
           mobilePhone: "Teléfono móvil",
+          phoneHint: "Consejo: incluye el código de país si estás fuera de EE. UU. (ejemplo: +233 ...).",
           currentLocation: "Ubicación actual (Ciudad, Estado, País)",
           linkedinPortfolio: "LinkedIn / Portafolio (URL)",
 
@@ -1449,8 +1456,8 @@
           experienceHint: "Si aplica, menciona experiencia en patrocinio fiscal o gestión de subvenciones.",
           coreCompetencies: "2–3 competencias principales",
           toolsCerts: "Herramientas y certificaciones",
-          resumeLink: "Enlace a tu CV (Google Drive/Dropbox)",
-          resumeShareHint: "Asegúrate de que el enlace sea visible para cualquiera.",
+          resumeLink: "Currículum (enlace o subir abajo)",
+          resumeShareHint: "Si usas enlace, asegúrate de que sea visible para cualquiera.",
           optionalUpload: "Opcional: subir CV (PDF/DOC/DOCX)",
           uploadHint: "Si subes un archivo, RR. HH. puede acceder desde tu ID de referencia.",
           dropTitle: "Arrastra y suelta tu CV aquí (opcional)",
@@ -1527,9 +1534,10 @@
           errEducation: "Selecciona un nivel educativo.",
           errExperience: "Agrega un resumen de experiencia.",
           errStrengths: "Enumera tus competencias.",
-          errResumeLink: "Proporciona un enlace válido a tu CV.",
+          errResumeLink: "Proporciona un enlace de CV o sube un archivo.",
           errInspiration: "Agrega una explicación breve.",
           errConsent: "El consentimiento es obligatorio.",
+          errReviewFields: "Revisa los campos marcados e inténtalo de nuevo.",
 
           draftNotSaved: "Borrador aún no guardado",
           draftSaved: "Borrador guardado",
@@ -1552,6 +1560,7 @@
           pdfFailed: "Falló la generación del PDF. Inténtalo de nuevo.",
           referenceCopied: "ID copiado.",
           startNewInfo: "Ya puedes iniciar una nueva solicitud.",
+          urlAutoFixed: "Se agregó https:// al enlace.",
 
           toastSavedTitle: "Guardado",
           toastSavedBody: "Borrador actualizado.",
@@ -1564,7 +1573,9 @@
           toastThemeTitle: "Tema",
           toastThemeBody: "Tema actualizado.",
           toastLanguageTitle: "Idioma",
-          toastLanguageBody: "Idioma actualizado."
+          toastLanguageBody: "Idioma actualizado.",
+          toastPdfTitle: "PDF",
+          toastPdfBody: "Generando PDF..."
         },
 
         fr: {
@@ -1585,6 +1596,7 @@
           preferredName: "Nom d’usage",
           emailAddress: "Adresse e-mail",
           mobilePhone: "Téléphone mobile",
+          phoneHint: "Astuce : ajoutez l’indicatif si hors USA (ex. +233 ...).",
           currentLocation: "Lieu actuel (Ville, État, Pays)",
           linkedinPortfolio: "LinkedIn / Portfolio (URL)",
 
@@ -1621,8 +1633,8 @@
           experienceHint: "Si pertinent, mentionnez le parrainage fiscal ou la gestion de subventions.",
           coreCompetencies: "2–3 compétences clés",
           toolsCerts: "Outils & certifications",
-          resumeLink: "Lien vers CV (Google Drive/Dropbox)",
-          resumeShareHint: "Assurez-vous que le lien est accessible à tous.",
+          resumeLink: "CV (lien ou téléversement ci-dessous)",
+          resumeShareHint: "Si vous utilisez un lien, vérifiez qu’il est accessible à tous.",
           optionalUpload: "Optionnel : téléverser le CV (PDF/DOC/DOCX)",
           uploadHint: "Si vous téléversez un fichier, RH pourra l’ouvrir via l’ID de référence.",
           dropTitle: "Glissez-déposez votre CV ici (optionnel)",
@@ -1699,9 +1711,10 @@
           errEducation: "Veuillez sélectionner un niveau d’études.",
           errExperience: "Veuillez ajouter un résumé d’expérience.",
           errStrengths: "Veuillez indiquer vos compétences.",
-          errResumeLink: "Veuillez fournir un lien CV valide.",
+          errResumeLink: "Veuillez fournir un lien CV ou téléverser un fichier.",
           errInspiration: "Veuillez ajouter une brève explication.",
           errConsent: "Le consentement est requis.",
+          errReviewFields: "Veuillez vérifier les champs surlignés puis réessayer.",
 
           draftNotSaved: "Brouillon non sauvegardé",
           draftSaved: "Brouillon sauvegardé",
@@ -1724,6 +1737,7 @@
           pdfFailed: "Échec de la génération du PDF. Réessayez.",
           referenceCopied: "ID copié.",
           startNewInfo: "Vous pouvez commencer une nouvelle candidature.",
+          urlAutoFixed: "Nous avons ajouté https:// au lien.",
 
           toastSavedTitle: "Sauvegardé",
           toastSavedBody: "Brouillon mis à jour.",
@@ -1736,7 +1750,9 @@
           toastThemeTitle: "Thème",
           toastThemeBody: "Thème mis à jour.",
           toastLanguageTitle: "Langue",
-          toastLanguageBody: "Langue mise à jour."
+          toastLanguageBody: "Langue mise à jour.",
+          toastPdfTitle: "PDF",
+          toastPdfBody: "Génération du PDF..."
         },
 
         ar: {
@@ -1757,6 +1773,7 @@
           preferredName: "الاسم المفضل",
           emailAddress: "البريد الإلكتروني",
           mobilePhone: "الهاتف المحمول",
+          phoneHint: "ملاحظة: أضف رمز الدولة إذا كنت خارج الولايات المتحدة (مثال: +233 ...).",
           currentLocation: "الموقع الحالي (مدينة، ولاية، دولة)",
           linkedinPortfolio: "لينكدإن / ملف أعمال (رابط)",
 
@@ -1793,8 +1810,8 @@
           experienceHint: "إن كان مناسبًا، اذكر خبرة في الرعاية المالية أو إدارة المنح.",
           coreCompetencies: "أهم 2–3 مهارات",
           toolsCerts: "الأدوات والشهادات",
-          resumeLink: "رابط السيرة الذاتية (Google Drive/Dropbox)",
-          resumeShareHint: "تأكد أن الرابط متاح للعرض للجميع.",
+          resumeLink: "السيرة الذاتية (رابط أو رفع بالأسفل)",
+          resumeShareHint: "إذا استخدمت رابطًا، تأكد أنه متاح للجميع للعرض.",
           optionalUpload: "اختياري: رفع السيرة (PDF/DOC/DOCX)",
           uploadHint: "إذا رفعت ملفًا، يمكن للموارد البشرية الوصول إليه عبر رقم المرجع.",
           dropTitle: "اسحب وأسقط السيرة هنا (اختياري)",
@@ -1871,9 +1888,10 @@
           errEducation: "يرجى اختيار المستوى التعليمي.",
           errExperience: "يرجى إضافة ملخص الخبرة.",
           errStrengths: "يرجى إدخال المهارات.",
-          errResumeLink: "يرجى إدخال رابط سيرة صالح.",
+          errResumeLink: "يرجى إدخال رابط سيرة صالح أو رفع ملف.",
           errInspiration: "يرجى إضافة شرح مختصر.",
           errConsent: "الموافقة مطلوبة للإرسال.",
+          errReviewFields: "يرجى مراجعة الحقول المميزة ثم المحاولة مرة أخرى.",
 
           draftNotSaved: "لم يتم حفظ المسودة بعد",
           draftSaved: "تم حفظ المسودة",
@@ -1896,6 +1914,7 @@
           pdfFailed: "فشل إنشاء PDF. حاول مرة أخرى.",
           referenceCopied: "تم نسخ رقم المرجع.",
           startNewInfo: "يمكنك بدء طلب جديد الآن.",
+          urlAutoFixed: "تمت إضافة https:// إلى الرابط.",
 
           toastSavedTitle: "تم الحفظ",
           toastSavedBody: "تم تحديث المسودة.",
@@ -1908,7 +1927,9 @@
           toastThemeTitle: "المظهر",
           toastThemeBody: "تم تحديث المظهر.",
           toastLanguageTitle: "اللغة",
-          toastLanguageBody: "تم تحديث اللغة."
+          toastLanguageBody: "تم تحديث اللغة.",
+          toastPdfTitle: "PDF",
+          toastPdfBody: "جارٍ إنشاء PDF..."
         }
       };
 
@@ -1949,7 +1970,6 @@
       const themeToggle = $('#themeToggle');
       const rootHtml = $('#rootHtml');
 
-      const saveIndicator = $('#saveIndicator');
       const saveDot = $('#saveDot');
       const saveText = $('#saveText');
 
@@ -1960,6 +1980,9 @@
       const btnChooseFile = $('#btnChooseFile');
       const btnClearFile = $('#btnClearFile');
       const filePickedText = $('#filePickedText');
+
+      const resumeLink = $('#resume_link');
+      const linkedinUrl = $('#linkedin_url');
 
       let lastSuccessfulId = '';
       let cur = 0;
@@ -1991,12 +2014,10 @@
         return s;
       }
 
-      function applyI18n(){
-        // text nodes
+      function applyI18n({silent=false}={}){
         $$('[data-i18n]').forEach(el=>{
           const key = el.getAttribute('data-i18n');
           const val = t(key);
-          // allow safe HTML for certain blocks (explicitly used for browser notes)
           if (key === 'browserHeadsUp' || key === 'reviewBrowserNote'){
             el.innerHTML = val;
           } else {
@@ -2004,9 +2025,7 @@
           }
         });
 
-        // attributes (placeholder etc)
         $$('[data-i18n-attr]').forEach(el=>{
-          // format: "placeholder:key"
           const spec = el.getAttribute('data-i18n-attr') || '';
           const pairs = spec.split(',').map(x=>x.trim()).filter(Boolean);
           pairs.forEach(p=>{
@@ -2016,11 +2035,10 @@
           });
         });
 
-        // update html lang/dir
         rootHtml.setAttribute('lang', lang);
         rootHtml.setAttribute('dir', isRtl(lang) ? 'rtl' : 'ltr');
 
-        toast('info', t('toastLanguageTitle'), t('toastLanguageBody'));
+        if (!silent) toast('info', t('toastLanguageTitle'), t('toastLanguageBody'));
       }
 
       langSelect.addEventListener('change', ()=>{
@@ -2028,7 +2046,7 @@
         if (!I18N[next]) return;
         lang = next;
         localStorage.setItem(LANG_KEY, lang);
-        applyI18n();
+        applyI18n({silent:false});
         updateCounters();
         renderWizard();
       });
@@ -2090,8 +2108,7 @@
           </div>
           <button class="t-close" aria-label="Close">✕</button>
         `;
-        const closeBtn = el.querySelector('.t-close');
-        closeBtn.addEventListener('click', ()=> el.remove());
+        el.querySelector('.t-close').addEventListener('click', ()=> el.remove());
         toasts.appendChild(el);
         setTimeout(()=>{ if (el.isConnected) el.remove(); }, ttl);
       }
@@ -2207,9 +2224,42 @@
         return ok;
       }
 
+      function validateResumeRequirement(){
+        // Require (resume_link OR resume_file)
+        const linkVal = (resumeLink.value || '').trim();
+        const hasLink = linkVal.length > 0;
+        const file = resumeFile?.files?.[0] || null;
+        const hasFile = !!file;
+
+        let ok = true;
+
+        if (hasLink){
+          ok = resumeLink.checkValidity();
+          validateGroup(resumeLink);
+        } else {
+          // if no link, clear URL validity styling (empty is ok), but group might still be invalid from requirement
+          const group = resumeLink.closest('[data-field]');
+          if (group) group.classList.remove('invalid');
+        }
+
+        if (!hasLink && !hasFile){
+          const group = resumeLink.closest('[data-field]');
+          if (group) group.classList.add('invalid');
+          ok = false;
+        }
+
+        // If a file is present, we accept empty link; remove any forced invalid on link group.
+        if (hasFile && !hasLink){
+          const group = resumeLink.closest('[data-field]');
+          if (group) group.classList.remove('invalid');
+        }
+
+        return ok;
+      }
+
       $$('input,select,textarea', form).forEach(el=>{
         el.addEventListener('blur', ()=> validateGroup(el));
-        el.addEventListener('input', ()=> {
+        el.addEventListener('input', ()=>{
           if (el.closest('.invalid')) validateGroup(el);
           scheduleDraftSave();
           updateCountersFor(el);
@@ -2223,21 +2273,13 @@
         let ok = true;
 
         if (stepIndex === 1) ok = validateAvailability() && ok;
+        if (stepIndex === 2) ok = validateResumeRequirement() && ok;
 
         const fields = $$('input,select,textarea', stepEl).filter(x => x.type !== 'file');
         fields.forEach(el => { if (!el.checkValidity()) ok = false; validateGroup(el); });
 
         if (!ok){
-          setStatus(t('submitWentWrong'), 'bad', t('tryAgain'));
-          // More specific prompt:
-          setStatus(t('submitWentWrong'), 'bad', t('tryAgain'));
-          // Replace with a clearer message:
-          setStatus(
-            (lang === 'en') ? 'Please review the highlighted fields and try again.' : t('submitWentWrong'),
-            'bad',
-            (lang === 'en') ? '' : t('tryAgain')
-          );
-
+          setStatus(t('errReviewFields'), 'bad');
           const firstInvalid = stepEl.querySelector('.invalid input, .invalid select, .invalid textarea');
           if (firstInvalid) firstInvalid.focus({preventScroll:true});
           return false;
@@ -2258,6 +2300,19 @@
           phone.value = `+1 (${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;
         }
       });
+
+      /* ===== URL normalization helper (front-end only) ===== */
+      function normalizeUrlInput(el){
+        const v = (el.value || '').trim();
+        if (!v) return;
+        const hasScheme = /^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(v);
+        if (!hasScheme){
+          el.value = 'https://' + v;
+          toast('info', 'Link', t('urlAutoFixed'), 1600);
+        }
+      }
+      resumeLink.addEventListener('blur', ()=>{ normalizeUrlInput(resumeLink); validateResumeRequirement(); });
+      linkedinUrl.addEventListener('blur', ()=> normalizeUrlInput(linkedinUrl));
 
       /* ===== Counters ===== */
       function updateCounters(){
@@ -2345,8 +2400,10 @@
       function scheduleDraftSave(){
         if (draftTimer) clearTimeout(draftTimer);
         draftTimer = setTimeout(() => {
-          localStorage.setItem(DRAFT_KEY, JSON.stringify(serializeDraft()));
-          localStorage.setItem(DRAFT_TS, String(Date.now()));
+          try{
+            localStorage.setItem(DRAFT_KEY, JSON.stringify(serializeDraft()));
+            localStorage.setItem(DRAFT_TS, String(Date.now()));
+          } catch {}
 
           const when = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
           setSaveIndicator(true, when);
@@ -2419,7 +2476,11 @@
 
       btnConfirmSubmit.addEventListener('click', async ()=>{
         closeModal(reviewModal);
-        form.requestSubmit();
+        if (form.requestSubmit){
+          form.requestSubmit();
+        } else {
+          form.dispatchEvent(new Event('submit', {cancelable:true, bubbles:true}));
+        }
       });
 
       /* ===== Success modal ===== */
@@ -2462,6 +2523,7 @@
         renderWizard();
         steps[cur].scrollIntoView({behavior:'smooth',block:'start'});
         setStatus(t('startNewInfo'), 'info');
+        updateFileUI();
       }
 
       function fireConfetti(){
@@ -2497,11 +2559,13 @@
       btnClearFile.addEventListener('click', ()=>{
         resumeFile.value = '';
         updateFileUI();
+        validateResumeRequirement();
         toast('info', t('toastFileRemovedTitle'), t('toastFileRemovedBody'));
       });
 
       resumeFile.addEventListener('change', ()=>{
         updateFileUI();
+        validateResumeRequirement();
         if (resumeFile.files && resumeFile.files[0]){
           toast('info', t('toastFilePickedTitle'), t('toastFilePickedBody'));
         }
@@ -2522,10 +2586,25 @@
       fileDrop.addEventListener('drop', (e)=>{
         const dt = e.dataTransfer;
         if (!dt || !dt.files || !dt.files.length) return;
-        // assign files to the real input
-        resumeFile.files = dt.files;
-        updateFileUI();
-        toast('info', t('toastFilePickedTitle'), t('toastFilePickedBody'));
+
+        // Some browsers restrict setting input.files; avoid crashing the UI.
+        try{
+          // Prefer DataTransfer -> FileList assignment
+          if (typeof DataTransfer !== 'undefined'){
+            const dtx = new DataTransfer();
+            // keep just the first file
+            dtx.items.add(dt.files[0]);
+            resumeFile.files = dtx.files;
+          } else {
+            // fallback: attempt direct assignment
+            resumeFile.files = dt.files;
+          }
+          updateFileUI();
+          validateResumeRequirement();
+          toast('info', t('toastFilePickedTitle'), t('toastFilePickedBody'));
+        } catch {
+          toast('bad', 'Upload', 'Drag & drop is blocked by this browser. Please use “Choose file”.', 3200);
+        }
       });
 
       updateFileUI();
@@ -2628,9 +2707,6 @@
 
           openSuccessModal(appId);
 
-          // Keep form values so PDF can reflect what they typed.
-          // User can click "Start New Application" in success modal.
-
         } catch(err){
           console.error(err);
           const msg = (err && err.message) ? err.message : t('tryAgain');
@@ -2638,7 +2714,7 @@
 
           const extra = lower.includes('failed to fetch')
             ? t('browserHeadsUp').replace(/<[^>]*>/g,'')
-            : msg;
+            : escapeHtml(msg);
 
           setStatus(t('submitWentWrong'), 'bad', extra);
         } finally {
@@ -2661,14 +2737,33 @@
 
       function savePDF(){
         clearStatus();
+        if (typeof html2pdf !== 'function'){
+          setStatus(t('pdfFailed'), 'bad');
+          return;
+        }
+
         const card = document.getElementById('applicationCard');
         const actions = document.querySelector('.actions');
+        const topbar = document.querySelector('.topbar');
+        const wizard = document.querySelector('.wizard');
 
+        // disable both PDF buttons
         btnPdf.disabled = true;
+        successPdf.disabled = true;
+
         const original = btnPdf.innerHTML;
         btnPdf.innerHTML = t('preparingPdf');
+        toast('info', t('toastPdfTitle'), t('toastPdfBody'), 1400);
 
-        actions.style.display = 'none';
+        const old = {
+          actions: actions ? actions.style.display : '',
+          topbar: topbar ? topbar.style.display : '',
+          wizard: wizard ? wizard.style.display : ''
+        };
+
+        if (actions) actions.style.display = 'none';
+        if (topbar) topbar.style.display = 'none';
+        if (wizard) wizard.style.display = 'none';
 
         const opt = {
           margin:[0.5,0.5],
@@ -2681,9 +2776,13 @@
         html2pdf().set(opt).from(card).save()
           .catch(()=>setStatus(t('pdfFailed'), 'bad'))
           .finally(()=>{
-            actions.style.display='flex';
-            btnPdf.disabled=false;
-            btnPdf.innerHTML=original;
+            if (actions) actions.style.display = old.actions;
+            if (topbar) topbar.style.display = old.topbar;
+            if (wizard) wizard.style.display = old.wizard;
+
+            btnPdf.disabled = false;
+            successPdf.disabled = false;
+            btnPdf.innerHTML = original;
           });
       }
 
@@ -2691,8 +2790,8 @@
         return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
       }
 
-      /* ===== Apply i18n immediately ===== */
-      applyI18n();
+      /* ===== Apply i18n immediately (silent) ===== */
+      applyI18n({silent:true});
 
       /* Improve wizard chips: click to jump (validation-safe) */
       chips.forEach((chip, i)=>{
@@ -2720,16 +2819,9 @@
         });
       });
 
-      /* Small quality-of-life: mark required fields (ARIA) */
-      $$('input[required],select[required],textarea[required]').forEach(el=>{
-        el.setAttribute('aria-required','true');
-      });
-
-      /* Make submit button visible only via review flow (as you designed) */
-      // (No change needed: btnSubmit remains hidden; Confirm Submit triggers requestSubmit)
-
+      // Keep resume requirement responsive while typing/clearing
+      resumeLink.addEventListener('input', ()=> validateResumeRequirement());
     });
   </script>
 </body>
 </html>
-
