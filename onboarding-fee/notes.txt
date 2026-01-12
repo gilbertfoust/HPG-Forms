@@ -1,0 +1,32 @@
+4) Environment variables for the backend
+
+Set these on your backend host:
+
+STRIPE_SECRET_KEY = sk_test_... (or sk_live_... in production)
+
+ALLOWED_ORIGINS = a comma-separated list like
+https://gilbertfoust.github.io,https://humanitypathwaysglobal.com
+
+How you “wire it up” (minimum steps)
+
+In Stripe Dashboard, copy:
+
+Publishable key (pk_test_...) → paste into STRIPE_PUBLISHABLE_KEY in index.html
+
+Secret key (sk_test_...) → set as STRIPE_SECRET_KEY on your backend host
+
+Deploy the backend (Node server). Confirm:
+
+https://YOUR-BACKEND-DOMAIN/health returns { ok: true }
+
+Update BACKEND_BASE_URL in index.html to your backend domain.
+
+Push index.html to GitHub Pages (or your site). Open it, choose country/state, pay.
+
+Practical notes that usually matter for nonprofits
+
+Non-refundable vs adjustable: if you intend to adjust when filings change, you can keep it “adjustable” in your policy text, but still charge the baseline fee.
+
+Receipts: Stripe automatically emails receipts if receipt_email is set (this code does).
+
+Audit trail: the PaymentIntent metadata stores country/state/org name, which makes reconciliation in Finance easier.
