@@ -1,4 +1,687 @@
 <!doctype html>
-<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HPG Onboarding Fee</title></head>
-<body><h1>HPG Onboarding Fee Portal</h1><p>Placeholder.</p></body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HPG — Onboarding Fee Payment</title>
+
+  <!-- Fonts: formal + readable -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Stripe.js -->
+  <script src="https://js.stripe.com/v3/"></script>
+
+  <style>
+    :root{
+      --ink:#0b1b2a;
+      --muted:#4b5b6b;
+      --paper:#f7f8fb;
+      --card:#ffffff;
+      --line:#d7dde5;
+      --accent:#123a63;     /* “governmental” navy */
+      --accent2:#2a5a92;
+      --seal:#b68b2e;       /* muted gold */
+      --danger:#9b1c1c;
+      --radius:16px;
+      --shadow:0 18px 55px rgba(11,27,42,.12);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(18,58,99,.10), transparent 60%),
+        radial-gradient(900px 600px at 90% 20%, rgba(42,90,146,.10), transparent 55%),
+        linear-gradient(180deg, var(--paper), #ffffff);
+      min-height:100vh;
+    }
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:28px 18px 56px;
+    }
+    .header{
+      display:flex;
+      gap:16px;
+      align-items:center;
+      justify-content:space-between;
+      padding:18px 20px;
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:linear-gradient(180deg, #ffffff, #fbfcff);
+      box-shadow:0 8px 24px rgba(11,27,42,.06);
+    }
+    .brand{
+      display:flex;
+      gap:14px;
+      align-items:center;
+    }
+    .seal{
+      width:54px;height:54px;flex:0 0 54px;
+      border-radius:999px;
+      border:1px solid rgba(182,139,46,.45);
+      background: radial-gradient(circle at 30% 30%, rgba(182,139,46,.25), transparent 60%),
+                  radial-gradient(circle at 70% 70%, rgba(182,139,46,.18), transparent 55%),
+                  linear-gradient(180deg, rgba(18,58,99,.06), rgba(18,58,99,.02));
+      display:grid;place-items:center;
+    }
+    .seal svg{width:30px;height:30px}
+    .titleBlock h1{
+      margin:0;
+      font-family:"Libre Baskerville", serif;
+      font-size:18px;
+      letter-spacing:.2px;
+    }
+    .titleBlock p{
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.3;
+    }
+    .stamp{
+      text-align:right;
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.25;
+    }
+    .stamp strong{color:var(--ink); font-weight:600}
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:18px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+      .stamp{text-align:left}
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px;
+    }
+    .card h2{
+      font-family:"Libre Baskerville", serif;
+      margin:0 0 10px;
+      font-size:16px;
+    }
+    .sub{
+      margin:0 0 16px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.45;
+    }
+    .row{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 560px){
+      .row{grid-template-columns:1fr}
+    }
+    label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin:0 0 6px;
+    }
+    input, select, textarea{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:11px 12px;
+      font-size:14px;
+      outline:none;
+      background:#fff;
+      color:var(--ink);
+    }
+    textarea{min-height:86px; resize:vertical}
+    input:focus, select:focus, textarea:focus{
+      border-color:rgba(18,58,99,.55);
+      box-shadow:0 0 0 4px rgba(18,58,99,.12);
+    }
+    .divider{
+      height:1px;
+      background:linear-gradient(90deg, transparent, rgba(215,221,229,.9), transparent);
+      margin:14px 0;
+    }
+    .summary{
+      border-radius:14px;
+      border:1px solid rgba(18,58,99,.18);
+      background:linear-gradient(180deg, rgba(18,58,99,.05), rgba(18,58,99,.02));
+      padding:12px;
+    }
+    .summary .line{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      font-size:13px;
+      padding:6px 6px;
+      color:var(--ink);
+    }
+    .summary .line span:first-child{color:var(--muted)}
+    .summary .total{
+      margin-top:6px;
+      padding-top:10px;
+      border-top:1px dashed rgba(18,58,99,.22);
+      font-size:14px;
+      font-weight:700;
+    }
+    .notice{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.45;
+      margin-top:10px;
+    }
+    .notice strong{color:var(--ink)}
+    .checkbox{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      margin-top:12px;
+      padding:10px 10px;
+      border:1px solid rgba(215,221,229,.9);
+      border-radius:12px;
+      background:#fbfcff;
+    }
+    .checkbox input{width:auto; margin-top:3px}
+    .btn{
+      margin-top:14px;
+      width:100%;
+      border:1px solid rgba(18,58,99,.25);
+      background:linear-gradient(180deg, var(--accent), #0e2f52);
+      color:#fff;
+      padding:12px 14px;
+      border-radius:14px;
+      font-size:14px;
+      font-weight:650;
+      cursor:pointer;
+      box-shadow:0 14px 35px rgba(18,58,99,.22);
+    }
+    .btn:disabled{
+      opacity:.6;
+      cursor:not-allowed;
+      box-shadow:none;
+    }
+    .tiny{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:10px;
+      text-align:center;
+    }
+    .err{
+      margin-top:10px;
+      color:var(--danger);
+      font-size:13px;
+      line-height:1.35;
+      display:none;
+    }
+    .ok{
+      margin-top:10px;
+      color:#0f5132;
+      font-size:13px;
+      display:none;
+    }
+
+    /* Stripe element frame */
+    #payment-element{
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:12px;
+      background:#fff;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div class="brand">
+        <div class="seal" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 2l7 4v6c0 5-3.1 9.4-7 10-3.9-.6-7-5-7-10V6l7-4z" stroke="rgba(182,139,46,.95)" stroke-width="1.6"/>
+            <path d="M8 12.2l2.2 2.3L16.5 9" stroke="rgba(182,139,46,.95)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="titleBlock">
+          <h1>Humanity Pathways Global — Onboarding Fee Payment</h1>
+          <p>Administrative filing coverage for registered agent coordination and applicable government registrations.</p>
+        </div>
+      </div>
+      <div class="stamp">
+        <div><strong>Payment Intake</strong></div>
+        <div>Reference: <span id="refTag">HPG-ONB</span></div>
+        <div><span id="todayTag"></span></div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- LEFT: organization + jurisdiction -->
+      <div class="card">
+        <h2>Organization Details</h2>
+        <p class="sub">
+          After compliance review, this payment finalizes the administrative onboarding step. If your compliance review is still in progress,
+          pause here and pay only when instructed by HPG.
+        </p>
+
+        <div class="row">
+          <div>
+            <label for="orgName">Organization / Project Name</label>
+            <input id="orgName" placeholder="Example: Megabridge Foundation (US Program)" autocomplete="organization" />
+          </div>
+          <div>
+            <label for="contactName">Primary Contact</label>
+            <input id="contactName" placeholder="Full name" autocomplete="name" />
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:12px;">
+          <div>
+            <label for="email">Email</label>
+            <input id="email" type="email" placeholder="name@example.org" autocomplete="email" />
+          </div>
+          <div>
+            <label for="phone">Phone</label>
+            <input id="phone" placeholder="+1 (___) ___-____" autocomplete="tel" />
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h2>Jurisdiction & Fee</h2>
+        <p class="sub">
+          Select your country and then your state/province. The total updates automatically.
+          (HPG can revise the schedule over time; the server validates the final amount.)
+        </p>
+
+        <div class="row">
+          <div>
+            <label for="country">Country</label>
+            <select id="country"></select>
+          </div>
+          <div>
+            <label for="region">State / Province</label>
+            <select id="region" disabled></select>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="summary" aria-live="polite">
+          <div class="line"><span>Coverage scope</span><span id="scopeLine">—</span></div>
+          <div class="line"><span>Government filing tier</span><span id="tierLine">—</span></div>
+          <div class="line total"><span>Total due</span><span id="totalLine">—</span></div>
+        </div>
+
+        <div class="notice">
+          <strong>What this fee is for:</strong> registered agent coordination (where applicable), secretary of state nonprofit registration filing support,
+          and charitable solicitation / charitable deduction certificate preparation steps (where applicable).  
+          <br><br>
+          <strong>What it is not:</strong> it is not a donation, and it does not replace your fiscal sponsorship agreement obligations.
+          This payment is generally treated as an administrative onboarding charge.
+        </div>
+      </div>
+
+      <!-- RIGHT: payment -->
+      <div class="card">
+        <h2>Secure Payment</h2>
+        <p class="sub">
+          Enter card details below. Your card information is processed by Stripe. HPG does not store card numbers.
+        </p>
+
+        <div class="row">
+          <div>
+            <label for="billingAddress">Billing Address</label>
+            <input id="billingAddress" placeholder="Street address" autocomplete="street-address" />
+          </div>
+          <div>
+            <label for="billingPostal">Postal / ZIP</label>
+            <input id="billingPostal" placeholder="Postal code" autocomplete="postal-code" />
+          </div>
+        </div>
+
+        <div style="margin-top:12px;">
+          <label>Card / Payment Method</label>
+          <div id="payment-element"></div>
+        </div>
+
+        <div class="checkbox">
+          <input id="ack" type="checkbox" />
+          <div class="notice" style="margin:0;">
+            I confirm I am authorized to make this payment on behalf of the organization/project named above, and I understand this is an onboarding
+            administrative fee tied to jurisdictional filing preparation. If HPG determines a jurisdictional change is needed, the fee may be adjusted
+            and coordinated with me.
+          </div>
+        </div>
+
+        <button class="btn" id="payBtn" disabled>
+          Pay <span id="payBtnAmount">—</span>
+        </button>
+
+        <div class="err" id="errBox"></div>
+        <div class="ok" id="okBox"></div>
+
+        <div class="tiny">
+          For receipt questions, reference your Stripe receipt email and include your organization name in communications.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /***********************
+     * CONFIG (EDIT ME)
+     ***********************/
+    // Your backend URL (where the Node server below is hosted).
+    // Example: "https://hpg-onboarding-fee.onrender.com"
+    const BACKEND_BASE_URL = "https://git.heroku.com/hpg-onboarding-backend.githttps://git.heroku.com/hpg-onboarding-backend.git";
+
+    // Stripe publishable key (starts with pk_live_... or pk_test_...)
+    const STRIPE_PUBLISHABLE_KEY = "
+pk_live_51SpheaI8NTQQcL1yqkkN5GG2XgnOZmuEUGjjvQZE27Kz6IM7yCpgFUSgLJBarLUPSvDw0TmN1Gx1wHRmXO9z8W9000zTnupuiX";
+
+    // Fee schedule (example tiering, keep within 150–200 as you requested).
+    // You can change values anytime; server will enforce its own copy too.
+    const FEE_SCHEDULE = {
+      "United States": {
+        currency: "usd",
+        regionsLabel: "State",
+        regions: {
+          "Alabama": 150, "Alaska": 200, "Arizona": 175, "Arkansas": 150, "California": 200,
+          "Colorado": 175, "Connecticut": 175, "Delaware": 175, "Florida": 175, "Georgia": 175,
+          "Hawaii": 200, "Idaho": 150, "Illinois": 175, "Indiana": 150, "Iowa": 150,
+          "Kansas": 150, "Kentucky": 150, "Louisiana": 175, "Maine": 150, "Maryland": 175,
+          "Massachusetts": 200, "Michigan": 175, "Minnesota": 175, "Mississippi": 150, "Missouri": 150,
+          "Montana": 150, "Nebraska": 150, "Nevada": 175, "New Hampshire": 150, "New Jersey": 200,
+          "New Mexico": 150, "New York": 200, "North Carolina": 175, "North Dakota": 150, "Ohio": 175,
+          "Oklahoma": 150, "Oregon": 175, "Pennsylvania": 175, "Rhode Island": 175, "South Carolina": 175,
+          "South Dakota": 150, "Tennessee": 150, "Texas": 175, "Utah": 150, "Vermont": 150,
+          "Virginia": 175, "Washington": 175, "West Virginia": 150, "Wisconsin": 150, "Wyoming": 150
+        }
+      },
+      "Canada": {
+        currency: "cad",
+        regionsLabel: "Province / Territory",
+        regions: {
+          "Alberta": 200, "British Columbia": 200, "Manitoba": 175, "New Brunswick": 175,
+          "Newfoundland and Labrador": 175, "Nova Scotia": 175, "Ontario": 200, "Prince Edward Island": 175,
+          "Quebec": 200, "Saskatchewan": 175, "Northwest Territories": 200, "Nunavut": 200, "Yukon": 200
+        }
+      },
+      "Other / International": {
+        currency: "usd",
+        regionsLabel: "Region",
+        regions: {
+          "Standard International": 200
+        }
+      }
+    };
+
+    /***********************
+     * UI STATE
+     ***********************/
+    const el = (id) => document.getElementById(id);
+    const countrySel = el("country");
+    const regionSel = el("region");
+    const totalLine = el("totalLine");
+    const scopeLine = el("scopeLine");
+    const tierLine = el("tierLine");
+    const payBtn = el("payBtn");
+    const payBtnAmount = el("payBtnAmount");
+    const errBox = el("errBox");
+    const okBox = el("okBox");
+    const ack = el("ack");
+
+    el("todayTag").textContent = new Date().toLocaleDateString(undefined, { year:"numeric", month:"long", day:"numeric" });
+
+    let stripe = null;
+    let elements = null;
+    let currentClientSecret = null;
+    let currentAmount = null;
+    let currentCurrency = null;
+
+    function money(amount, currency){
+      try{
+        return new Intl.NumberFormat(undefined, { style:"currency", currency: currency.toUpperCase() }).format(amount);
+      } catch {
+        return `${amount} ${currency.toUpperCase()}`;
+      }
+    }
+
+    function setError(msg){
+      okBox.style.display = "none";
+      errBox.textContent = msg;
+      errBox.style.display = msg ? "block" : "none";
+    }
+    function setOk(msg){
+      errBox.style.display = "none";
+      okBox.textContent = msg;
+      okBox.style.display = msg ? "block" : "none";
+    }
+
+    function getSelected(){
+      const c = countrySel.value;
+      const r = regionSel.value;
+      const cfg = FEE_SCHEDULE[c];
+      if(!cfg) return null;
+      const amt = cfg.regions[r];
+      return { country:c, region:r, currency:cfg.currency, amount:amt, label:cfg.regionsLabel };
+    }
+
+    function populateCountries(){
+      countrySel.innerHTML = "";
+      Object.keys(FEE_SCHEDULE).forEach((c) => {
+        const opt = document.createElement("option");
+        opt.value = c; opt.textContent = c;
+        countrySel.appendChild(opt);
+      });
+    }
+
+    function populateRegions(country){
+      const cfg = FEE_SCHEDULE[country];
+      regionSel.innerHTML = "";
+      if(!cfg){
+        regionSel.disabled = true;
+        return;
+      }
+      const regions = Object.keys(cfg.regions);
+      regions.forEach((r) => {
+        const opt = document.createElement("option");
+        opt.value = r; opt.textContent = r;
+        regionSel.appendChild(opt);
+      });
+      regionSel.disabled = false;
+    }
+
+    function updateSummary(){
+      const s = getSelected();
+      if(!s){
+        scopeLine.textContent = "—";
+        tierLine.textContent = "—";
+        totalLine.textContent = "—";
+        payBtnAmount.textContent = "—";
+        payBtn.disabled = true;
+        return;
+      }
+
+      scopeLine.textContent = `${s.country} • ${s.label}: ${s.region}`;
+      tierLine.textContent = (s.amount <= 150) ? "Tier A (lower filing complexity)"
+                       : (s.amount <= 175) ? "Tier B (moderate filing complexity)"
+                       : "Tier C (higher filing complexity)";
+
+      totalLine.textContent = money(s.amount, s.currency);
+      payBtnAmount.textContent = money(s.amount, s.currency);
+
+      // enable button only if we have a Stripe client secret + acknowledgement
+      payBtn.disabled = !(currentClientSecret && ack.checked);
+    }
+
+    async function initStripe(){
+      stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+    }
+
+    async function buildPaymentElement(){
+      setError("");
+      setOk("");
+
+      const s = getSelected();
+      if(!s) return;
+
+      if(!BACKEND_BASE_URL || BACKEND_BASE_URL.includes("https://gilbertfoust.github.io/HPG-Forms/onboarding-fee/")){
+        setError("Backend URL is not configured. Set BACKEND_BASE_URL in index.html.");
+        return;
+      }
+      if(!STRIPE_PUBLISHABLE_KEY || STRIPE_PUBLISHABLE_KEY.includes("REPLACE_ME")){
+        setError("Stripe publishable key is not configured. Set STRIPE_PUBLISHABLE_KEY in index.html.");
+        return;
+      }
+
+      // Ask server for a PaymentIntent client_secret (server calculates and validates amount)
+      const payload = {
+        country: s.country,
+        region: s.region,
+        orgName: el("orgName").value || "",
+        contactName: el("contactName").value || "",
+        email: el("email").value || "",
+        phone: el("phone").value || ""
+      };
+
+      try{
+        const res = await fetch(`${BACKEND_BASE_URL}/create-payment-intent`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if(!res.ok) throw new Error(data?.error || "Unable to start payment.");
+
+        currentClientSecret = data.clientSecret;
+        currentAmount = data.amount;
+        currentCurrency = data.currency;
+
+        // Re-mount elements for the new PaymentIntent
+        const mountPoint = el("payment-element");
+        mountPoint.innerHTML = "";
+
+        elements = stripe.elements({ clientSecret: currentClientSecret });
+        const paymentElement = elements.create("payment");
+        paymentElement.mount("#payment-element");
+
+        updateSummary();
+        setOk("Payment method is ready.");
+      }catch(e){
+        currentClientSecret = null;
+        elements = null;
+        updateSummary();
+        setError(e.message || "Payment setup failed.");
+      }
+    }
+
+    function attachHandlers(){
+      countrySel.addEventListener("change", async () => {
+        populateRegions(countrySel.value);
+        updateSummary();
+        await buildPaymentElement();
+      });
+
+      regionSel.addEventListener("change", async () => {
+        updateSummary();
+        await buildPaymentElement();
+      });
+
+      ack.addEventListener("change", () => updateSummary());
+
+      // If org/contact changes, we don’t need to rebuild the intent immediately,
+      // but it’s fine if you want to. For simplicity, we rebuild only on jurisdiction changes.
+      ["orgName","contactName","email","phone"].forEach(id=>{
+        el(id).addEventListener("input", () => {});
+      });
+
+      payBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        setError("");
+        setOk("");
+
+        if(!ack.checked){
+          setError("Please confirm the authorization checkbox before paying.");
+          return;
+        }
+        if(!currentClientSecret || !elements){
+          setError("Payment is not ready yet. Please re-select your jurisdiction and try again.");
+          return;
+        }
+
+        // Basic validations (kept light; Stripe will also validate payment fields)
+        const orgName = el("orgName").value.trim();
+        const email = el("email").value.trim();
+        if(!orgName || !email){
+          setError("Please provide at least an organization/project name and an email address.");
+          return;
+        }
+
+        payBtn.disabled = true;
+        payBtn.textContent = "Processing…";
+
+        const returnUrl = `${window.location.origin}${window.location.pathname}?paid=1`;
+
+        try{
+          const result = await stripe.confirmPayment({
+            elements,
+            confirmParams: {
+              return_url: returnUrl,
+              payment_method_data: {
+                billing_details: {
+                  name: el("contactName").value || "Authorized Payer",
+                  email: el("email").value || undefined,
+                  phone: el("phone").value || undefined,
+                  address: {
+                    line1: el("billingAddress").value || undefined,
+                    postal_code: el("billingPostal").value || undefined
+                  }
+                }
+              }
+            }
+          });
+
+          if(result.error){
+            setError(result.error.message || "Payment failed.");
+            payBtn.textContent = "Pay " + payBtnAmount.textContent;
+            payBtn.disabled = !(currentClientSecret && ack.checked);
+            return;
+          }
+
+          // Most flows redirect; if not, show a message:
+          setOk("Payment submitted. If you are not redirected, check your email receipt.");
+        }catch(err){
+          setError(err.message || "Payment failed.");
+        }finally{
+          payBtn.textContent = "Pay " + payBtnAmount.textContent;
+          payBtn.disabled = !(currentClientSecret && ack.checked);
+        }
+      });
+
+      // Paid confirmation message (after Stripe redirect)
+      const params = new URLSearchParams(window.location.search);
+      if(params.get("paid") === "1"){
+        setOk("Payment completed. A receipt should arrive via email from Stripe. You may close this page.");
+      }
+    }
+
+    (async function boot(){
+      populateCountries();
+      populateRegions(countrySel.value);
+      updateSummary();
+      await initStripe();
+      attachHandlers();
+      await buildPaymentElement();
+    })();
+  </script>
+</body>
+</html>
+
