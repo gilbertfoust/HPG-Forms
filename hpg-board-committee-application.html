@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en" id="rootHtml">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HPG Board & Committee Application</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    :root{
+      --primary:#003366;
+      --secondary:#E67E22;
+      --ink:#0f172a;
+      --muted:#64748b;
+      --line:rgba(15,23,42,.12);
+      --glass:rgba(255,255,255,.90);
+      --panel:rgba(255,255,255,.94);
+      --shadow:0 18px 50px rgba(2,6,23,.12);
+      --shadow2:0 10px 28px rgba(2,6,23,.10);
+      --ok:#146c43;
+      --bad:#b02a37;
+      --info:#0b5ed7;
+      --r:22px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      margin:0;
+      padding:42px 18px;
+      color:var(--ink);
+      background:
+        radial-gradient(1000px 650px at 10% -10%, rgba(230,126,34,.22), transparent 55%),
+        radial-gradient(900px 600px at 110% 10%, rgba(0,51,102,.20), transparent 55%),
+        linear-gradient(135deg,#f6f8fb 0%, #cfd9ea 100%);
+    }
+
+    .container{
+      max-width:980px;
+      margin:0 auto;
+      border-radius:var(--r);
+      background:var(--glass);
+      backdrop-filter: blur(10px);
+      border:1px solid rgba(255,255,255,.55);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:center;
+      padding:14px 18px;
+      border-bottom:1px solid var(--line);
+      background:rgba(255,255,255,.80);
+      flex-wrap:wrap;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 12px;
+      border-radius:999px;
+      background:rgba(0,51,102,.08);
+      color:var(--primary);
+      font-weight:800;
+      border:1px solid rgba(0,51,102,.12);
+      font-size:.88rem;
+    }
+
+    .header{
+      text-align:center;
+      padding:30px 22px 24px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.86)),
+        radial-gradient(900px 260px at 50% 0%, rgba(230,126,34,.13), transparent 60%);
+      border-bottom:1px solid var(--line);
+    }
+
+    .header img{max-height:108px;margin-bottom:10px;filter:drop-shadow(0 10px 18px rgba(2,6,23,.10))}
+    .header h1{margin:0;color:var(--primary);font-size:1.95rem;letter-spacing:-.5px}
+    .header p{margin:8px auto 0;color:var(--muted);max-width:720px;line-height:1.5}
+
+    .wizard{padding:16px 40px 10px}
+    .progress{display:flex;gap:12px;align-items:center}
+    .bar{height:12px;flex:1;border-radius:999px;background:rgba(15,23,42,.09);overflow:hidden;border:1px solid rgba(255,255,255,.7)}
+    .bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--secondary),#ffb26b);transition:.2s ease;border-radius:999px}
+    #pct{min-width:72px;text-align:right;font-weight:900;color:rgba(15,23,42,.56)}
+    .steps{display:flex;flex-wrap:wrap;gap:9px;margin-top:13px}
+    .chip{padding:7px 11px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.75);color:rgba(15,23,42,.60);font-size:.84rem;font-weight:700}
+    .chip.active{background:#fff;color:var(--primary);border-color:rgba(0,51,102,.25);font-weight:900}
+    .chip.done{background:rgba(20,108,67,.08);color:var(--ok);border-color:rgba(20,108,67,.24);font-weight:900}
+
+    form{padding:10px 40px 38px}
+    .status{display:none;padding:14px;border-radius:14px;margin:0 0 18px;border:1px solid rgba(0,0,0,.08);background:#fff;box-shadow:var(--shadow2)}
+    .status.show{display:block}
+    .status.ok{background:rgba(20,108,67,.07);border-color:rgba(20,108,67,.22);color:var(--ok)}
+    .status.bad{background:rgba(176,42,55,.07);border-color:rgba(176,42,55,.22);color:var(--bad)}
+    .status.info{background:rgba(11,94,215,.07);border-color:rgba(11,94,215,.22);color:var(--info)}
+
+    .step{display:none;background:var(--panel);border-radius:18px;padding:18px 18px 8px;border:1px solid rgba(255,255,255,.6);box-shadow:0 14px 34px rgba(2,6,23,.09)}
+    .step.active{display:block}
+    .section-title{font-size:1.14rem;color:var(--primary);font-weight:900;margin:0 0 18px;display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+    .section-title i{color:var(--secondary)}
+
+    .grid-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .form-group{margin-bottom:18px}
+    label{display:block;font-weight:800;font-size:.92rem;margin-bottom:8px;color:rgba(15,23,42,.86)}
+    .hint{font-size:.82rem;color:rgba(15,23,42,.58);margin:-2px 0 9px}
+    input,select,textarea{
+      width:100%;padding:14px;border:1px solid rgba(15,23,42,.14);border-radius:14px;font-family:inherit;font-size:.96rem;background:rgba(255,255,255,.90);color:rgba(15,23,42,.92);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.75);
+    }
+    textarea{resize:vertical}
+    input:focus,select:focus,textarea:focus{outline:none;border-color:rgba(230,126,34,.55);box-shadow:0 0 0 4px rgba(230,126,34,.14),0 10px 22px rgba(2,6,23,.08);background:#fff}
+    .field-error{display:none;margin-top:8px;color:var(--bad);font-size:.82rem;font-weight:800}
+    .invalid .field-error{display:block}
+    .invalid input,.invalid select,.invalid textarea{border-color:rgba(176,42,55,.55);box-shadow:0 0 0 4px rgba(176,42,55,.10)}
+
+    .checkbox-group{display:flex;flex-wrap:wrap;gap:10px}
+    .checkbox-pill{cursor:pointer;position:relative;margin:0}
+    .checkbox-pill input{position:absolute;opacity:0;pointer-events:none}
+    .pill-content{display:flex;align-items:center;gap:8px;padding:10px 15px;border-radius:999px;background:#fff;border:1px solid rgba(15,23,42,.14);color:rgba(15,23,42,.62);font-size:.9rem;font-weight:900;box-shadow:0 8px 18px rgba(2,6,23,.07);user-select:none}
+    .checkbox-pill input:checked~.pill-content{background:linear-gradient(180deg,rgba(0,51,102,.98),rgba(0,34,68,.98));color:#fff;border-color:rgba(0,51,102,.55);transform:translateY(-1px)}
+
+    .actions{position:sticky;bottom:0;display:flex;gap:12px;margin-top:18px;padding:14px;border-radius:16px;background:rgba(255,255,255,.82);backdrop-filter:blur(10px);box-shadow:0 18px 40px rgba(2,6,23,.12);border:1px solid rgba(255,255,255,.6);flex-wrap:wrap}
+    button{padding:14px 16px;border:none;border-radius:14px;font-size:1rem;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:.12s ease}
+    button:disabled{opacity:.65;cursor:not-allowed}
+    .btn{flex:1;min-width:160px}
+    .btn-primary{color:#fff;background:linear-gradient(180deg,rgba(0,51,102,.98),rgba(0,34,68,.98));box-shadow:0 14px 28px rgba(0,51,102,.22)}
+    .btn-outline{background:#fff;color:var(--primary);border:1px solid rgba(0,51,102,.30);box-shadow:0 10px 22px rgba(2,6,23,.08)}
+    .btn-ghost{background:#fff;color:rgba(15,23,42,.78);border:1px solid rgba(15,23,42,.12);box-shadow:0 10px 22px rgba(2,6,23,.08)}
+    button:hover{transform:translateY(-1px)}
+
+    .modal{display:none;position:fixed;inset:0;background:rgba(2,6,23,.55);padding:18px;z-index:99;align-items:center;justify-content:center}
+    .modal.show{display:flex}
+    .modal-card{background:rgba(255,255,255,.96);border-radius:18px;max-width:900px;width:100%;box-shadow:var(--shadow);overflow:hidden}
+    .modal-head{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px}
+    .modal-head h3{margin:0;color:var(--primary)}
+    .modal-body{padding:16px 18px;max-height:65vh;overflow:auto}
+    .summary{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .kv{border:1px solid rgba(15,23,42,.10);border-radius:14px;padding:12px;background:rgba(248,250,252,.95)}
+    .kv b{display:block;color:rgba(15,23,42,.70);font-size:.84rem;margin-bottom:6px}
+    .kv span{font-size:.94rem;word-break:break-word}
+    .modal-actions{padding:14px 18px;border-top:1px solid var(--line);display:flex;gap:12px;flex-wrap:wrap}
+    .hp{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
+
+    @media(max-width:700px){.grid-row,.summary{grid-template-columns:1fr}.wizard,form{padding-left:18px;padding-right:18px}body{padding:24px 10px}.header h1{font-size:1.55rem}}
+    @media print{.topbar,.wizard,.actions,.modal{display:none!important}body{background:#fff;padding:0}.container{box-shadow:none;border:none;border-radius:0}}
+  </style>
+</head>
+<body>
+  <div class="container" id="applicationCard">
+    <div class="topbar">
+      <span class="badge"><i class="fa-solid fa-landmark"></i> HPG Governance Intake</span>
+      <span class="badge"><i class="fa-solid fa-envelope"></i> Routes to Nominations Committee</span>
+    </div>
+
+    <div class="header">
+      <img src="https://img1.wsimg.com/isteam/ip/8d5502d6-d937-4d80-bd56-8074053e4d77/Humanity%20Pathways%20Global.jpg/:/rs=h:175,m" alt="HPG Logo">
+      <h1>Board of Directors & Committee Application</h1>
+      <p>Apply for HPG board, officer, committee, or advisory service. This form supports governance review, nominations screening, conflict disclosure, and committee placement.</p>
+    </div>
+
+    <div class="wizard">
+      <div class="progress"><div class="bar"><span id="barFill"></span></div><div id="pct">0%</div></div>
+      <div class="steps" id="stepChips">
+        <div class="chip"><i class="fa-regular fa-user"></i> Profile</div>
+        <div class="chip"><i class="fa-solid fa-landmark"></i> Role</div>
+        <div class="chip"><i class="fa-solid fa-star"></i> Experience</div>
+        <div class="chip"><i class="fa-solid fa-globe"></i> Alignment</div>
+        <div class="chip"><i class="fa-solid fa-shield-halved"></i> Compliance</div>
+      </div>
+    </div>
+
+    <form id="appForm" novalidate>
+      <div class="status" id="status" role="status"></div>
+      <label class="hp">Company <input class="hp" type="text" name="company" autocomplete="off" tabindex="-1"></label>
+
+      <section class="step active" data-step="0">
+        <div class="section-title"><i class="fas fa-user-circle"></i> Personal & Professional Information</div>
+        <div class="grid-row">
+          <div class="form-group" data-field><label>Legal Full Name *</label><input name="full_name" required maxlength="140" autocomplete="name"><div class="field-error">Please enter your legal full name.</div></div>
+          <div class="form-group" data-field><label>Preferred Name</label><input name="preferred_name" maxlength="140" autocomplete="nickname"><div class="field-error"></div></div>
+        </div>
+        <div class="grid-row">
+          <div class="form-group" data-field><label>Email Address *</label><input name="email" type="email" required maxlength="180" autocomplete="email" placeholder="name@example.com"><div class="field-error">Please enter a valid email address.</div></div>
+          <div class="form-group" data-field><label>Mobile Phone *</label><input name="phone" type="tel" required maxlength="40" autocomplete="tel" placeholder="e.g. +1 313 555 0123"><div class="field-error">Please enter a phone number.</div></div>
+        </div>
+        <div class="form-group" data-field><label>Current Location — City, State/Province, Country *</label><input name="location" required maxlength="160" placeholder="e.g. Detroit, MI, USA"><div class="field-error">Please enter your location.</div></div>
+        <div class="grid-row">
+          <div class="form-group" data-field><label>LinkedIn / Professional Bio / Portfolio URL</label><input name="linkedin_url" type="url" maxlength="260" placeholder="https://..."><div class="field-error">That link does not look valid.</div></div>
+          <div class="form-group" data-field><label>Current Employer or Organization</label><input name="current_employer" maxlength="180"><div class="field-error"></div></div>
+        </div>
+        <div class="grid-row">
+          <div class="form-group" data-field><label>Current Professional Title</label><input name="current_title" maxlength="180" placeholder="e.g. Treasurer, Attorney, Executive Director"><div class="field-error"></div></div>
+          <div class="form-group" data-field><label>Primary Professional Sector</label><select name="professional_sector"><option value="">Select one...</option><option>Nonprofit / NGO Leadership</option><option>Finance / Accounting</option><option>Legal / Compliance</option><option>Education / Research</option><option>Business / Entrepreneurship</option><option>Healthcare / Public Health</option><option>Technology / Data</option><option>Fundraising / Philanthropy</option><option>Community Organizing</option><option>Other</option></select><div class="field-error"></div></div>
+        </div>
+      </section>
+
+      <section class="step" data-step="1">
+        <div class="section-title"><i class="fas fa-landmark"></i> Board / Committee Role Interest</div>
+        <div class="grid-row">
+          <div class="form-group" data-field><label>Role Applying For *</label><select name="role_interest" required><option value="" disabled selected>Select Role...</option><option>Board of Directors Member</option><option>Board Officer — Chair</option><option>Board Officer — Vice Chair</option><option>Board Officer — Secretary</option><option>Board Officer — Treasurer</option><option>Compliance Officer</option><option>Committee Chair</option><option>Committee Member</option><option>Advisory Board Member</option><option>Not Sure — Recommend Best Fit</option></select><div class="field-error">Please select a role.</div></div>
+          <div class="form-group" data-field><label>Available Start Date *</label><input type="date" name="start_date" id="start_date" required><div class="field-error">Please choose a start date.</div></div>
+        </div>
+
+        <div class="form-group" data-field>
+          <label>Committee Interest *</label>
+          <div class="hint">Select at least one. Governance, Program Oversight, International Partnerships, HR, Tech/Data, Marketing, and Ethics were intentionally removed.</div>
+          <div class="checkbox-group" id="committeeGroup">
+            <label class="checkbox-pill"><input class="committee_interest" type="checkbox" name="committee_interests" value="Executive Committee"><span class="pill-content"><i class="fas fa-users"></i> Executive Committee</span></label>
+            <label class="checkbox-pill"><input class="committee_interest" type="checkbox" name="committee_interests" value="Finance Committee"><span class="pill-content"><i class="fas fa-coins"></i> Finance Committee</span></label>
+            <label class="checkbox-pill"><input class="committee_interest" type="checkbox" name="committee_interests" value="Audit / Financial Oversight Committee"><span class="pill-content"><i class="fas fa-file-invoice-dollar"></i> Audit / Financial Oversight Committee</span></label>
+            <label class="checkbox-pill"><input class="committee_interest" type="checkbox" name="committee_interests" value="Nominations Committee"><span class="pill-content"><i class="fas fa-user-check"></i> Nominations Committee</span></label>
+            <label class="checkbox-pill"><input class="committee_interest" type="checkbox" name="committee_interests" value="Compliance & Risk Committee"><span class="pill-content"><i class="fas fa-shield-alt"></i> Compliance & Risk Committee</span></label>
+            <label class="checkbox-pill"><input class="committee_interest" type="checkbox" name="committee_interests" value="Fund Development Committee"><span class="pill-content"><i class="fas fa-hand-holding-heart"></i> Fund Development Committee</span></label>
+            <label class="checkbox-pill"><input class="committee_interest" type="checkbox" name="committee_interests" value="Advisory Committee"><span class="pill-content"><i class="fas fa-lightbulb"></i> Advisory Committee</span></label>
+            <label class="checkbox-pill"><input class="committee_interest" type="checkbox" name="committee_interests" value="Other"><span class="pill-content"><i class="fas fa-plus-circle"></i> Other</span></label>
+          </div>
+          <div class="field-error" id="committeeErr">Please select at least one committee.</div>
+        </div>
+
+        <div class="grid-row">
+          <div class="form-group" data-field><label>Estimated Hours Available Per Month</label><select name="monthly_hours"><option value="">Select one...</option><option>2–4 hours/month</option><option>5–8 hours/month</option><option>9–12 hours/month</option><option>13–20 hours/month</option><option>More than 20 hours/month</option></select><div class="field-error"></div></div>
+          <div class="form-group" data-field><label>Board / Committee Experience Status</label><select name="board_experience_status"><option value="">Select one...</option><option>Yes, prior formal board service</option><option>Yes, committee or advisory experience</option><option>Informal or community-based leadership only</option><option>No prior board service</option></select><div class="field-error"></div></div>
+        </div>
+
+        <div class="form-group" data-field>
+          <label>Meeting Availability *</label>
+          <div class="checkbox-group" id="meetingGroup">
+            <label class="checkbox-pill"><input class="meeting_availability" type="checkbox" name="meeting_availability" value="Weekday mornings"><span class="pill-content"><i class="fas fa-sun"></i> Weekday mornings</span></label>
+            <label class="checkbox-pill"><input class="meeting_availability" type="checkbox" name="meeting_availability" value="Weekday afternoons"><span class="pill-content"><i class="fas fa-clock"></i> Weekday afternoons</span></label>
+            <label class="checkbox-pill"><input class="meeting_availability" type="checkbox" name="meeting_availability" value="Weekday evenings"><span class="pill-content"><i class="fas fa-moon"></i> Weekday evenings</span></label>
+            <label class="checkbox-pill"><input class="meeting_availability" type="checkbox" name="meeting_availability" value="Weekends"><span class="pill-content"><i class="fas fa-calendar-alt"></i> Weekends</span></label>
+            <label class="checkbox-pill"><input class="meeting_availability" type="checkbox" name="meeting_availability" value="Flexible"><span class="pill-content"><i class="fas fa-arrows-rotate"></i> Flexible</span></label>
+          </div>
+          <div class="field-error" id="meetingErr">Please select at least one meeting availability option.</div>
+        </div>
+      </section>
+
+      <section class="step" data-step="2">
+        <div class="section-title"><i class="fas fa-star"></i> Governance Experience & Professional Strengths</div>
+        <div class="form-group" data-field><label>Board, Committee, Leadership, or Oversight Experience Summary *</label><textarea name="board_experience_summary" rows="5" required maxlength="4000" placeholder="Describe formal or informal board, committee, fiduciary, nonprofit, public service, or leadership experience."></textarea><div class="field-error">Please describe your experience.</div></div>
+        <div class="form-group" data-field><label>Professional Expertise Areas</label><div class="checkbox-group">
+          <label class="checkbox-pill"><input type="checkbox" name="expertise_areas" value="Nonprofit Governance"><span class="pill-content">Nonprofit Governance</span></label>
+          <label class="checkbox-pill"><input type="checkbox" name="expertise_areas" value="Finance / Budgeting"><span class="pill-content">Finance / Budgeting</span></label>
+          <label class="checkbox-pill"><input type="checkbox" name="expertise_areas" value="Accounting"><span class="pill-content">Accounting</span></label>
+          <label class="checkbox-pill"><input type="checkbox" name="expertise_areas" value="Legal / Compliance"><span class="pill-content">Legal / Compliance</span></label>
+          <label class="checkbox-pill"><input type="checkbox" name="expertise_areas" value="Risk Management"><span class="pill-content">Risk Management</span></label>
+          <label class="checkbox-pill"><input type="checkbox" name="expertise_areas" value="Fundraising"><span class="pill-content">Fundraising</span></label>
+          <label class="checkbox-pill"><input type="checkbox" name="expertise_areas" value="Grant Oversight"><span class="pill-content">Grant Oversight</span></label>
+          <label class="checkbox-pill"><input type="checkbox" name="expertise_areas" value="Strategic Planning"><span class="pill-content">Strategic Planning</span></label>
+          <label class="checkbox-pill"><input type="checkbox" name="expertise_areas" value="Community Partnerships"><span class="pill-content">Community Partnerships</span></label>
+          <label class="checkbox-pill"><input type="checkbox" name="expertise_areas" value="Research / Policy"><span class="pill-content">Research / Policy</span></label>
+        </div><div class="field-error"></div></div>
+        <div class="form-group" data-field><label>Top 3 Professional Strengths *</label><textarea name="strengths" rows="3" required maxlength="800" placeholder="e.g. financial oversight, nonprofit compliance, donor cultivation, policy review"></textarea><div class="field-error">Please list your strengths.</div></div>
+        <div class="grid-row">
+          <div class="form-group" data-field><label>Tools, Certifications, or Credentials</label><input name="tools" maxlength="260" placeholder="e.g. CPA, JD, PMP, QuickBooks, grant review, board training"><div class="field-error"></div></div>
+          <div class="form-group" data-field><label>Resume, CV, Bio, or Board Profile Link</label><input type="url" name="resume_link" maxlength="300" placeholder="https://..."><div class="field-error">That link does not look valid.</div></div>
+        </div>
+      </section>
+
+      <section class="step" data-step="3">
+        <div class="section-title"><i class="fas fa-globe-americas"></i> Mission, Ethics & Strategic Alignment</div>
+        <div class="form-group" data-field><label>What inspires you to serve HPG in a board or committee capacity? *</label><textarea name="inspiration" rows="4" required maxlength="2500"></textarea><div class="field-error">Please add a short explanation.</div></div>
+        <div class="form-group" data-field><label>Which part of HPG’s mission could you help strengthen?</label><div class="checkbox-group">
+          <label class="checkbox-pill"><input type="checkbox" name="strategic_contribution" value="Fiscal sponsorship infrastructure"><span class="pill-content">Fiscal Sponsorship Infrastructure</span></label>
+          <label class="checkbox-pill"><input type="checkbox" name="strategic_contribution" value="NGO onboarding and oversight"><span class="pill-content">NGO Onboarding & Oversight</span></label>
+          <label class="checkbox-pill"><input type="checkbox" name="strategic_contribution" value="Fundraising and donor development"><span class="pill-content">Fundraising & Donor Development</span></label>
+          <label class="checkbox-pill"><input type="checkbox" name="strategic_contribution" value="Financial accountability"><span class="pill-content">Financial Accountability</span></label>
+          <label class="checkbox-pill"><input type="checkbox" name="strategic_contribution" value="Legal and compliance systems"><span class="pill-content">Legal & Compliance Systems</span></label>
+          <label class="checkbox-pill"><input type="checkbox" name="strategic_contribution" value="Board nominations and leadership recruitment"><span class="pill-content">Board Nominations</span></label>
+          <label class="checkbox-pill"><input type="checkbox" name="strategic_contribution" value="Community-based humanitarian projects"><span class="pill-content">Humanitarian Projects</span></label>
+        </div><div class="field-error"></div></div>
+        <div class="form-group" data-field><label>How do you understand the difference between board governance and day-to-day management? *</label><textarea name="governance_philosophy" rows="4" required maxlength="2500"></textarea><div class="field-error">Please answer this governance question.</div></div>
+        <div class="form-group" data-field><label>What specific contribution would you hope to make during your first 90 days? *</label><textarea name="first_90_days" rows="4" required maxlength="2500"></textarea><div class="field-error">Please describe your first 90-day contribution.</div></div>
+      </section>
+
+      <section class="step" data-step="4">
+        <div class="section-title"><i class="fas fa-shield-halved"></i> Compliance, Conflicts & Board Readiness</div>
+        <div class="grid-row">
+          <div class="form-group" data-field><label>Consistent Meeting Participation</label><select name="meeting_commitment"><option>Yes</option><option>No</option><option>Unsure</option></select><div class="field-error"></div></div>
+          <div class="form-group" data-field><label>Willing to Review Documents Before Meetings?</label><select name="document_review_commitment"><option>Yes</option><option>No</option><option>Unsure</option></select><div class="field-error"></div></div>
+        </div>
+        <div class="grid-row">
+          <div class="form-group" data-field><label>Willing to Support Fundraising / Resource Development?</label><select name="fundraising_commitment"><option>Yes</option><option>Limited capacity</option><option>Prefer committee-only support</option><option>No</option></select><div class="field-error"></div></div>
+          <div class="form-group" data-field><label>Willing to Complete Board Orientation?</label><select name="orientation_commitment"><option>Yes</option><option>No</option></select><div class="field-error"></div></div>
+        </div>
+        <div class="form-group" data-field><label>Conflict of Interest Status</label><select name="conflict_status"><option>No known conflict</option><option>Possible conflict — explained below</option><option>Unsure</option></select><div class="field-error"></div></div>
+        <div class="form-group" data-field><label>If yes or unsure, explain possible conflict</label><textarea name="conflict_explanation" rows="3" maxlength="1500"></textarea><div class="field-error"></div></div>
+        <div class="form-group" data-field><label>Have you ever been removed from a board, fiduciary role, or leadership position for misconduct, financial mismanagement, ethical violations, or failure to perform duties?</label><select name="removal_history"><option>No</option><option>Yes — explained below</option><option>Prefer to discuss privately</option></select><div class="field-error"></div></div>
+        <div class="form-group" data-field><label>If needed, explain</label><textarea name="removal_explanation" rows="3" maxlength="1500"></textarea><div class="field-error"></div></div>
+        <div class="form-group" data-field><label class="checkbox-pill" style="width:100%"><input id="consent" type="checkbox" name="consent" required><span class="pill-content" style="width:100%;border-radius:16px"><i class="fas fa-user-check"></i> I certify that the information provided is accurate and consent to HPG reviewing my information for board, committee, advisory, or governance-related service.</span></label><div class="field-error">Consent is required to submit.</div></div>
+      </section>
+
+      <div class="actions">
+        <button type="button" class="btn btn-outline" id="btnPdf"><i class="fas fa-file-download"></i> Download PDF</button>
+        <button type="button" class="btn btn-ghost" id="btnBack"><i class="fa-solid fa-arrow-left"></i> Back</button>
+        <button type="button" class="btn btn-primary" id="btnNext">Next <i class="fa-solid fa-arrow-right"></i></button>
+        <button type="button" class="btn btn-primary" id="btnReview" style="display:none">Review <i class="fa-regular fa-clipboard"></i></button>
+        <button type="submit" class="btn btn-primary" id="btnSubmit" style="display:none">Submit <i class="fas fa-paper-plane"></i></button>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal" id="reviewModal">
+    <div class="modal-card">
+      <div class="modal-head"><h3><i class="fa-regular fa-clipboard"></i> Review your application</h3><button class="btn-ghost" type="button" id="closeReview">✕</button></div>
+      <div class="modal-body"><div class="summary" id="summaryGrid"></div></div>
+      <div class="modal-actions"><button class="btn btn-ghost" type="button" id="btnEdit"><i class="fa-solid fa-pen"></i> Edit</button><button class="btn btn-primary" type="button" id="btnConfirmSubmit"><i class="fas fa-paper-plane"></i> Confirm Submit</button></div>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const CONFIG = {
+        functionUrl: 'https://mlmjlgmsrkemsuwdohsa.supabase.co/functions/v1/submit-board-application',
+        supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1sbWpsZ21zcmtlbXN1d2RvaHNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU1MTE0MTgsImV4cCI6MjA4MTA4NzQxOH0.NW6sYH5TC-Pa591FZd09coSiJFhoAOg3oz27he6XV1I'
+      };
+
+      const $ = (s, r=document) => r.querySelector(s);
+      const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+      const form = $('#appForm');
+      const status = $('#status');
+      const steps = $$('.step');
+      const chips = $$('#stepChips .chip');
+      const barFill = $('#barFill');
+      const pct = $('#pct');
+      const btnBack = $('#btnBack');
+      const btnNext = $('#btnNext');
+      const btnReview = $('#btnReview');
+      const btnSubmit = $('#btnSubmit');
+      const btnPdf = $('#btnPdf');
+      const reviewModal = $('#reviewModal');
+      const summaryGrid = $('#summaryGrid');
+      let cur = 0;
+
+      const today = new Date();
+      $('#start_date').min = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+
+      function setStatus(message, type='info'){
+        status.className = `status show ${type}`;
+        status.innerHTML = message;
+        status.scrollIntoView({behavior:'smooth',block:'start'});
+      }
+      function clearStatus(){ status.className='status'; status.innerHTML=''; }
+      function escapeHtml(s){ return String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+      function renderWizard(){
+        steps.forEach((s,i)=>s.classList.toggle('active', i===cur));
+        const p = Math.round((cur/(steps.length-1))*100);
+        barFill.style.width = p + '%';
+        pct.textContent = p + '%';
+        chips.forEach((c,i)=>{c.classList.toggle('active', i===cur); c.classList.toggle('done', i<cur);});
+        btnBack.style.display = cur === 0 ? 'none' : '';
+        btnNext.style.display = cur < steps.length-1 ? '' : 'none';
+        btnReview.style.display = cur === steps.length-1 ? '' : 'none';
+        btnSubmit.style.display = 'none';
+        clearStatus();
+      }
+      renderWizard();
+
+      function markField(group, ok){ if(group) group.classList.toggle('invalid', !ok); }
+      function validateGroup(el){ const g = el.closest('[data-field]'); const ok = el.checkValidity(); markField(g, ok); return ok; }
+      $$('input,select,textarea', form).forEach(el=>{ el.addEventListener('blur',()=>validateGroup(el)); el.addEventListener('input',()=>{ if(el.closest('.invalid')) validateGroup(el); }); });
+
+      function validateStep(index){
+        clearStatus();
+        let ok = true;
+        const step = steps[index];
+        $$('input,select,textarea', step).forEach(el=>{ if(!el.checkValidity()) ok = false; validateGroup(el); });
+        if(index === 1){
+          const hasCommittee = $$('.committee_interest').some(x=>x.checked);
+          $('#committeeErr').style.display = hasCommittee ? 'none' : 'block';
+          if(!hasCommittee) ok = false;
+          const hasMeeting = $$('.meeting_availability').some(x=>x.checked);
+          $('#meetingErr').style.display = hasMeeting ? 'none' : 'block';
+          if(!hasMeeting) ok = false;
+        }
+        if(!ok){
+          setStatus('Please review the highlighted fields and try again.', 'bad');
+          return false;
+        }
+        return true;
+      }
+
+      btnBack.addEventListener('click',()=>{ if(cur>0){ cur--; renderWizard(); steps[cur].scrollIntoView({behavior:'smooth',block:'start'}); } });
+      btnNext.addEventListener('click',()=>{ if(validateStep(cur) && cur<steps.length-1){ cur++; renderWizard(); steps[cur].scrollIntoView({behavior:'smooth',block:'start'}); } });
+      chips.forEach((chip,i)=> chip.addEventListener('click',()=>{ if(i<=cur){cur=i; renderWizard();} }));
+
+      const reviewFields = [
+        ['Name','full_name'], ['Email','email'], ['Phone','phone'], ['Location','location'],
+        ['Current Title','current_title'], ['Role Interest','role_interest'], ['Committees','committee_interests'],
+        ['Monthly Hours','monthly_hours'], ['Meeting Availability','meeting_availability'],
+        ['Board Experience','board_experience_summary'], ['Strengths','strengths'], ['Conflict Status','conflict_status']
+      ];
+      function values(name){
+        if(['committee_interests','meeting_availability','expertise_areas','strategic_contribution'].includes(name)) return $$(`[name="${name}"]`).filter(x=>x.checked).map(x=>x.value).join(', ') || '(none)';
+        const el = form.querySelector(`[name="${name}"]`); return el ? el.value || '(blank)' : '(blank)';
+      }
+      btnReview.addEventListener('click',()=>{
+        if(!validateStep(cur)) return;
+        summaryGrid.innerHTML = reviewFields.map(([label,name])=>`<div class="kv"><b>${escapeHtml(label)}</b><span>${escapeHtml(values(name))}</span></div>`).join('');
+        reviewModal.classList.add('show');
+      });
+      $('#closeReview').addEventListener('click',()=>reviewModal.classList.remove('show'));
+      $('#btnEdit').addEventListener('click',()=>reviewModal.classList.remove('show'));
+      $('#btnConfirmSubmit').addEventListener('click',()=>{ reviewModal.classList.remove('show'); form.requestSubmit(); });
+      reviewModal.addEventListener('click',(e)=>{ if(e.target === reviewModal) reviewModal.classList.remove('show'); });
+
+      form.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        if(form.querySelector('input[name="company"]').value.trim()) return;
+        for(let i=0;i<steps.length;i++){ if(!validateStep(i)){ cur=i; renderWizard(); return; } }
+
+        btnBack.disabled = btnNext.disabled = btnReview.disabled = btnSubmit.disabled = btnPdf.disabled = true;
+        setStatus('Submitting board application…', 'info');
+
+        try{
+          const fd = new FormData(form);
+          const data = {};
+          for(const [k,v] of fd.entries()){
+            if(['company','committee_interests','meeting_availability','expertise_areas','strategic_contribution'].includes(k)) continue;
+            data[k] = String(v ?? '').trim();
+          }
+          data.committee_interests = fd.getAll('committee_interests');
+          data.meeting_availability = fd.getAll('meeting_availability');
+          data.expertise_areas = fd.getAll('expertise_areas');
+          data.strategic_contribution = fd.getAll('strategic_contribution');
+          data.consent = fd.get('consent') === 'on';
+
+          const res = await fetch(CONFIG.functionUrl, {
+            method:'POST',
+            headers:{
+              'Content-Type':'application/json',
+              'apikey': CONFIG.supabaseAnonKey,
+              'Authorization': 'Bearer ' + CONFIG.supabaseAnonKey
+            },
+            body: JSON.stringify(data)
+          });
+          const out = await res.json().catch(()=>({}));
+          if(!res.ok || !out.ok) throw new Error(out.error || `Request failed (${res.status})`);
+          setStatus(`<strong>Board application received.</strong><br>Reference ID: ${escapeHtml(out.id)}<br><small>This submission has been saved to HPG’s board_applications table.</small>`, 'ok');
+          form.reset(); cur=0; renderWizard();
+        }catch(err){
+          setStatus(`<strong>Submission failed.</strong><br>${escapeHtml(err.message || err)}`, 'bad');
+        }finally{
+          btnBack.disabled = btnNext.disabled = btnReview.disabled = btnSubmit.disabled = btnPdf.disabled = false;
+        }
+      });
+
+      btnPdf.addEventListener('click',()=>{
+        if(typeof html2pdf !== 'function'){ setStatus('PDF tool did not load. Try again.', 'bad'); return; }
+        const actions = document.querySelector('.actions');
+        const old = actions.style.display;
+        actions.style.display = 'none';
+        html2pdf().set({margin:[0.5,0.5],filename:'HPG_Board_Committee_Application.pdf',image:{type:'jpeg',quality:0.98},html2canvas:{scale:2,useCORS:true},jsPDF:{unit:'in',format:'letter',orientation:'portrait'}}).from(document.getElementById('applicationCard')).save().finally(()=>actions.style.display=old);
+      });
+    });
+  </script>
+</body>
+</html>
